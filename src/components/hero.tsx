@@ -231,7 +231,7 @@ export function Hero() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-1 sm:space-y-3 md:space-y-4 lg:space-y-6 text-center lg:text-left order-1 lg:order-1"
+            className="space-y-3 sm:space-y-3 md:space-y-4 lg:space-y-6 text-center lg:text-left order-1 lg:order-1"
           >
             {/* Badge */}
             <motion.div
@@ -246,7 +246,7 @@ export function Hero() {
             </motion.div>
 
             {/* Main Headline */}
-            <div className="space-y-1 sm:space-y-3">
+            <div className="space-y-3 sm:space-y-3">
               {/* Animated Tagline as Main Headline */}
               <motion.div
                 initial={{ opacity: 0, filter: "blur(8px)", scale: 0.95 }}
