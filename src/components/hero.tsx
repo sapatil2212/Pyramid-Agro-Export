@@ -36,7 +36,7 @@ function AnimatedTagline() {
         ease: "easeOut",
         delay: 0.1
       }}
-      className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight px-2 sm:px-0"
+      className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight px-2 sm:px-0"
     >
       {taglines[currentIndex]}
     </motion.h1>
@@ -302,17 +302,17 @@ export function Hero() {
               </div>
             </motion.div>
 
-            {/* CTA Buttons - Hidden on mobile */}
+            {/* CTA Buttons - Now visible on mobile */}
             <motion.div
               initial={{ opacity: 0, filter: "blur(8px)", scale: 0.95 }}
               animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
               transition={{ delay: 1.2, duration: 1.2, ease: "easeOut" }}
-              className="hidden md:flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto lg:mx-0"
+              className="flex flex-row gap-2 sm:gap-4 justify-center items-center w-full"
             >
               <Button
-                size="lg"
+                size="sm"
                 asChild
-                className="group bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base"
+                className="group bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-3 sm:px-6 md:px-8 py-1.5 sm:py-2.5 md:py-3 rounded-md sm:rounded-lg shadow-md sm:shadow-lg hover:shadow-xl transition-all duration-200 text-xs sm:text-sm md:text-base"
               >
                 <Link href="/contact">
                   Get Quote Now
@@ -328,9 +328,9 @@ export function Hero() {
 
               <Button
                 variant="outline"
-                size="lg"
+                size="sm"
                 asChild
-                className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base"
+                className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 px-3 sm:px-6 md:px-8 py-1.5 sm:py-2.5 md:py-3 rounded-md sm:rounded-lg text-xs sm:text-sm md:text-base"
               >
                 <Link href="/products">View Products</Link>
               </Button>
@@ -390,25 +390,6 @@ export function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Mobile Fixed Quote Button */}
-      <motion.div
-        initial={{ opacity: 0, y: 100 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.8 }}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 p-3 sm:p-4 bg-white/98 backdrop-blur-md border-t border-gray-200 shadow-xl safe-area-inset-bottom"
-        style={{ pointerEvents: 'auto' }}
-      >
-        <Button
-          size="lg"
-          asChild
-          className="group shadow-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-sm font-semibold w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white min-h-[48px] transition-all duration-200"
-        >
-          <Link href="/contact">
-            <TrendingUp className="h-4 w-4" />
-            Get Export Quote
-          </Link>
-        </Button>
-      </motion.div>
     </section>
   )
 }
