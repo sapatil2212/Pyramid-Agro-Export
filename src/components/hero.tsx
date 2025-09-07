@@ -149,7 +149,7 @@ function ProductCarousel() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="flex items-center justify-center rounded-lg sm:rounded-xl shadow-lg overflow-hidden bg-white w-full aspect-[4/3] sm:aspect-[3/2] md:aspect-[4/3] lg:aspect-[3/2] max-w-full"
+        className="flex items-center justify-center rounded-lg sm:rounded-xl shadow-lg overflow-hidden bg-white w-full aspect-[3/2] sm:aspect-[3/2] md:aspect-[4/3] lg:aspect-[3/2] max-w-full"
       >
         <div className="relative w-full h-full">
           <Image
@@ -216,7 +216,7 @@ function ProductCarousel() {
 
 export function Hero() {
   return (
-    <section className="relative bg-gradient-to-br from-emerald-50 via-white to-amber-50 min-h-screen flex items-center overflow-hidden w-full">
+    <section className="relative bg-gradient-to-br from-emerald-50 via-white to-amber-50 min-h-[90vh] sm:min-h-screen flex items-center overflow-hidden w-full">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-20 h-20 bg-emerald-500/5 rounded-full blur-xl"></div>
@@ -224,14 +224,14 @@ export function Hero() {
         <div className="absolute bottom-20 right-10 w-24 h-24 bg-amber-500/5 rounded-full blur-xl"></div>
       </div>
 
-      <div className="container mx-auto px-3 sm:px-4 md:px-8 lg:px-16 xl:px-32 -mt-4 sm:-mt-8 md:-mt-12 pb-4 sm:pb-0 md:pb-8 relative z-10 w-full max-w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-16 items-center w-full max-w-full overflow-hidden">
+      <div className="container mx-auto px-3 sm:px-4 md:px-8 lg:px-16 xl:px-32 pt-8 sm:pt-12 md:pt-16 pb-4 sm:pb-0 md:pb-8 relative z-10 w-full max-w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12 items-center w-full max-w-full overflow-hidden">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8 text-center lg:text-left order-1 lg:order-1"
+            className="space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-6 text-center lg:text-left order-1 lg:order-1"
           >
             {/* Badge */}
             <motion.div
@@ -246,7 +246,7 @@ export function Hero() {
             </motion.div>
 
             {/* Main Headline */}
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-2 sm:space-y-3">
               {/* Animated Tagline as Main Headline */}
               <motion.div
                 initial={{ opacity: 0, filter: "blur(8px)", scale: 0.95 }}
@@ -363,7 +363,7 @@ export function Hero() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative w-full h-full mt-0 order-2 lg:order-2 max-w-full overflow-hidden"
+            className="relative w-full h-full mt-2 sm:mt-4 lg:mt-0 order-2 lg:order-2 max-w-full overflow-hidden"
           >
             <ProductCarousel />
           </motion.div>
@@ -395,13 +395,13 @@ export function Hero() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.8 }}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-3 bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-lg safe-area-inset-bottom"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 p-3 sm:p-4 bg-white/98 backdrop-blur-md border-t border-gray-200 shadow-xl safe-area-inset-bottom"
         style={{ pointerEvents: 'auto' }}
       >
         <Button
           size="lg"
           asChild
-          className="group shadow-lg px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm font-medium w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white min-h-[44px]"
+          className="group shadow-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-sm font-semibold w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white min-h-[48px] transition-all duration-200"
         >
           <Link href="/contact">
             <TrendingUp className="h-4 w-4" />
