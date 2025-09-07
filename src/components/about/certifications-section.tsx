@@ -361,9 +361,9 @@ export function CertificationsSection() {
               Our Commitment to Excellence
             </h3>
             <blockquote className="text-xl italic mb-8 max-w-4xl mx-auto leading-relaxed">
-              "Quality is not just a requirement for us – it's a promise we make to every farmer we work with, 
+              &ldquo;Quality is not just a requirement for us &ndash; it&rsquo;s a promise we make to every farmer we work with, 
               every client we serve, and every consumer who enjoys our products. Our certifications are proof 
-              of this unwavering commitment."
+              of this unwavering commitment.&rdquo;
             </blockquote>
             <cite className="text-emerald-200 font-medium">
               — Pyramid Agro Export Quality Assurance Team

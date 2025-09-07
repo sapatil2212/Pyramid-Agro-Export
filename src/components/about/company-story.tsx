@@ -125,7 +125,7 @@ export function CompanyStory() {
             className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed"
           >
             Pyramid Agro Export was born from a simple yet powerful vision: to showcase 
-            India's agricultural heritage to the world while supporting the farmers who 
+            India&rsquo;s agricultural heritage to the world while supporting the farmers who 
             cultivate these exceptional products with unwavering dedication.
           </motion.p>
         </motion.div>
@@ -170,7 +170,7 @@ export function CompanyStory() {
               <p>
                 Founded in 2009 by a team of agricultural enthusiasts and export professionals, 
                 Pyramid Agro Export began as a small venture with big dreams. We recognized 
-                the immense potential of India's diverse agricultural landscape and the growing 
+                the immense potential of India&rsquo;s diverse agricultural landscape and the growing 
                 global demand for authentic, high-quality products.
               </p>
               <p>
@@ -215,7 +215,7 @@ export function CompanyStory() {
             >
               <h4 className="font-semibold text-gray-900 mb-2">Founding Vision</h4>
               <p className="text-sm text-gray-600">
-                "To be the most trusted bridge connecting India's agricultural heritage with global opportunities"
+                &ldquo;To be the most trusted bridge connecting India&rsquo;s agricultural heritage with global opportunities&rdquo;
               </p>
             </motion.div>
           </motion.div>

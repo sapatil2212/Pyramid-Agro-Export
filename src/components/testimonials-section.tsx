@@ -139,7 +139,7 @@ export function TestimonialsSection() {
             className="text-xl text-gray-600 max-w-3xl mx-auto"
           >
             Hear from our global partners about their experience working with 
-            Pyramid Agro Export and how we've helped grow their businesses.
+            Pyramid Agro Export and how we&rsquo;ve helped grow their businesses.
           </motion.p>
         </motion.div>
 
@@ -179,7 +179,7 @@ export function TestimonialsSection() {
 
                   {/* Testimonial Text */}
                   <blockquote className="text-xl lg:text-2xl text-gray-700 mb-8 leading-relaxed italic">
-                    "{testimonials[currentTestimonial].content}"
+                    &ldquo;{testimonials[currentTestimonial].content}&rdquo;
                   </blockquote>
 
                   {/* Author Info */}

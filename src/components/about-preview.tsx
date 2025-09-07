@@ -201,9 +201,9 @@ export function AboutPreview() {
               Our Mission
             </h3>
             <blockquote className="text-xl text-gray-600 italic leading-relaxed border-l-4 border-emerald-500 pl-6">
-              "To be the bridge that connects India's agricultural excellence with the world, 
+              &ldquo;To be the bridge that connects India&rsquo;s agricultural excellence with the world, 
               fostering sustainable farming practices while delivering uncompromising quality 
-              that our global partners can trust."
+              that our global partners can trust.&rdquo;
             </blockquote>
             <cite className="text-emerald-600 font-medium mt-4 block">
               — Pyramid Agro Export Leadership Team

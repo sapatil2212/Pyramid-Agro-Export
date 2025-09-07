@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Award, Shield, MapPin, Star, ChevronLeft, ChevronRight, ArrowRight, Leaf, Globe, TrendingUp, Truck, Apple } from "lucide-react"
+import { Shield, MapPin, Star, ChevronLeft, ChevronRight, ArrowRight, Leaf, Globe, TrendingUp, Truck } from "lucide-react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -23,7 +23,7 @@ function AnimatedTagline() {
     }, 4000) // Change every 4 seconds
     
     return () => clearInterval(interval)
-  }, [])
+  }, [taglines.length])
   
   return (
     <motion.h1
@@ -59,7 +59,7 @@ function AnimatedSubContent() {
     }, 4000) // Change every 4 seconds
     
     return () => clearInterval(interval)
-  }, [])
+  }, [subContents.length])
   
   return (
     <motion.p
@@ -75,66 +75,6 @@ function AnimatedSubContent() {
   )
 }
 
-// Custom hook for responsive dimensions
-function useResponsiveDimensions() {
-  const [dimensions, setDimensions] = useState({
-    width: '900px',
-    height: '550px'
-  })
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (window.innerWidth < 480) {
-        // Extra small mobile
-        setDimensions({
-          width: '300px',
-          height: '250px'
-        })
-      } else if (window.innerWidth < 640) {
-        // Small mobile
-        setDimensions({
-          width: '360px',
-          height: '300px'
-        })
-      } else if (window.innerWidth < 768) {
-        // Large mobile
-        setDimensions({
-          width: '420px',
-          height: '350px'
-        })
-      } else if (window.innerWidth < 1024) {
-        // Tablet
-        setDimensions({
-          width: '500px',
-          height: '400px'
-        })
-      } else if (window.innerWidth < 1280) {
-        // Small desktop
-        setDimensions({
-          width: '600px',
-          height: '450px'
-        })
-      } else {
-        // Large desktop
-        setDimensions({
-          width: '700px',
-          height: '500px'
-        })
-      }
-    }
-
-    // Set initial dimensions
-    updateDimensions()
-
-    // Add event listener
-    window.addEventListener('resize', updateDimensions)
-
-    // Cleanup
-    return () => window.removeEventListener('resize', updateDimensions)
-  }, [])
-
-  return dimensions
-}
 
 // Product Image Carousel Component
 function ProductCarousel() {
@@ -183,7 +123,7 @@ function ProductCarousel() {
     }, 4000) // Change every 4 seconds to sync with text
     
     return () => clearInterval(interval)
-  }, [])
+  }, [products.length])
   
   const goToSlide = (index: number) => {
     setCurrentIndex(index)

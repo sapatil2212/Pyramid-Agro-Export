@@ -271,7 +271,7 @@ export function Values() {
               <h3 className="text-3xl font-bold mb-4">Our Mission</h3>
               
               <p className="text-lg text-emerald-100 leading-relaxed">
-                To be the most trusted bridge connecting India's agricultural heritage with global 
+                To be the most trusted bridge connecting India&rsquo;s agricultural heritage with global 
                 opportunities, while empowering farming communities and promoting sustainable 
                 practices that benefit both people and planet.
               </p>

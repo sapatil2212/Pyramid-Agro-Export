@@ -286,10 +286,10 @@ export function WhyChooseUs() {
         >
           <div className="max-w-4xl mx-auto">
             <blockquote className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 leading-tight">
-              "Built on <span className="text-emerald-600">Trust</span>, 
+              &ldquo;Built on <span className="text-emerald-600">Trust</span>, 
               Delivering <span className="text-amber-600">Excellence</span>, 
               Creating <span className="text-blue-600">Partnerships</span> 
-              that Last"
+              that Last&rdquo;
             </blockquote>
             <p className="text-lg text-gray-600">
               Join thousands of satisfied customers who trust Pyramid Agro Export 

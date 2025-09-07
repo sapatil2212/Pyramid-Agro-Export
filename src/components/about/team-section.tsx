@@ -325,7 +325,7 @@ export function TeamSection() {
           <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-2xl p-8 lg:p-12 text-white">
             <h3 className="text-3xl font-bold mb-4">Join Our Growing Team</h3>
             <p className="text-lg text-emerald-100 mb-8 max-w-2xl mx-auto">
-              We're always looking for passionate individuals who share our vision of connecting 
+              We&rsquo;re always looking for passionate individuals who share our vision of connecting 
               farms to global markets. Explore career opportunities with us.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

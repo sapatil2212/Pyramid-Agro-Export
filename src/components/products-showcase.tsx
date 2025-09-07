@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { useState } from "react"
-import { ArrowRight, Wheat, Leaf, Coffee, Droplets, Apple, Eye } from "lucide-react"
+import { ArrowRight, Wheat, Leaf, Droplets, Apple, Eye } from "lucide-react"
 import { AnimatedButton } from "@/components/ui/animated-button"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
@@ -297,11 +297,11 @@ export function ProductsShowcase() {
         >
           <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-2xl p-8 lg:p-12 text-white">
             <h3 className="text-3xl lg:text-4xl font-bold mb-4">
-              Can't Find What You're Looking For?
+              Can&rsquo;t Find What You&rsquo;re Looking For?
             </h3>
             <p className="text-lg mb-8 text-emerald-100 max-w-2xl mx-auto">
               We source a wide variety of agricultural products. Contact us for custom requirements 
-              and we'll help you find exactly what you need.
+              and we&rsquo;ll help you find exactly what you need.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
