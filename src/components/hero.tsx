@@ -139,7 +139,7 @@ function ProductCarousel() {
   
   return (
     <div 
-      className="relative group bg-transparent overflow-hidden rounded-lg sm:rounded-xl h-auto w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto"
+      className="relative group bg-transparent overflow-hidden rounded-lg sm:rounded-xl mx-auto w-full h-64 sm:h-72 md:h-80 lg:h-96 xl:h-[28rem] max-w-lg sm:max-w-xl md:max-w-xl lg:max-w-lg xl:max-w-xl"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -149,7 +149,7 @@ function ProductCarousel() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="flex items-center justify-center rounded-lg sm:rounded-xl shadow-lg overflow-hidden bg-white w-full aspect-[3/2] sm:aspect-[3/2] md:aspect-[4/3] lg:aspect-[3/2] max-w-full"
+        className="flex items-center justify-center rounded-lg sm:rounded-xl shadow-lg overflow-hidden bg-white w-full h-full"
       >
         <div className="relative w-full h-full">
           <Image
@@ -216,7 +216,7 @@ function ProductCarousel() {
 
 export function Hero() {
   return (
-    <section className="relative bg-gradient-to-br from-emerald-50 via-white to-amber-50 min-h-[90vh] sm:min-h-screen flex items-center overflow-hidden w-full">
+    <section className="relative bg-gradient-to-br from-emerald-50 via-white to-amber-50 min-h-[70vh] sm:min-h-screen flex items-center overflow-hidden w-full">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-20 h-20 bg-emerald-500/5 rounded-full blur-xl"></div>
@@ -224,14 +224,14 @@ export function Hero() {
         <div className="absolute bottom-20 right-10 w-24 h-24 bg-amber-500/5 rounded-full blur-xl"></div>
       </div>
 
-      <div className="container mx-auto px-3 sm:px-4 md:px-8 lg:px-16 xl:px-32 pt-8 sm:pt-12 md:pt-16 pb-4 sm:pb-0 md:pb-8 relative z-10 w-full max-w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12 items-center w-full max-w-full overflow-hidden">
+      <div className="container mx-auto px-3 sm:px-4 md:px-8 lg:px-16 xl:px-32 pt-2 sm:pt-12 md:pt-16 pb-4 sm:pb-0 md:pb-8 relative z-10 w-full max-w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-6 md:gap-8 lg:gap-12 items-center w-full max-w-full overflow-hidden">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-6 text-center lg:text-left order-1 lg:order-1"
+            className="space-y-1 sm:space-y-3 md:space-y-4 lg:space-y-6 text-center lg:text-left order-1 lg:order-1"
           >
             {/* Badge */}
             <motion.div
@@ -246,7 +246,7 @@ export function Hero() {
             </motion.div>
 
             {/* Main Headline */}
-            <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-1 sm:space-y-3">
               {/* Animated Tagline as Main Headline */}
               <motion.div
                 initial={{ opacity: 0, filter: "blur(8px)", scale: 0.95 }}
@@ -363,7 +363,7 @@ export function Hero() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative w-full h-full mt-2 sm:mt-4 lg:mt-0 order-2 lg:order-2 max-w-full overflow-hidden"
+            className="relative w-full h-full mt-1 sm:mt-4 lg:mt-0 order-2 lg:order-2 max-w-full overflow-hidden"
           >
             <ProductCarousel />
           </motion.div>
