@@ -120,7 +120,7 @@ const processSteps = [
 
 export function ServicesPreview() {
   return (
-    <section className="py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-emerald-50">
+    <section className="py-20 lg:py-8 bg-gradient-to-br from-gray-50 to-emerald-50">
       <div className="container mx-auto">
         {/* Header */}
         <motion.div
@@ -146,7 +146,7 @@ export function ServicesPreview() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
+            className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4"
           >
             Comprehensive Export Solutions
           </motion.h2>
@@ -156,7 +156,7 @@ export function ServicesPreview() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-xl text-gray-600 max-w-3xl mx-auto"
+            className="text-sm md:text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto"
           >
             From farm to your doorstep, we provide end-to-end services that ensure 
             quality, compliance, and reliable delivery of premium agricultural products.
@@ -164,7 +164,7 @@ export function ServicesPreview() {
         </motion.div>
 
         {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 mb-24">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-5 mb-12">
           {services.map((service, index) => (
             <motion.div
               key={service.title}
@@ -174,7 +174,7 @@ export function ServicesPreview() {
               viewport={{ once: true }}
               whileHover={{ y: -5 }}
             >
-              <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <Card className="h-full border-0 bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300">
                 <CardHeader className="pb-4">
                   <div className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-xl flex items-center justify-center mb-4`}>
                     {(() => {
@@ -202,83 +202,9 @@ export function ServicesPreview() {
           ))}
         </div>
 
-        {/* Process Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="bg-white rounded-2xl p-8 lg:p-12 shadow-xl"
-        >
-          <div className="text-center mb-12">
-            <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Our Export Process
-            </h3>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              A streamlined 5-step process ensuring quality and efficiency from consultation to delivery
-            </p>
-          </div>
+      
 
-          <div className="grid md:grid-cols-5 gap-8">
-            {processSteps.map((step, index) => (
-              <motion.div
-                key={step.step}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                viewport={{ once: true }}
-                className="text-center relative"
-              >
-                {/* Step Number */}
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
-                  {step.step}
-                </div>
-
-                {/* Connector Line */}
-                {index < processSteps.length - 1 && (
-                  <div className="hidden md:block absolute top-8 left-1/2 w-full h-0.5 bg-gradient-to-r from-emerald-200 to-emerald-300 transform translate-x-8 -z-10" />
-                )}
-
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                  {step.title}
-                </h4>
-                <p className="text-sm text-gray-600">
-                  {step.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mt-16"
-        >
-          <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">
-            Ready to Start Your Export Journey?
-          </h3>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Let our experienced team guide you through every step of the export process 
-            with personalized solutions tailored to your needs.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <AnimatedButton size="lg" asChild>
-              <Link href="/services" className="group">
-                Explore All Services
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </AnimatedButton>
-            
-            <AnimatedButton variant="outline" size="lg" asChild>
-              <Link href="/contact">Get Custom Quote</Link>
-            </AnimatedButton>
-          </div>
-        </motion.div>
+       
       </div>
     </section>
   )

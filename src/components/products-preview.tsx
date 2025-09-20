@@ -92,7 +92,7 @@ export function ProductsPreview() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-sm md:text-md text-gray-600 leading-relaxed max-w-3xl mx-auto"
+            className="text-sm md:text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto"
           >
             Discover our comprehensive range of premium agricultural products, carefully sourced and exported to meet international quality standards
           </motion.p>
@@ -107,7 +107,7 @@ export function ProductsPreview() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:border-gray-300 transition-colors duration-300"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 h-full">
                 {/* Image Section */}

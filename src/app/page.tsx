@@ -12,11 +12,12 @@ export default function Home() {
     <>
       <Hero />
       <AboutPreview />
+      <ProductsPreview />
       <ExportProcessSection />
       <ServicesPreview />
-      <ProductsPreview />
+     
       <InteractiveGallery />
-      <WhyChooseUs />
+     
       <TestimonialsSection />
     </>
   )

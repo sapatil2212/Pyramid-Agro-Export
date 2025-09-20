@@ -57,44 +57,7 @@ export function Footer() {
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 text-white">
-      {/* Newsletter Section */}
-      <div className="border-b border-gray-700">
-        <div className="container mx-auto py-16 lg:py-20">
-          <div className="max-w-4xl mx-auto text-center">
-            <h3 className="text-3xl font-bold mb-4">
-              Stay Updated with Market Insights
-            </h3>
-            <p className="text-gray-300 mb-8 text-lg">
-              Get the latest agricultural export trends, product updates, and exclusive offers delivered to your inbox.
-            </p>
-            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email address"
-                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                required
-              />
-              <Button 
-                type="submit" 
-                disabled={isSubscribing}
-                size="lg"
-                className="bg-emerald-600 hover:bg-emerald-700 px-8"
-              >
-                {isSubscribing ? (
-                  <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-2" />
-                    Subscribe
-                  </>
-                )}
-              </Button>
-            </form>
-          </div>
-        </div>
-      </div>
+     
 
       {/* Main Footer Content */}
       <div className="container mx-auto py-20 lg:py-24">

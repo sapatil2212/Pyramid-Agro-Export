@@ -14,68 +14,57 @@ import "swiper/css/navigation"
 const testimonials = [
   {
     id: 1,
-    name: "Priya Sharma",
-    avatar: "P",
-    location: "Google Review",
+    name: "Fahad Al Mansoori",
+    avatar: "F",
+    location: "Fresh Harvest LLC (Dubai)",
     quote:
-      "Dr. Shweta's expertise in dermatology is exceptional! My skin has never looked better after the Hydrafacial treatment. The clinic is clean, modern, and the staff is incredibly professional. Highly recommend Aries Skin Clinic!",
+      "Pyramid Agro Exports has been our go-to partner for fresh grapes. Every consignment is delivered with exceptional care, ensuring freshness and flavor remain intact. Their consistency gives us complete confidence in building long-term business together.",
     rating: 5,
-    date: "2 months ago",
+    date: "Procurement Head",
     verified: true,
   },
   {
     id: 2,
-    name: "Rajesh Kumar",
-    avatar: "R",
-    location: "Google Review",
+    name: "Mohammed Al Rashid",
+    avatar: "M",
+    location: "Al Noor Foods (UAE)",
     quote:
-      "I had severe acne issues for years. After just 3 sessions of chemical peel treatment, my skin has completely transformed. Dr. Shweta's personalized approach and advanced technology made all the difference. Thank you!",
+      "The onions we import from Pyramid Agro Exports stand out for their quality and shelf life. Their packaging is export-friendly and tailored to our needs, making the logistics process smooth and hassle-free.",
     rating: 5,
-    date: "1 month ago",
+    date: "Director",
     verified: true,
   },
   {
     id: 3,
-    name: "Anita Patel",
+    name: "Abdullah Al Harthy",
     avatar: "A",
-    location: "Google Review",
+    location: "Gulf Agro Traders (Oman)",
     quote:
-      "The laser hair reduction treatment was painless and effective. The clinic uses state-of-the-art equipment and the results are amazing. The staff is friendly and Dr. Shweta explains everything clearly. Highly satisfied!",
+      "We've been sourcing chilies from Pyramid Agro Exports for over a year, and the taste, spice level, and freshness are consistently excellent. Their professionalism and commitment to deadlines make them a reliable partner.",
     rating: 5,
-    date: "3 months ago",
+    date: "Import Manager",
     verified: true,
   },
   {
     id: 4,
-    name: "Vikram Singh",
-    avatar: "V",
-    location: "Google Review",
+    name: "Saeed Al Qasimi",
+    avatar: "S",
+    location: "Emirates Fresh Produce (Dubai)",
     quote:
-      "Excellent dermatology care! I came for hair fall treatment and the PRP therapy worked wonders. The clinic is well-equipped with FDA-approved machines and the doctor's expertise is outstanding. Worth every penny!",
+      "What sets Pyramid Agro Exports apart is their honesty and transparency. They deliver exactly what they promise—no compromises on quality. It's rare to find exporters who prioritize trust as much as they do.",
     rating: 5,
-    date: "2 months ago",
+    date: "CEO",
     verified: true,
   },
   {
     id: 5,
-    name: "Meera Joshi",
-    avatar: "M",
-    location: "Google Review",
+    name: "Khalid Bin Hamdan",
+    avatar: "K",
+    location: "Oasis Food Distributors (Oman)",
     quote:
-      "Dr. Shweta's carbon peel treatment gave me the glowing skin I always wanted. The clinic maintains high hygiene standards and the staff is very caring. I feel confident in my skin now. Highly recommend!",
+      "Their grapes and onions have helped us cater to premium clients who demand the very best. Pyramid Agro Exports ensures international standards are met every time, making them one of the most dependable suppliers in the region.",
     rating: 5,
-    date: "1 month ago",
-    verified: true,
-  },
-  {
-    id: 6,
-    name: "Suresh Reddy",
-    avatar: "S",
-    location: "Google Review",
-    quote:
-      "Professional service with amazing results! The microneedling treatment helped reduce my acne scars significantly. Dr. Shweta is knowledgeable and the clinic uses the latest technology. Great experience overall!",
-    rating: 5,
-    date: "4 months ago",
+    date: "Senior Buyer",
     verified: true,
   },
 ]
@@ -240,19 +229,19 @@ export function TestimonialsSection() {
           <div className="text-center mb-16 lg:mb-20">
             <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
               <Star className="h-4 w-4 fill-current" />
-              <span>Patient Testimonials</span>
+              <span>Client Testimonials</span>
             </div>
 
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight">
               What Our{" "}
               <span className="text-primary">
-                Amazing Patients
+                Valued Clients
               </span>{" "}
               Say About Us
             </h2>
 
             <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto mb-8 leading-relaxed">
-              Real experiences from our valued patients who have transformed their lives with our treatments
+              Real experiences from our international clients who trust us for premium agricultural exports
             </p>
           </div>
 

@@ -191,7 +191,7 @@ export function Hero() {
   const { openModal } = useAppointmentModal()
 
   return (
-    <section className="relative bg-gradient-to-br from-emerald-50 via-white to-amber-50 min-h-screen flex items-start overflow-hidden pt-24 lg:pt-32 pb-20 md:pb-0">
+    <section className="relative bg-gradient-to-br from-emerald-50 via-white to-amber-50 min-h-screen flex items-start overflow-hidden pt-24 lg:pt-32 pb-8 md:pb-0">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-20 h-20 bg-emerald-500/5 rounded-full blur-xl"></div>
@@ -199,7 +199,7 @@ export function Hero() {
         <div className="absolute bottom-20 right-10 w-24 h-24 bg-amber-500/5 rounded-full blur-xl"></div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-8 lg:px-32 pt-8 pb-20 md:pt-12 md:pb-20 relative z-10">
+      <div className="container mx-auto px-4 sm:px-8 lg:px-32 pt-8 pb-8 md:pt-12 md:pb-20 relative z-10">
         <div className="grid lg:grid-cols-2 gap-4 md:gap-8 lg:gap-16 items-center w-full">
           {/* Left Content */}
           <motion.div
@@ -336,7 +336,7 @@ export function Hero() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative w-full h-full mt-2 md:mt-0"
+            className="relative w-full h-full mt-1 md:mt-0"
           >
             <ImageCarousel />
           </motion.div>

@@ -19,6 +19,7 @@ import {
   Package
 } from "lucide-react"
 import { useAppointmentModal } from "@/components/appointment-modal-provider"
+import { ExportProcessSection } from "@/components/export-process-section"
 
 export default function AboutPage() {
   const { openModal } = useAppointmentModal()
@@ -26,9 +27,9 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Our Story Section */}
-      <section id="story" className="pt-32 sm:pt-50 pb-16 bg-white">
-        <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <section id="story" className="pt-32 sm:pt-42 pb-16 bg-white">
+        <div className="container mx-auto px-6 sm:px-8 ">
+          <div className="grid lg:grid-cols-2 gap-12 sm:gap-8 items-center">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -62,7 +63,7 @@ export default function AboutPage() {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="relative">
+              <div className="relative max-w-lg mx-auto ">
                 <img
                   src="/hero/home-about.png"
                   alt="Pyramid Agro Exports - Agricultural Excellence"
@@ -108,7 +109,7 @@ export default function AboutPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {[
               {
                 icon: Globe,
@@ -149,6 +150,14 @@ export default function AboutPage() {
                 iconBg: "bg-amber-100",
                 iconBgHover: "group-hover:bg-amber-200",
                 iconColor: "text-amber-600"
+              },
+              {
+                icon: CheckCircle,
+                title: "Commitment to Consistency",
+                description: "We ensure uniform quality, size, and taste in every batch, meeting the most demanding international standards.",
+                iconBg: "bg-indigo-100",
+                iconBgHover: "group-hover:bg-indigo-200",
+                iconColor: "text-indigo-600"
               }
             ].map((feature, index) => (
               <motion.div
@@ -264,7 +273,7 @@ export default function AboutPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 max-w-6xl mx-auto px-2 sm:px-4">
             {[
               {
                 name: "Vaibhav Abhang",
@@ -332,6 +341,9 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* Export Process Section */}
+      <ExportProcessSection />
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-emerald-600 to-emerald-700">
