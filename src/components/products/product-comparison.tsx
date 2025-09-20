@@ -4,21 +4,16 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
 import { Product } from "@/types"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { 
   X, 
   Plus, 
   Star, 
-  MapPin, 
-  Package, 
-  Calendar, 
-  Award, 
-  Leaf,
-  TrendingUp,
   CheckCircle,
   XCircle,
-  Minus,
-  BarChart3
+  BarChart3,
+  Package,
+  TrendingUp
 } from "lucide-react"
 import Image from "next/image"
 
@@ -412,7 +407,7 @@ export function ProductComparison({
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as 'overview' | 'specifications' | 'pricing' | 'features')}
                   className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
                     activeTab === tab.id
                       ? 'border-emerald-500 text-emerald-600'

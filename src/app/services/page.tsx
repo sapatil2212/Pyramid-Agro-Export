@@ -23,14 +23,16 @@ interface Service {
   id: string
   title: string
   description: string
-  icon: React.ComponentType<any>
+  icon: React.ComponentType<{ className?: string }>
+  color: string
+  features: string[]
 }
 
 interface ProcessStep {
   step: string
   title: string
   description: string
-  icon: React.ComponentType<any>
+  icon: React.ComponentType<{ className?: string }>
 }
 
 // Service data

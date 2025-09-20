@@ -46,29 +46,59 @@ const productCategories = [
 ]
 
 // Product data
-const products = [
+const products: Product[] = [
   // Fruits
   {
     id: "grapes",
     name: "Fresh Grapes",
     category: "fruits",
     description: "Premium quality table grapes, perfect for export",
-    features: ["High Sugar Content", "Long Shelf Life", "Premium Grade"],
     image: "/hero/hero-1.png",
-    price: "Contact for Quote",
+    images: ["/hero/hero-1.png"],
+    specifications: { "Variety": "Table Grapes", "Color": "Green/Red" },
+    origin: "Nashik, Maharashtra",
+    seasons: ["March", "April", "May"],
+    minOrderQuantity: "1000 kg",
+    packaging: ["Carton Box"],
+    price: { min: 2.5, max: 4.0, currency: "USD" },
+    availability: "in-stock" as const,
     rating: 4.9,
-    reviews: 150
+    reviews: 150,
+    features: ["High Sugar Content", "Long Shelf Life", "Premium Grade"],
+    nutritionalInfo: { "Calories": "62 per 100g" },
+    certifications: ["FSSAI"],
+    shelfLife: "2-3 weeks",
+    storageConditions: ["Cool Temperature"],
+    exportMarkets: ["UAE", "UK"],
+    isFeatured: true,
+    isOrganic: true,
+    isPremium: true
   },
   {
     id: "banana",
     name: "Banana",
     category: "fruits", 
     description: "Fresh bananas with excellent nutritional value",
-    features: ["Rich in Potassium", "Natural Ripening", "Export Quality"],
     image: "/hero/hero-1.png",
-    price: "Contact for Quote",
+    images: ["/hero/hero-1.png"],
+    specifications: { "Variety": "Cavendish", "Size": "Medium-Large" },
+    origin: "Tamil Nadu",
+    seasons: ["Year Round"],
+    minOrderQuantity: "500 kg",
+    packaging: ["Carton Box"],
+    price: { min: 1.5, max: 2.5, currency: "USD" },
+    availability: "in-stock" as const,
     rating: 4.8,
-    reviews: 120
+    reviews: 120,
+    features: ["Rich in Potassium", "Natural Ripening", "Export Quality"],
+    nutritionalInfo: { "Potassium": "358mg per 100g" },
+    certifications: ["FSSAI"],
+    shelfLife: "1-2 weeks",
+    storageConditions: ["Room Temperature"],
+    exportMarkets: ["UAE", "Saudi Arabia"],
+    isFeatured: false,
+    isOrganic: false,
+    isPremium: false
   },
   // Vegetables
   {
@@ -76,22 +106,52 @@ const products = [
     name: "Fresh Onions",
     category: "vegetables",
     description: "Premium quality onions suitable for global markets",
-    features: ["High Dry Matter", "Long Storage Life", "Uniform Size"],
     image: "/hero/hero-1.png",
-    price: "Contact for Quote", 
+    images: ["/hero/hero-1.png"],
+    specifications: { "Variety": "Red Onions", "Size": "Medium-Large" },
+    origin: "Maharashtra",
+    seasons: ["October", "November", "December"],
+    minOrderQuantity: "1000 kg",
+    packaging: ["Mesh Bags", "Carton Box"],
+    price: { min: 0.8, max: 1.5, currency: "USD" },
+    availability: "in-stock" as const,
     rating: 4.7,
-    reviews: 200
+    reviews: 200,
+    features: ["High Dry Matter", "Long Storage Life", "Uniform Size"],
+    nutritionalInfo: { "Vitamin C": "7.4mg per 100g" },
+    certifications: ["FSSAI"],
+    shelfLife: "2-3 months",
+    storageConditions: ["Cool Dry Place"],
+    exportMarkets: ["UAE", "Bangladesh"],
+    isFeatured: true,
+    isOrganic: false,
+    isPremium: true
   },
   {
     id: "green-chilli",
     name: "Green Chilli",
     category: "vegetables",
     description: "Fresh green chillies with perfect spice level",
-    features: ["Consistent Heat", "Fresh Harvest", "Export Ready"],
     image: "/hero/hero-1.png",
-    price: "Contact for Quote",
+    images: ["/hero/hero-1.png"],
+    specifications: { "Variety": "Green Chillies", "Heat Level": "Medium" },
+    origin: "Andhra Pradesh",
+    seasons: ["Year Round"],
+    minOrderQuantity: "500 kg",
+    packaging: ["Carton Box"],
+    price: { min: 2.0, max: 3.5, currency: "USD" },
+    availability: "in-stock" as const,
     rating: 4.6,
-    reviews: 180
+    reviews: 180,
+    features: ["Consistent Heat", "Fresh Harvest", "Export Ready"],
+    nutritionalInfo: { "Vitamin C": "143.7mg per 100g" },
+    certifications: ["FSSAI"],
+    shelfLife: "1-2 weeks",
+    storageConditions: ["Cool Temperature"],
+    exportMarkets: ["UAE", "Qatar"],
+    isFeatured: false,
+    isOrganic: false,
+    isPremium: false
   },
   // Grains & Spices
   {
@@ -99,22 +159,52 @@ const products = [
     name: "Basmati Rice",
     category: "grains",
     description: "Premium basmati rice with authentic aroma",
-    features: ["Long Grain", "Aromatic", "Premium Grade"],
     image: "/hero/hero-1.png",
-    price: "Contact for Quote",
+    images: ["/hero/hero-1.png"],
+    specifications: { "Variety": "Basmati", "Grain Length": "Long" },
+    origin: "Punjab",
+    seasons: ["October", "November"],
+    minOrderQuantity: "1000 kg",
+    packaging: ["Jute Bags", "Plastic Bags"],
+    price: { min: 3.0, max: 5.0, currency: "USD" },
+    availability: "in-stock" as const,
     rating: 4.9,
-    reviews: 300
+    reviews: 300,
+    features: ["Long Grain", "Aromatic", "Premium Grade"],
+    nutritionalInfo: { "Carbohydrates": "78g per 100g" },
+    certifications: ["FSSAI", "APEDA"],
+    shelfLife: "2 years",
+    storageConditions: ["Dry Place", "Cool Temperature"],
+    exportMarkets: ["UAE", "UK", "USA"],
+    isFeatured: true,
+    isOrganic: false,
+    isPremium: true
   },
   {
     id: "turmeric",
     name: "Turmeric Powder",
     category: "grains",
     description: "Pure turmeric powder with high curcumin content",
-    features: ["High Curcumin", "Pure Form", "Medicinal Grade"],
     image: "/hero/hero-1.png",
-    price: "Contact for Quote",
+    images: ["/hero/hero-1.png"],
+    specifications: { "Type": "Powder", "Purity": "99%" },
+    origin: "Tamil Nadu",
+    seasons: ["Year Round"],
+    minOrderQuantity: "100 kg",
+    packaging: ["Plastic Bags", "Carton Box"],
+    price: { min: 4.0, max: 6.0, currency: "USD" },
+    availability: "in-stock" as const,
     rating: 4.8,
-    reviews: 250
+    reviews: 250,
+    features: ["High Curcumin", "Pure Form", "Medicinal Grade"],
+    nutritionalInfo: { "Curcumin": "3-5%" },
+    certifications: ["FSSAI", "Organic"],
+    shelfLife: "2 years",
+    storageConditions: ["Dry Place", "Airtight Container"],
+    exportMarkets: ["UAE", "USA", "Germany"],
+    isFeatured: false,
+    isOrganic: true,
+    isPremium: true
   }
 ]
 
@@ -167,7 +257,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
               {product.reviews} reviews
             </div>
             <div className="text-lg font-semibold text-emerald-600">
-              {product.price}
+              {product.price ? `${product.price.currency} ${product.price.min}-${product.price.max}` : 'Contact for price'}
             </div>
           </div>
           

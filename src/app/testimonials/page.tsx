@@ -19,18 +19,21 @@ import { useState } from "react"
 interface Testimonial {
   id: string
   name: string
+  position: string
   company: string
   location: string
   rating: number
   comment: string
   image: string
   verified: boolean
+  products: string[]
+  duration: string
 }
 
 // Testimonial data
 const testimonials = [
   {
-    id: 1,
+    id: "1",
     name: "Sarah Johnson",
     position: "Procurement Manager",
     company: "Global Foods Ltd.",
@@ -39,10 +42,11 @@ const testimonials = [
     image: "/hero/hero-1.png",
     comment: "Pyramid Agro Exports has been our trusted partner for over 5 years. Their commitment to quality and timely delivery has helped us maintain our reputation in the European market. The fresh grapes we receive are always of the highest quality.",
     products: ["Fresh Grapes", "Onions"],
-    duration: "5+ years"
+    duration: "5+ years",
+    verified: true
   },
   {
-    id: 2,
+    id: "2",
     name: "Ahmed Hassan",
     position: "Director",
     company: "Middle East Trading Co.",
@@ -51,10 +55,11 @@ const testimonials = [
     image: "/hero/hero-1.png",
     comment: "Excellent service and consistent quality. They understand our specific requirements and deliver every time. The team is professional and responsive to our needs. Highly recommended for agricultural exports.",
     products: ["Banana", "Green Chilli", "Spices"],
-    duration: "3+ years"
+    duration: "3+ years",
+    verified: true
   },
   {
-    id: 3,
+    id: "3",
     name: "Maria Rodriguez",
     position: "Import Manager",
     company: "European Imports",
@@ -63,10 +68,11 @@ const testimonials = [
     image: "/hero/hero-1.png",
     comment: "Professional team, competitive prices, and always on-time delivery. The quality of their products consistently exceeds our expectations. They have become an integral part of our supply chain.",
     products: ["Basmati Rice", "Turmeric", "Fresh Vegetables"],
-    duration: "4+ years"
+    duration: "4+ years",
+    verified: true
   },
   {
-    id: 4,
+    id: "4",
     name: "David Chen",
     position: "CEO",
     company: "Asia Pacific Foods",
@@ -75,10 +81,11 @@ const testimonials = [
     image: "/hero/hero-1.png",
     comment: "Outstanding partnership with Pyramid Agro Exports. Their sustainable sourcing practices align perfectly with our company values. The quality and freshness of their products are unmatched in the market.",
     products: ["All Product Categories"],
-    duration: "6+ years"
+    duration: "6+ years",
+    verified: true
   },
   {
-    id: 5,
+    id: "5",
     name: "Lisa Thompson",
     position: "Quality Assurance Manager",
     company: "North American Distributors",
@@ -87,10 +94,11 @@ const testimonials = [
     image: "/hero/hero-1.png",
     comment: "The quality control measures implemented by Pyramid Agro Exports are exceptional. Every shipment meets our strict standards. Their attention to detail and customer service is remarkable.",
     products: ["Fresh Fruits", "Grains"],
-    duration: "2+ years"
+    duration: "2+ years",
+    verified: true
   },
   {
-    id: 6,
+    id: "6",
     name: "James Wilson",
     position: "Operations Director",
     company: "African Continental Trading",
@@ -99,7 +107,8 @@ const testimonials = [
     image: "/hero/hero-1.png",
     comment: "Reliable, trustworthy, and professional. Pyramid Agro Exports has helped us expand our business across Africa. Their logistics support and customer service are top-notch.",
     products: ["Fresh Vegetables", "Spices"],
-    duration: "4+ years"
+    duration: "4+ years",
+    verified: true
   }
 ]
 

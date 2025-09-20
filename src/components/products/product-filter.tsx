@@ -7,19 +7,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { 
   Search, 
-  Filter, 
   X, 
   ChevronDown, 
   ChevronUp,
   SlidersHorizontal,
   Star,
-  MapPin,
-  Calendar,
-  Package,
+  RotateCcw,
   Award,
-  Leaf,
-  TrendingUp,
-  RotateCcw
+  Leaf
 } from "lucide-react"
 
 interface ProductFilterProps {
@@ -144,7 +139,7 @@ export function ProductFilter({ products, onFilteredProducts, onFilterChange }: 
 
     // Sort products
     filtered.sort((a, b) => {
-      let aValue: any, bValue: any
+      let aValue: string | number, bValue: string | number
 
       switch (filters.sortBy) {
         case 'name':
@@ -180,7 +175,7 @@ export function ProductFilter({ products, onFilteredProducts, onFilterChange }: 
     onFilterChange(filters)
   }, [filters, products, onFilteredProducts, onFilterChange])
 
-  const updateFilter = (key: keyof FilterState, value: any) => {
+  const updateFilter = (key: keyof FilterState, value: string | number | boolean | null | { min: number; max: number }) => {
     setFilters(prev => ({ ...prev, [key]: value }))
   }
 

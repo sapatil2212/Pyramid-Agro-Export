@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Award, Leaf } from "lucide-react"
+import { ArrowRight, Leaf } from "lucide-react"
 import { useAppointmentModal } from "@/components/appointment-modal-provider"
 
 // Product images

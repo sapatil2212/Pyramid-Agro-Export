@@ -20,10 +20,8 @@ import {
   ChevronRight,
   Info,
   CheckCircle,
-  Globe,
   Clock,
-  Thermometer,
-  Droplets
+  Thermometer
 } from "lucide-react"
 import Image from "next/image"
 
@@ -306,7 +304,7 @@ export function ProductModal({
                       return (
                         <button
                           key={tab.id}
-                          onClick={() => setActiveTab(tab.id as any)}
+                          onClick={() => setActiveTab(tab.id as 'overview' | 'specifications' | 'nutrition' | 'certifications')}
                           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-200 ${
                             activeTab === tab.id
                               ? 'border-emerald-500 text-emerald-600'
