@@ -14,10 +14,8 @@ import {
   Calendar,
   Package,
   Award,
-  TrendingUp,
   Leaf,
-  ChevronRight,
-  Info
+  ChevronRight
 } from "lucide-react"
 import Image from "next/image"
 

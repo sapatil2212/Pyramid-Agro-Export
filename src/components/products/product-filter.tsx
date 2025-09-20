@@ -64,8 +64,6 @@ export function ProductFilter({ products, onFilteredProducts, onFilterChange }: 
   const categories = [...new Set(products.map(p => p.category))]
   const origins = [...new Set(products.map(p => p.origin))]
   const seasons = [...new Set(products.flatMap(p => p.seasons))]
-  const certifications = [...new Set(products.flatMap(p => p.certifications))]
-  const features = [...new Set(products.flatMap(p => p.features))]
   const maxPrice = Math.max(...products.filter(p => p.price).map(p => p.price!.max))
 
   // Filter and sort products

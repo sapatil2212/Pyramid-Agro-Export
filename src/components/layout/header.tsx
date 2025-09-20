@@ -86,7 +86,6 @@ export function Header({ onAppointmentClick }: HeaderProps) {
   const paddingX = isScrolled ? Math.min(smoothProgress * 20 + 16, 24) : 0 // No padding when not scrolled
   const paddingY = smoothProgress * 10 + 8 // Smooth padding transition
   const logoScale = 1 - (smoothProgress * 0.12) // Slight logo scale down
-  const textScale = 1 - (smoothProgress * 0.08) // Slight text scale down
 
   React.useEffect(() => {
     setIsMenuOpen(false)
@@ -416,7 +415,7 @@ export function Header({ onAppointmentClick }: HeaderProps) {
                         >
                           <div className="p-6" style={{ overflow: 'visible' }}>
                             <div className="space-y-2" style={{ overflow: 'visible' }}>
-                              {item.dropdownItems.map((category, index) => (
+                              {item.dropdownItems.map((category) => (
                                 <div key={category.id} className="group/category relative" style={{ overflow: 'visible' }}>
                                   {'href' in category ? (
                                     <Link

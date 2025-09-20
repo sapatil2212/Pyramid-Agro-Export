@@ -99,10 +99,5 @@ export const NAVIGATION = [
       }
     ]
   },
-  { 
-    name: "Testimonials", 
-    href: "/testimonials",
-    hasDropdown: false
-  },
   { name: "Contact", href: "/contact", hasDropdown: false }
 ]

@@ -3,11 +3,9 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { LoadingButton } from "@/components/ui/loading-button"
-import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield } from "lucide-react"
-import { useAppointmentModal } from "@/components/appointment-modal-provider"
+import { Star, CheckCircle, Leaf, Truck, Shield } from "lucide-react"
 
 export default function GarlicsPage() {
-  const { openModal } = useAppointmentModal()
 
   return (
     <div className="min-h-screen">
@@ -32,7 +30,7 @@ export default function GarlicsPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <LoadingButton
-                  onClick={openModal}
+                  onClick={() => {}}
                   size="lg"
                   className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 group"
                   showArrow={true}
@@ -172,7 +170,7 @@ export default function GarlicsPage() {
               Contact us today for the finest quality garlics delivered to your doorstep
             </p>
             <LoadingButton
-              onClick={openModal}
+              onClick={() => {}}
               size="lg"
               className="bg-white text-emerald-600 hover:bg-gray-100 px-8 py-3 group"
               showArrow={true}

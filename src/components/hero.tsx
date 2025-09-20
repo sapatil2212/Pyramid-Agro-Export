@@ -3,7 +3,6 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Award, Shield, MapPin, Star, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react"
-import { COMPANY_INFO, COMPANY_DETAILS } from "@/lib/constants"
 import { useState, useEffect } from "react"
 // Using public folder images directly
 const HeroImage1 = "/hero/hero-2.png"
@@ -27,7 +26,7 @@ function AnimatedTagline() {
     }, 4000) // Change every 4 seconds
     
     return () => clearInterval(interval)
-  }, [])
+  }, [taglines.length])
   
   return (
     <motion.h1
@@ -63,7 +62,7 @@ function AnimatedSubContent() {
     }, 4000) // Change every 4 seconds
     
     return () => clearInterval(interval)
-  }, [])
+  }, [subContents.length])
   
   return (
     <motion.p
@@ -118,11 +117,8 @@ function ImageCarousel() {
     }, 4000) // Change every 4 seconds to sync with text
     
     return () => clearInterval(interval)
-  }, [])
+  }, [images.length])
   
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index)
-  }
   
   const goToPrevious = () => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)

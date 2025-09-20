@@ -6,14 +6,11 @@ import {
   FileCheck, 
   Truck, 
   Users, 
-  ArrowRight,
   CheckCircle,
   Clock,
   Globe
 } from "lucide-react"
-import { AnimatedButton } from "@/components/ui/animated-button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
 
 const services = [
   {
@@ -90,33 +87,6 @@ const services = [
   }
 ]
 
-const processSteps = [
-  {
-    step: "01",
-    title: "Consultation",
-    description: "Understanding your specific requirements and market needs"
-  },
-  {
-    step: "02", 
-    title: "Sourcing",
-    description: "Identifying and selecting the best quality products from trusted farmers"
-  },
-  {
-    step: "03",
-    title: "Quality Testing",
-    description: "Rigorous testing and certification to ensure international standards"
-  },
-  {
-    step: "04",
-    title: "Documentation",
-    description: "Complete export documentation and regulatory compliance"
-  },
-  {
-    step: "05",
-    title: "Logistics",
-    description: "Efficient packaging, shipping, and delivery to your destination"
-  }
-]
 
 export function ServicesPreview() {
   return (

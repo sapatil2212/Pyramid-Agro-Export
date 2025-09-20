@@ -133,7 +133,7 @@ export function InteractiveGallery() {
     } else {
       stopAutoScroll();
     }
-  }, [isHovered]);
+  }, [isHovered, startAutoScroll]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -208,7 +208,7 @@ export function InteractiveGallery() {
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isModalOpen, selectedImage]);
+  }, [isModalOpen, selectedImage, handleKeyDown]);
 
   return (
     <section className="py-16 lg:py-20 bg-gray-50">

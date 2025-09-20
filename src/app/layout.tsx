@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   description: "Leading exporter of premium quality fresh fruits, vegetables, grains, and spices from India. Delivering nature's best to global markets with international standards.",
   keywords: ["agricultural export", "fresh fruits", "vegetables", "grains", "spices", "India export", "pomegranates", "grapes", "onions", "turmeric", "rice"],
   authors: [{ name: "Pyramid Agro Export" }],
+  icons: {
+    icon: "/Logo_v2.png",
+    shortcut: "/Logo_v2.png",
+    apple: "/Logo_v2.png",
+  },
   openGraph: {
     title: "Pyramid Agro Export - Premium Agricultural Products",
     description: "Premium quality fresh fruits, vegetables, grains, and spices exported from India to global markets.",
@@ -47,6 +52,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
+      <head>
+        <link rel="icon" href="/Logo_v2.png" type="image/png" />
+        <link rel="shortcut icon" href="/Logo_v2.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/Logo_v2.png" />
+        <meta name="theme-color" content="#10b981" />
+      </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <LoadingProvider>
           <ClientWrapper>

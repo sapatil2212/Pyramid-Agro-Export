@@ -119,7 +119,7 @@ export function ExportProcessSection() {
                 color: "rose",
                 delay: 0.4
               }
-            ].map((process, index) => (
+            ].map((process) => (
               <motion.div
                 key={process.step}
                 initial={{ opacity: 0, y: 50 }}

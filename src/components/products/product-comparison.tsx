@@ -27,9 +27,7 @@ interface ProductComparisonProps {
 }
 
 export function ProductComparison({
-  products,
   onClose,
-  onAddProduct,
   onRemoveProduct,
   selectedProducts,
   maxCompare = 3

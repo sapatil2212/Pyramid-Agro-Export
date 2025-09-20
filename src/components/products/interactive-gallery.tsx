@@ -154,7 +154,7 @@ export function InteractiveGallery({ images, productName, className = "" }: Inte
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isFullscreen])
+  }, [isFullscreen, handleNext, handlePrevious])
 
   return (
     <div className={`relative ${className}`}>

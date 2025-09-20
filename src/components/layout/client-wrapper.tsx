@@ -1,14 +1,11 @@
 "use client"
 
-import { useState } from "react"
 import { Header } from "./header"
 import { AppointmentModalProvider } from "../appointment-modal-provider"
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
-  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false)
-
   const handleAppointmentClick = () => {
-    setIsAppointmentOpen(true)
+    // Appointment modal will be handled by the provider
   }
 
   return (

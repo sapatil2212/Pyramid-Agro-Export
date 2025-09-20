@@ -3,9 +3,9 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield } from "lucide-react"
-import GuavaTable from "@/components/products/guava-table"
+import GroundnutsTable from "@/components/products/groundnuts-table"
 
-export default function GuavaPage() {
+export default function GroundnutsPage() {
 
   return (
     <div className="min-h-screen">
@@ -21,17 +21,17 @@ export default function GuavaPage() {
             >
               <h1 className="text-xl md:text-4xl font-bold text-gray-900 mb-4">
                 Premium Quality{" "}
-                <span className="text-emerald-600">Guavas</span>
+                <span className="text-emerald-600">Groundnuts</span>
               </h1>
               <div className="space-y-4 text-sm md:text-[15px] text-gray-600 leading-relaxed">
                 <p>
-                  Experience the finest guavas from India&apos;s premier orchards. 
-                  Our premium quality guavas are carefully selected, packed, 
+                  Experience the finest groundnuts from India&apos;s premier nut processing facilities. 
+                  Our premium quality groundnuts are carefully processed, graded, 
                   and exported to meet the highest international standards.
                 </p>
                 <p>
-                  Guavas are rich in Vitamin C, fiber, and antioxidants, offering exceptional taste 
-                  and health benefits with both white and pink flesh varieties.
+                  Available in raw, roasted, and blanched forms with high oil content and protein, 
+                  perfect for snacks, oil extraction, and confectionery applications.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 mt-6">
@@ -62,8 +62,8 @@ export default function GuavaPage() {
             >
               <div className="relative max-w-lg mx-auto">
                 <img
-                  src="/products/guava.png"
-                  alt="Premium Guavas"
+                  src="/products/groundnuts.png"
+                  alt="Premium Groundnuts"
                   className="w-full h-auto rounded-xl"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
@@ -78,7 +78,7 @@ export default function GuavaPage() {
                 >
                   <div className="text-center text-gray-600">
                     <Leaf className="h-16 w-16 mx-auto mb-4 text-emerald-500" />
-                    <p className="text-lg font-semibold">Premium Guavas</p>
+                    <p className="text-lg font-semibold">Premium Groundnuts</p>
                     <p className="text-sm">Export Quality</p>
                   </div>
                 </div>
@@ -99,10 +99,10 @@ export default function GuavaPage() {
             className="text-center mb-8"
           >
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-              Why Choose Our Guavas?
+              Why Choose Our Groundnuts?
             </h2>
             <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto">
-              Premium quality guavas with exceptional taste and health benefits
+              Premium quality groundnuts with high oil content and protein for diverse applications
             </p>
           </motion.div>
 
@@ -110,28 +110,28 @@ export default function GuavaPage() {
             {[
               {
                 icon: Star,
-                title: "Premium Quality",
-                description: "Hand-picked from finest orchards"
+                title: "High Oil Content",
+                description: "Perfect for oil extraction"
               },
               {
                 icon: CheckCircle,
-                title: "Rich in Vitamin C",
-                description: "High nutritional value"
+                title: "Multiple Forms",
+                description: "Raw, roasted, blanched"
               },
               {
                 icon: Leaf,
-                title: "Two Varieties",
-                description: "White & Pink flesh options"
+                title: "High Protein",
+                description: "Rich in protein content"
               },
               {
                 icon: Truck,
-                title: "Tropical Freshness",
-                description: "Naturally sweet flavor"
+                title: "Bulk Exports",
+                description: "Reliable supply chain"
               },
               {
                 icon: Shield,
-                title: "Health Benefits",
-                description: "Fiber & antioxidants"
+                title: "Multiple Uses",
+                description: "Snacks, oil, confectionery"
               }
             ].map((feature, index) => (
               <motion.div
@@ -162,10 +162,10 @@ export default function GuavaPage() {
         </div>
       </section>
 
-      {/* Interactive Guava Table */}
+      {/* Interactive Groundnuts Table */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
-          <GuavaTable />
+          <GroundnutsTable />
         </div>
       </section>
 
@@ -181,10 +181,10 @@ export default function GuavaPage() {
           >
             <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-2xl p-8 border border-emerald-100">
               <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
-                Ready to Order Premium Guavas?
+                Ready to Order Premium Groundnuts?
               </h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                Contact us today for the finest quality guavas delivered to your doorstep with our proven export process
+                Contact us today for the finest quality groundnuts delivered to your doorstep with our proven export process
               </p>
               <Button
                 onClick={() => window.location.href = '/contact'}

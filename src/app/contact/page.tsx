@@ -11,12 +11,9 @@ import {
   ArrowRight, 
   Send,
   MessageCircle,
-  Globe,
   Award,
-  CheckCircle
 } from "lucide-react"
 import { useAppointmentModal } from "@/components/appointment-modal-provider"
-import { COMPANY_INFO } from "@/lib/constants"
 import { useState } from "react"
 
 // Contact form component

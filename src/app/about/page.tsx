@@ -1,7 +1,6 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { LoadingButton } from "@/components/ui/loading-button"
 import { 
   Award, 
   Users, 
@@ -11,18 +10,11 @@ import {
   CheckCircle,
   Target,
   Heart,
-  Truck,
-  MessageCircle,
-  Search,
-  TestTube,
-  FileText,
-  Package
+  Truck
 } from "lucide-react"
-import { useAppointmentModal } from "@/components/appointment-modal-provider"
 import { ExportProcessSection } from "@/components/export-process-section"
 
 export default function AboutPage() {
-  const { openModal } = useAppointmentModal()
 
   return (
     <div className="min-h-screen">
@@ -344,38 +336,6 @@ export default function AboutPage() {
 
       {/* Export Process Section */}
       <ExportProcessSection />
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-emerald-600 to-emerald-700">
-        <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center text-white"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Ready to Experience Freshness?
-            </h2>
-            <p className="text-sm md:text-lg text-emerald-100 mb-8 max-w-3xl mx-auto">
-              Join our global network of satisfied customers who trust Pyramid Agro Exports for premium agricultural products
-            </p>
-            <div className="flex flex-row gap-4 justify-center items-center">
-              <LoadingButton
-                onClick={openModal}
-                size="lg"
-                className="bg-white text-emerald-600 hover:bg-gray-100 px-6 sm:px-8 py-3 w-full sm:w-auto group"
-                showArrow={true}
-                loadingText="Getting Quote..."
-              >
-                Get Quote
-              </LoadingButton>
-              
-            </div>
-          </motion.div>
-        </div>
-      </section>
     </div>
   )
 }
