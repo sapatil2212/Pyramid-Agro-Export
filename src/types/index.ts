@@ -4,11 +4,29 @@ export interface Product {
   category: string
   description: string
   image: string
+  images: string[]
   specifications: { [key: string]: string }
   origin: string
   seasons: string[]
   minOrderQuantity: string
   packaging: string[]
+  price?: {
+    min: number
+    max: number
+    currency: string
+  }
+  availability: 'in-stock' | 'limited' | 'out-of-stock'
+  rating?: number
+  reviews?: number
+  features: string[]
+  nutritionalInfo?: { [key: string]: string }
+  certifications: string[]
+  shelfLife: string
+  storageConditions: string[]
+  exportMarkets: string[]
+  isFeatured?: boolean
+  isOrganic?: boolean
+  isPremium?: boolean
 }
 
 export interface ProductCategory {

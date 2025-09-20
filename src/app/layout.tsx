@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/header";
+import { ClientWrapper } from "@/components/layout/client-wrapper";
 import { Footer } from "@/components/layout/footer";
+import { LoadingProvider } from "@/components/loading-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,20 +12,20 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Pyramid Agro Exports - Premium Fresh Fruits & Vegetables from India",
-  description: "Leading fresh produce export company bringing the finest fruits, vegetables from Indian farms to global markets. Specializing in fresh grapes, onions, bananas, and green chilli with decades of expertise.",
-  keywords: ["fresh fruits export", "vegetable exports", "Indian agriculture", "fresh grapes", "onions export", "bananas", "green chilli", "Nashik exports"],
-  authors: [{ name: "Pyramid Agro Exports" }],
+  title: "Pyramid Agro Export - Premium Agricultural Products from India",
+  description: "Leading exporter of premium quality fresh fruits, vegetables, grains, and spices from India. Delivering nature's best to global markets with international standards.",
+  keywords: ["agricultural export", "fresh fruits", "vegetables", "grains", "spices", "India export", "pomegranates", "grapes", "onions", "turmeric", "rice"],
+  authors: [{ name: "Pyramid Agro Export" }],
   openGraph: {
-    title: "Pyramid Agro Exports - Premium Fresh Fruits & Vegetables",
-    description: "Bringing the finest fruits, vegetables from Indian farms to your table with unmatched quality in every product.",
+    title: "Pyramid Agro Export - Premium Agricultural Products",
+    description: "Premium quality fresh fruits, vegetables, grains, and spices exported from India to global markets.",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pyramid Agro Exports",
-    description: "Premium fresh fruits and vegetables from Indian farms to global markets",
+    title: "Pyramid Agro Export",
+    description: "Premium agricultural products from India - delivering nature's best globally",
   },
   robots: {
     index: true,
@@ -47,11 +48,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <LoadingProvider>
+          <ClientWrapper>
+            <main className="flex-1">
+              {children}
+            </main>
+          </ClientWrapper>
+          <Footer />
+        </LoadingProvider>
       </body>
     </html>
   );

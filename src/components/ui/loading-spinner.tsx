@@ -1,27 +1,53 @@
 "use client"
 
-import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 
 interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg"
   className?: string
 }
 
-export function LoadingSpinner({ size = "md", className }: LoadingSpinnerProps) {
+export function LoadingSpinner({ size = "md", className = "" }: LoadingSpinnerProps) {
   const sizeClasses = {
-    sm: "h-4 w-4",
-    md: "h-8 w-8",
-    lg: "h-12 w-12"
+    sm: "w-6 h-6",
+    md: "w-8 h-8", 
+    lg: "w-12 h-12"
   }
 
   return (
-    <div className={cn("flex items-center justify-center", className)}>
-      <div
-        className={cn(
-          "animate-spin rounded-full border-2 border-emerald-200 border-t-emerald-600",
-          sizeClasses[size]
-        )}
+    <div className={`flex items-center justify-center ${className}`}>
+      <motion.div
+        className={`${sizeClasses[size]} border-2 border-emerald-200 border-t-emerald-600 rounded-full`}
+        animate={{ rotate: 360 }}
+        transition={{
+          duration: 1,
+          repeat: Infinity,
+          ease: "linear"
+        }}
       />
     </div>
+  )
+}
+
+export function PageLoader() {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center"
+    >
+      <div className="text-center">
+        <LoadingSpinner size="lg" className="mb-4" />
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-gray-600 font-medium"
+        >
+          Loading...
+        </motion.p>
+      </div>
+    </motion.div>
   )
 }
