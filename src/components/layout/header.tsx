@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { NAVIGATION, COMPANY_INFO } from "@/lib/constants"
 import { cn, formatPhoneNumber } from "@/lib/utils"
+import Image from "next/image"
 interface NavigationItem {
   id: string
   name: string
@@ -313,9 +314,11 @@ export function Header({ onAppointmentClick }: HeaderProps) {
             <Link href="/" className="flex items-center">
               <div className="relative">
                 {/* Desktop Logo */}
-                <img 
+                <Image 
                   src="/Logo_v1.png"
                   alt="Pyramid Agro Exports Logo"
+                  width={120}
+                  height={48}
                   className="hidden lg:block will-change-transform"
                   style={{
                     height: `${logoScale * 48}px`,
@@ -324,9 +327,11 @@ export function Header({ onAppointmentClick }: HeaderProps) {
                   }}
                 />
                 {/* Mobile Logo */}
-                <img 
+                <Image 
                   src="/Logo_v2.png"
                   alt="Pyramid Agro Exports Logo"
+                  width={120}
+                  height={48}
                   className="lg:hidden will-change-transform"
                   style={{
                     height: `${logoScale * 48}px`,
@@ -419,7 +424,7 @@ export function Header({ onAppointmentClick }: HeaderProps) {
                                 <div key={category.id} className="group/category relative" style={{ overflow: 'visible' }}>
                                   {'href' in category ? (
                                     <Link
-                                      href={category.href}
+                                      href={category.href as string}
                                       role="menuitem"
                                       className="flex items-start p-4 rounded-xl hover:bg-gradient-to-r hover:from-emerald-50 hover:to-emerald-50/50 transition-all duration-200 group-hover/category:shadow-lg group-hover/category:scale-[1.02] border border-transparent hover:border-emerald-100"
                                       onClick={() => {
@@ -624,7 +629,7 @@ export function Header({ onAppointmentClick }: HeaderProps) {
                                     <div key={category.id} className="space-y-2">
                                       {'href' in category ? (
                                         <Link
-                                          href={category.href}
+                                          href={category.href as string}
                                           className="flex items-center w-full text-xs font-medium py-2.5 px-3 text-gray-700 hover:text-emerald-600 transition-all duration-200 rounded-lg hover:bg-white/90 hover:shadow-sm"
                                           onClick={() => setIsMenuOpen(false)}
                                         >

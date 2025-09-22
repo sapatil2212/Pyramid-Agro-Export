@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { 
   Search, 
@@ -153,9 +154,11 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
       <div className="grid grid-cols-1 md:grid-cols-2 h-full">
         {/* Image Section */}
         <div className="relative h-64 sm:h-72 md:h-full">
-          <img
+          <Image
             src={product.image}
             alt={product.name}
+            width={300}
+            height={200}
             className="w-full h-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;

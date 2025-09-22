@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Leaf } from "lucide-react"
@@ -112,9 +113,11 @@ export function ProductsPreview() {
               <div className="grid grid-cols-1 md:grid-cols-2 h-full">
                 {/* Image Section */}
                 <div className="relative overflow-hidden order-1 md:order-1">
-                  <img 
+                  <Image 
                     src={product.image} 
                     alt={product.title}
+                    width={300}
+                    height={200}
                     className="w-full h-48 md:h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;

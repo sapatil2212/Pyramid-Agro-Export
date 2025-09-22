@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { X, ZoomIn, ZoomOut, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 
 interface GalleryImage {
   id: number;
@@ -67,7 +68,7 @@ export function InteractiveGallery() {
   const scrollPositionRef = useRef<number>(0);
 
   // Smooth auto-scroll using requestAnimationFrame
-  const smoothAutoScroll = () => {
+  const smoothAutoScroll = useCallback(() => {
     if (!scrollContainerRef.current || isHovered) {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -94,13 +95,13 @@ export function InteractiveGallery() {
 
     // Continue the animation
     animationFrameRef.current = requestAnimationFrame(smoothAutoScroll);
-  };
+  }, [isHovered]);
 
-  const startAutoScroll = () => {
+  const startAutoScroll = useCallback(() => {
     if (!animationFrameRef.current && !isHovered) {
       animationFrameRef.current = requestAnimationFrame(smoothAutoScroll);
     }
-  };
+  }, [isHovered, smoothAutoScroll]);
 
   const stopAutoScroll = () => {
     if (animationFrameRef.current) {
@@ -146,41 +147,41 @@ export function InteractiveGallery() {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setSelectedImage(null);
     setZoomLevel(1);
-  };
+  }, []);
 
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     if (!selectedImage) return;
     const currentIndex = galleryImages.findIndex(img => img.id === selectedImage.id);
     const nextIndex = (currentIndex + 1) % galleryImages.length;
     setSelectedImage(galleryImages[nextIndex]);
     setZoomLevel(1);
-  };
+  }, [selectedImage]);
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     if (!selectedImage) return;
     const currentIndex = galleryImages.findIndex(img => img.id === selectedImage.id);
     const prevIndex = currentIndex === 0 ? galleryImages.length - 1 : currentIndex - 1;
     setSelectedImage(galleryImages[prevIndex]);
     setZoomLevel(1);
-  };
+  }, [selectedImage]);
 
-  const handleZoomIn = () => {
+  const handleZoomIn = useCallback(() => {
     setZoomLevel(prev => Math.min(prev + 0.5, 3));
-  };
+  }, []);
 
-  const handleZoomOut = () => {
+  const handleZoomOut = useCallback(() => {
     setZoomLevel(prev => Math.max(prev - 0.5, 0.5));
-  };
+  }, []);
 
-  const resetZoom = () => {
+  const resetZoom = useCallback(() => {
     setZoomLevel(1);
-  };
+  }, []);
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (!isModalOpen) return;
     
     switch (e.key) {
@@ -203,7 +204,7 @@ export function InteractiveGallery() {
         resetZoom();
         break;
     }
-  };
+  }, [isModalOpen, closeModal, nextImage, prevImage, handleZoomIn, handleZoomOut, resetZoom]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -255,9 +256,11 @@ export function InteractiveGallery() {
                 }}
               >
                 <div className="relative w-full h-full rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                  <img
+                  <Image
                     src={image.src}
                     alt={image.alt}
+                    width={320}
+                    height={256}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.currentTarget.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDMyMCAyNTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjU2IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNjAgMTI4QzE2MCAxNDEuNDY0IDE0OS4zMjQgMTUyIDEzNiAxNTJDMTIyLjY3NiAxNTIgMTEyIDE0MS40NjQgMTEyIDEyOEMxMTIgMTE0LjUzNiAxMjIuNjc2IDEwNCAxMzYgMTA0QzE0OS4zMjQgMTA0IDE2MCAxMTQuNTM2IDE2MCAxMjhaIiBmaWxsPSIjOUI5QkE1Ii8+Cjx0ZXh0IHg9IjE2MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNkI3MjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiPkltYWdlIExvYWRpbmcuLi48L3RleHQ+Cjwvc3ZnPgo="
@@ -323,9 +326,11 @@ export function InteractiveGallery() {
             {/* Image */}
             {selectedImage && (
               <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-                <img
+                <Image
                   src={selectedImage.src}
                   alt={selectedImage.alt}
+                  width={800}
+                  height={600}
                   className="max-w-full max-h-full object-contain transition-transform duration-300"
                   style={{ transform: `scale(${zoomLevel})` }}
                 />

@@ -4,6 +4,8 @@ import { motion } from "framer-motion"
 import { ArrowRight, Users, Target, Heart, Sparkles } from "lucide-react"
 import { AnimatedButton } from "@/components/ui/animated-button"
 import Link from "next/link"
+import { useAboutContent } from "@/hooks/use-about-content"
+import Image from "next/image"
 
 const values = [
   {
@@ -30,6 +32,35 @@ const values = [
 
 
 export function AboutPreview() {
+  const { content, loading } = useAboutContent();
+  
+  // Get the about section content
+  const aboutContent = content.find(section => section.section === 'about');
+  
+  // Fallback content if not found or loading
+  const fallbackContent = {
+    title: "Bridging Tradition with Innovation",
+    subtitle: "About Pyramid Agro Export",
+    description: "With decades of expertise in agricultural exports, Pyramid Agro Exports has been a trusted name in the export of premium-quality fresh fruits and vegetables. We take pride in delivering the finest agricultural produce to customers worldwide from our base in Nashik, Maharashtra.\n\nOur commitment extends beyond business – we work closely with local farmers, promoting sustainable farming practices and ensuring that every product undergoes rigorous quality checks to meet the highest international standards for freshness and nutrition.",
+    buttonText: "Learn More About Us",
+    buttonLink: "/about",
+    imageUrl: "/hero/home-about.png"
+  };
+
+  const displayContent = aboutContent || fallbackContent;
+
+  if (loading) {
+    return (
+      <section className="py-15 lg:py-32 bg-white">
+        <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-15 lg:py-32 bg-white">
       <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
@@ -50,9 +81,11 @@ export function AboutPreview() {
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="bg-transparent w-full h-auto flex items-center justify-center"
               >
-                <img 
-                  src="/hero/home-about.png" 
+                <Image 
+                  src={displayContent.imageUrl || "/hero/home-about.png"} 
                   alt="Pyramid Agro Export - Agricultural Excellence"
+                  width={400}
+                  height={300}
                   className="w-full h-auto object-contain bg-transparent max-w-full"
                   onError={(e) => {
                     e.currentTarget.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yMDAgMTUwQzIwMCAxNjUuNDY0IDE4Ny4zMjQgMTc4IDE3MCAxNzhDMTUyLjY3NiAxNzggMTQwIDE2NS40NjQgMTQwIDE1MEMxNDAgMTM0LjUzNiAxNTIuNjc2IDEyMiAxNzAgMTIyQzE4Ny4zMjQgMTIyIDIwMCAxMzQuNTM2IDIwMCAxNTBaIiBmaWxsPSIjOUI5QkE1Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNkI3MjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkltYWdlIExvYWRpbmcuLi48L3RleHQ+Cjwvc3ZnPgo="
@@ -77,7 +110,7 @@ export function AboutPreview() {
               className="inline-flex items-center px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-6"
             >
               <Heart className="h-4 w-4 mr-2" />
-              About Pyramid Agro Export
+              {displayContent.subtitle}
             </motion.div>
 
             <motion.h2
@@ -86,46 +119,17 @@ export function AboutPreview() {
               transition={{ delay: 0.4, duration: 0.8 }}
               viewport={{ once: true }}
               className="text-xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight"
-            >
-              Bridging{" "}
-              <span className="text-emerald-600 relative">
-                Tradition
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  transition={{ delay: 1, duration: 0.8 }}
-                  viewport={{ once: true }}
-                  className="absolute bottom-2 left-0 right-0 h-3 bg-emerald-200 -z-10"
-                />
-              </span>{" "}
-              with Innovation
-            </motion.h2>
+              dangerouslySetInnerHTML={{ __html: displayContent.title.replace('Tradition', '<span class="text-emerald-600 relative">Tradition<span class="absolute bottom-2 left-0 right-0 h-3 bg-emerald-200 -z-10"></span></span>') }}
+            />
 
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
               viewport={{ once: true }}
               className="text-sm md:text-lg text-gray-600 mb-8 leading-relaxed"
-            >
-              With decades of expertise in agricultural exports, Pyramid Agro Exports has been 
-              a trusted name in the export of premium-quality fresh fruits and vegetables. 
-              We take pride in delivering the finest agricultural produce to customers worldwide 
-              from our base in Nashik, Maharashtra.
-            </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.8 }}
-              viewport={{ once: true }}
-              className="text-sm md:text-[15px] text-gray-600 mb-8 leading-relaxed"
-            >
-              Our commitment extends beyond business – we work closely with local farmers, 
-              promoting sustainable farming practices and ensuring that every product 
-              undergoes rigorous quality checks to meet the highest international standards 
-              for freshness and nutrition.
-            </motion.p>
+              dangerouslySetInnerHTML={{ __html: displayContent.description.replace(/\n\n/g, '</p><p class="text-sm md:text-[15px] text-gray-600 mb-8 leading-relaxed">') }}
+            />
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -135,8 +139,8 @@ export function AboutPreview() {
               className="flex flex-row gap-4"
             >
               <AnimatedButton size="lg" asChild>
-                <Link href="/about" className="group">
-                  Learn More About Us
+                <Link href={displayContent.buttonLink} className="group">
+                  {displayContent.buttonText}
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </AnimatedButton>

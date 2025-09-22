@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield } from "lucide-react"
 import GuavaTable from "@/components/products/guava-table"
@@ -61,9 +62,11 @@ export default function GuavaPage() {
               className="relative"
             >
               <div className="relative max-w-lg mx-auto">
-                <img
+                <Image
                   src="/products/guava.png"
                   alt="Premium Guavas"
+                  width={500}
+                  height={400}
                   className="w-full h-auto rounded-xl"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;

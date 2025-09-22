@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 import { 
   Award, 
   Users, 
@@ -13,8 +14,37 @@ import {
   Truck
 } from "lucide-react"
 import { ExportProcessSection } from "@/components/export-process-section"
+import { useAboutContent } from "@/hooks/use-about-content"
 
 export default function AboutPage() {
+  const { content, loading } = useAboutContent();
+  
+  // Get the about section content
+  const aboutContent = content.find(section => section.section === 'about');
+  
+  // Fallback content if not found or loading
+  const fallbackContent = {
+    title: "About us",
+    subtitle: "About Pyramid Agro Export",
+    description: "At Pyramid Agro Exports, we are committed to delivering the finest, freshest, and most nutritious produce from India's fertile lands to tables across the world. Headquartered in Nashik, Maharashtra—India's agricultural heartland—we specialize in the export of premium-quality onions, grapes, and green chilies.\n\nWith a seamless farm-to-market approach, we take pride in our sourcing, grading, packaging, and timely delivery, ensuring that every shipment meets global quality and safety standards. Our strength lies in combining modern agri-export expertise with ethical farming practices, thereby building long-term trust with both farmers and customers.\n\nAt Pyramid Agro Exports, we don't just export produce—we export freshness, trust, and long-lasting partnerships.",
+    imageUrl: "/hero/home-about.png"
+  };
+
+  const displayContent = aboutContent || fallbackContent;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <div className="pt-32 sm:pt-42 pb-16 bg-white">
+          <div className="container mx-auto px-6 sm:px-8">
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -29,22 +59,14 @@ export default function AboutPage() {
               viewport={{ once: true }}
             >
             <h2 className="text-xl md:text-4xl font-bold text-gray-900 mb-4">
-             About us 
+             {displayContent.title}
             </h2>
             <div className="space-y-4 text-sm md:text-[15px] text-gray-600 leading-relaxed">
-              <p>
-                At Pyramid Agro Exports, we are committed to delivering the finest, freshest, and most nutritious 
-                produce from India&apos;s fertile lands to tables across the world. Headquartered in Nashik, Maharashtra—India&apos;s 
-                agricultural heartland—we specialize in the export of premium-quality onions, grapes, and green chilies.
-              </p>
-              <p>
-                With a seamless farm-to-market approach, we take pride in our sourcing, grading, packaging, and timely delivery, 
-                ensuring that every shipment meets global quality and safety standards. Our strength lies in combining modern 
-                agri-export expertise with ethical farming practices, thereby building long-term trust with both farmers and customers.
-              </p>
-              <p>
-                At Pyramid Agro Exports, we don&apos;t just export produce—we export freshness, trust, and long-lasting partnerships.
-              </p>
+              {displayContent.description.split('\n\n').map((paragraph, index) => (
+                <p key={index}>
+                  {paragraph}
+                </p>
+              ))}
             </div>
             </motion.div>
 
@@ -56,16 +78,12 @@ export default function AboutPage() {
               className="relative"
             >
               <div className="relative max-w-lg mx-auto ">
-                <img
-                  src="/hero/home-about.png"
+                <Image
+                  src={displayContent.imageUrl || "/hero/home-about.png"}
                   alt="Pyramid Agro Exports - Agricultural Excellence"
+                  width={600}
+                  height={400}
                   className="w-full h-auto rounded-xl"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    const placeholder = target.nextElementSibling as HTMLElement;
-                    if (placeholder) placeholder.style.display = 'flex';
-                  }}
                 />
                 <div 
                   className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-amber-100 rounded-xl flex items-center justify-center"
@@ -299,16 +317,12 @@ export default function AboutPage() {
               >
                 <div className="text-center transition-all duration-700 ease-out group-hover:scale-105 h-full border border-gray-200 hover:border-emerald-300 rounded-xl bg-white overflow-hidden">
                   <div className="relative w-full h-64 rounded-t-xl overflow-hidden transition-all duration-700 ease-out">
-                    <img
+                    <Image
                       src={director.image}
                       alt={director.name}
+                      width={300}
+                      height={300}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const placeholder = target.nextElementSibling as HTMLElement;
-                        if (placeholder) placeholder.style.display = 'flex';
-                      }}
                     />
                     <div 
                       className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-amber-100 flex items-center justify-center"

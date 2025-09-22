@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield } from "lucide-react"
 import NashikGrapesTable from "@/components/products/nashik-grapes-table"
@@ -61,16 +62,12 @@ export default function GrapesPage() {
               className="relative"
             >
               <div className="relative max-w-lg mx-auto">
-                <img
+                <Image
                   src="/products/grapes-2.png"
                   alt="Premium Grapes"
+                  width={600}
+                  height={400}
                   className="w-full h-auto rounded-xl"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    const placeholder = target.nextElementSibling as HTMLElement;
-                    if (placeholder) placeholder.style.display = 'flex';
-                  }}
                 />
                 <div 
                   className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-amber-100 rounded-xl flex items-center justify-center"

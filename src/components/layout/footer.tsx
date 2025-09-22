@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { 
   Phone, 
   Mail, 
@@ -49,15 +50,19 @@ export function Footer() {
             <div className="flex items-center space-x-3 mb-6">
               <div className="relative">
                 {/* Desktop Logo */}
-                <img 
+                <Image 
                   src="/Logo_v1.png"
                   alt="Pyramid Agro Exports Logo"
+                  width={120}
+                  height={48}
                   className="hidden lg:block h-12 w-auto"
                 />
                 {/* Mobile Logo */}
-                <img 
+                <Image 
                   src="/Logo_v2.png"
                   alt="Pyramid Agro Exports Logo"
+                  width={120}
+                  height={48}
                   className="lg:hidden h-12 w-auto"
                 />
               </div>

@@ -64,40 +64,5 @@ export const NAVIGATION = [
       }
     ]
   },
-  { 
-    name: "Services", 
-    href: "/services",
-    hasDropdown: true,
-    dropdownItems: [
-      {
-        id: "quality-assurance",
-        name: "Quality Assurance",
-        description: "Rigorous quality checks and international standards",
-        href: "/services#quality",
-        hasSubDropdown: false
-      },
-      {
-        id: "sustainable-sourcing",
-        name: "Sustainable Sourcing",
-        description: "Partnering with local farmers for sustainable practices",
-        href: "/services#sourcing",
-        hasSubDropdown: false
-      },
-      {
-        id: "global-logistics",
-        name: "Global Logistics",
-        description: "Efficient supply chain for timely delivery worldwide",
-        href: "/services#logistics",
-        hasSubDropdown: false
-      },
-      {
-        id: "custom-solutions",
-        name: "Custom Solutions",
-        description: "Tailored solutions to meet your specific needs",
-        href: "/services#custom",
-        hasSubDropdown: false
-      }
-    ]
-  },
   { name: "Contact", href: "/contact", hasDropdown: false }
 ]

@@ -1,3 +1,5 @@
+"use client"
+
 import { Hero } from "@/components/hero"
 import { AboutPreview } from "@/components/about-preview"
 import { ServicesPreview } from "@/components/services-preview"

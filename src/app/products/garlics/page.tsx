@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { Star, CheckCircle, Leaf, Truck, Shield } from "lucide-react"
@@ -57,9 +58,11 @@ export default function GarlicsPage() {
             >
               <div className="bg-gradient-to-br from-emerald-100 to-amber-100 rounded-2xl p-8">
                 <div className="relative w-full h-80 rounded-xl overflow-hidden">
-                  <img
+                  <Image
                     src="/products/garlics.jpg"
                     alt="Premium Garlics"
+                    width={400}
+                    height={320}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;

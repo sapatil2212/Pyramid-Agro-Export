@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, Download, Share2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
@@ -25,22 +25,22 @@ export function InteractiveGallery({ images, productName, className = "" }: Inte
   const imageRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const handlePrevious = () => {
-    setActiveIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
-    resetZoom()
-  }
-
-  const handleNext = () => {
-    setActiveIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
-    resetZoom()
-  }
-
-  const resetZoom = () => {
+  const resetZoom = useCallback(() => {
     setZoomLevel(1)
     setPanPosition({ x: 0, y: 0 })
     setRotation(0)
     setIsZoomed(false)
-  }
+  }, [])
+
+  const handlePrevious = useCallback(() => {
+    setActiveIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+    resetZoom()
+  }, [images.length, resetZoom])
+
+  const handleNext = useCallback(() => {
+    setActiveIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+    resetZoom()
+  }, [images.length, resetZoom])
 
   const handleZoomIn = () => {
     setZoomLevel(prev => Math.min(prev + 0.5, 3))
@@ -154,7 +154,7 @@ export function InteractiveGallery({ images, productName, className = "" }: Inte
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isFullscreen, handleNext, handlePrevious])
+  }, [isFullscreen, handleNext, handlePrevious, resetZoom])
 
   return (
     <div className={`relative ${className}`}>

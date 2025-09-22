@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClientWrapper } from "@/components/layout/client-wrapper";
-import { Footer } from "@/components/layout/footer";
+import { ConditionalFooter } from "@/components/layout/conditional-footer";
 import { LoadingProvider } from "@/components/loading-provider";
+import { AuthProvider } from "@/components/auth-provider";
+import { ReduxProvider } from "@/components/providers/redux-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -59,14 +61,18 @@ export default function RootLayout({
         <meta name="theme-color" content="#10b981" />
       </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
-        <LoadingProvider>
-          <ClientWrapper>
-            <main className="flex-1">
-              {children}
-            </main>
-          </ClientWrapper>
-          <Footer />
-        </LoadingProvider>
+        <ReduxProvider>
+          <AuthProvider>
+            <LoadingProvider>
+              <ClientWrapper>
+                <main className="flex-1">
+                  {children}
+                </main>
+              </ClientWrapper>
+              <ConditionalFooter />
+            </LoadingProvider>
+          </AuthProvider>
+        </ReduxProvider>
       </body>
     </html>
   );
