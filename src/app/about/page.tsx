@@ -2,35 +2,44 @@
 
 import { motion } from "framer-motion"
 import Image from "next/image"
-import { 
-  Award, 
-  Users, 
-  Globe, 
-  Leaf, 
-  Shield, 
+import {
+  Award,
+  Users,
+  Globe,
+  Leaf,
+  Shield,
   CheckCircle,
   Target,
   Heart,
-  Truck
+  Truck,
+  Star,
+  type LucideIcon,
 } from "lucide-react"
 import { ExportProcessSection } from "@/components/export-process-section"
-import { useAboutContent } from "@/hooks/use-about-content"
+import { CertificationsSection } from "@/components/about/certifications-section"
+import { useAboutDynamic } from "@/hooks/use-about-dynamic"
+import { useTeamMembers } from "@/hooks/use-team-members"
 
 export default function AboutPage() {
-  const { content, loading } = useAboutContent();
+  const { content, features, loading } = useAboutDynamic();
+  const { members: teamMembers, loading: teamLoading } = useTeamMembers();
   
   // Get the about section content
-  const aboutContent = content.find(section => section.section === 'about');
+  const storyContent = content.find(section => section.section === 'story');
+  const valuesFeatures = features.filter(f => f.section === 'values');
+  const visionContent = content.find(section => section.section === 'vision');
+  const missionContent = content.find(section => section.section === 'mission');
+  const teamContent = content.find(section => section.section === 'team');
   
   // Fallback content if not found or loading
-  const fallbackContent = {
+  const fallbackStoryContent = {
     title: "About us",
     subtitle: "About Pyramid Agro Export",
     description: "At Pyramid Agro Exports, we are committed to delivering the finest, freshest, and most nutritious produce from India's fertile lands to tables across the world. Headquartered in Nashik, Maharashtra—India's agricultural heartland—we specialize in the export of premium-quality onions, grapes, and green chilies.\n\nWith a seamless farm-to-market approach, we take pride in our sourcing, grading, packaging, and timely delivery, ensuring that every shipment meets global quality and safety standards. Our strength lies in combining modern agri-export expertise with ethical farming practices, thereby building long-term trust with both farmers and customers.\n\nAt Pyramid Agro Exports, we don't just export produce—we export freshness, trust, and long-lasting partnerships.",
     imageUrl: "/hero/home-about.png"
   };
 
-  const displayContent = aboutContent || fallbackContent;
+  const displayStoryContent = storyContent || fallbackStoryContent;
 
   if (loading) {
     return (
@@ -59,10 +68,10 @@ export default function AboutPage() {
               viewport={{ once: true }}
             >
             <h2 className="text-xl md:text-4xl font-bold text-gray-900 mb-4">
-             {displayContent.title}
+             {displayStoryContent.title}
             </h2>
             <div className="space-y-4 text-sm md:text-[15px] text-gray-600 leading-relaxed">
-              {displayContent.description.split('\n\n').map((paragraph, index) => (
+              {displayStoryContent.description?.split('\n\n').map((paragraph, index) => (
                 <p key={index}>
                   {paragraph}
                 </p>
@@ -79,7 +88,7 @@ export default function AboutPage() {
             >
               <div className="relative max-w-lg mx-auto ">
                 <Image
-                  src={displayContent.imageUrl || "/hero/home-about.png"}
+                  src={displayStoryContent.imageUrl || "/hero/home-about.png"}
                   alt="Pyramid Agro Exports - Agricultural Excellence"
                   width={600}
                   height={400}
@@ -120,56 +129,53 @@ export default function AboutPage() {
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {[
+            {(valuesFeatures.length > 0 ? valuesFeatures : [
               {
-                icon: Globe,
                 title: "Global Export Expertise",
                 description: "Years of successful exports backed by strong logistics and compliance with international standards.",
-                iconBg: "bg-blue-100",
-                iconBgHover: "group-hover:bg-blue-200",
-                iconColor: "text-blue-600"
+                icon: "Globe"
               },
               {
-                icon: Leaf,
                 title: "Premium-Quality Produce",
                 description: "Freshly harvested onions, grapes, and green chilies directly from India's best farmlands.",
-                iconBg: "bg-green-100",
-                iconBgHover: "group-hover:bg-green-200",
-                iconColor: "text-green-600"
+                icon: "Leaf"
               },
               {
-                icon: Truck,
                 title: "Seamless Supply Chain",
                 description: "Assured freshness with timely delivery and customized export-friendly packaging.",
-                iconBg: "bg-purple-100",
-                iconBgHover: "group-hover:bg-purple-200",
-                iconColor: "text-purple-600"
+                icon: "Truck"
               },
               {
-                icon: Heart,
                 title: "Sustainability & Ethical Sourcing",
                 description: "Supporting farmers with fair practices while delivering responsibly grown produce.",
-                iconBg: "bg-emerald-100",
-                iconBgHover: "group-hover:bg-emerald-200",
-                iconColor: "text-emerald-600"
+                icon: "Heart"
               },
               {
-                icon: Shield,
                 title: "Trust & Reliability",
                 description: "Every shipment is a promise of quality, freshness, and care.",
-                iconBg: "bg-amber-100",
-                iconBgHover: "group-hover:bg-amber-200",
-                iconColor: "text-amber-600"
+                icon: "Shield"
               },
               {
-                icon: CheckCircle,
                 title: "Commitment to Consistency",
                 description: "We ensure uniform quality, size, and taste in every batch, meeting the most demanding international standards.",
-                iconBg: "bg-indigo-100",
-                iconBgHover: "group-hover:bg-indigo-200",
-                iconColor: "text-indigo-600"
+                icon: "CheckCircle"
               }
-            ].map((feature, index) => (
+            ]).map((feature, index) => {
+              const iconMap: Record<string, LucideIcon> = {
+                Globe, Leaf, Truck, Heart, Shield, CheckCircle, Award, Star, Target, Users
+              };
+              const IconComponent = iconMap[feature.icon || 'Star'] || Star;
+              const iconColors = [
+                { bg: "bg-blue-100", hover: "group-hover:bg-blue-200", color: "text-blue-600" },
+                { bg: "bg-green-100", hover: "group-hover:bg-green-200", color: "text-green-600" },
+                { bg: "bg-purple-100", hover: "group-hover:bg-purple-200", color: "text-purple-600" },
+                { bg: "bg-emerald-100", hover: "group-hover:bg-emerald-200", color: "text-emerald-600" },
+                { bg: "bg-amber-100", hover: "group-hover:bg-amber-200", color: "text-amber-600" },
+                { bg: "bg-indigo-100", hover: "group-hover:bg-indigo-200", color: "text-indigo-600" }
+              ];
+              const colors = iconColors[index % iconColors.length];
+              
+              return (
               <motion.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 30 }}
@@ -180,8 +186,8 @@ export default function AboutPage() {
                 className="group"
               >
                 <div className="p-6 h-full transition-all duration-700 ease-out group-hover:scale-105 border border-gray-200 hover:border-emerald-300 rounded-xl bg-white">
-                  <div className={`w-16 h-16 ${feature.iconBg} ${feature.iconBgHover} rounded-2xl flex items-center justify-center mb-4 transition-all duration-700 ease-out group-hover:scale-110 group-hover:rotate-3`}>
-                    <feature.icon className={`h-8 w-8 ${feature.iconColor} transition-all duration-700 ease-out group-hover:scale-110`} />
+                  <div className={`w-16 h-16 ${colors.bg} ${colors.hover} rounded-2xl flex items-center justify-center mb-4 transition-all duration-700 ease-out group-hover:scale-110 group-hover:rotate-3`}>
+                    <IconComponent className={`h-8 w-8 ${colors.color} transition-all duration-700 ease-out group-hover:scale-110`} />
                   </div>
                   <h3 className="text-sm sm:text-[15px] font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors duration-500 ease-out">
                     {feature.title}
@@ -191,7 +197,8 @@ export default function AboutPage() {
                   </p>
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -214,11 +221,11 @@ export default function AboutPage() {
                     <Target className="h-5 w-5 md:h-6 md:w-6 text-emerald-600" />
                   </div>
                   <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">
-                    Vision
+                    {visionContent?.title || 'Vision'}
                   </h2>
                 </div>
                 <p className="text-gray-600 leading-relaxed text-sm sm:text-md">
-                To become a globally admired leader in agricultural exports, renowned for delivering the authentic freshness and richness of Indian produce to households and businesses across the world. We aspire to build a future where sustainable farming practices preserve nature’s balance, where farmers are empowered with fair opportunities and growth, and where our commitment to quality, innovation, and trust sets new benchmarks in the agri-export industry.
+                  {visionContent?.description || "To become a globally admired leader in agricultural exports, renowned for delivering the authentic freshness and richness of Indian produce to households and businesses across the world. We aspire to build a future where sustainable farming practices preserve nature's balance, where farmers are empowered with fair opportunities and growth, and where our commitment to quality, innovation, and trust sets new benchmarks in the agri-export industry."}
                 </p>
               </div>
             </motion.div>
@@ -236,28 +243,36 @@ export default function AboutPage() {
                     <Award className="h-5 w-5 md:h-6 md:w-6 text-amber-600" />
                   </div>
                   <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">
-                    Mission
+                    {missionContent?.title || 'Mission'}
                   </h2>
                 </div>
                 <div className="space-y-3 md:space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-emerald-500 flex-shrink-0 mt-1" />
+                  {missionContent?.description ? (
                     <p className="text-gray-600 leading-relaxed text-sm sm:text-md">
-                      To consistently supply premium-quality, farm-fresh produce that meets international benchmarks.
+                      {missionContent.description}
                     </p>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-emerald-500 flex-shrink-0 mt-1" />
-                    <p className="text-gray-600 leading-relaxed text-sm sm:text-md">
-                      To create a sustainable, transparent, and efficient supply chain that benefits farmers, partners, and consumers alike.
-                    </p>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-emerald-500 flex-shrink-0 mt-1" />
-                    <p className="text-gray-600 leading-relaxed text-sm sm:text-md">
-                      To uphold the values of trust, quality, and responsibility in every export.
-                    </p>
-                  </div>
+                  ) : (
+                    <>
+                      <div className="flex items-start space-x-3">
+                        <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-emerald-500 flex-shrink-0 mt-1" />
+                        <p className="text-gray-600 leading-relaxed text-sm sm:text-md">
+                          To consistently supply premium-quality, farm-fresh produce that meets international benchmarks.
+                        </p>
+                      </div>
+                      <div className="flex items-start space-x-3">
+                        <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-emerald-500 flex-shrink-0 mt-1" />
+                        <p className="text-gray-600 leading-relaxed text-sm sm:text-md">
+                          To create a sustainable, transparent, and efficient supply chain that benefits farmers, partners, and consumers alike.
+                        </p>
+                      </div>
+                      <div className="flex items-start space-x-3">
+                        <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-emerald-500 flex-shrink-0 mt-1" />
+                        <p className="text-gray-600 leading-relaxed text-sm sm:text-md">
+                          To uphold the values of trust, quality, and responsibility in every export.
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -276,77 +291,76 @@ export default function AboutPage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our Directors
+              {teamContent?.title || 'Our Directors'}
             </h2>
             <p className="text-md sm:text-lg text-gray-600 max-w-2xl mx-auto">
-              Meet the visionary leaders behind Pyramid Agro Exports
+              {teamContent?.subtitle || 'Meet the visionary leaders behind Pyramid Agro Exports'}
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 max-w-6xl mx-auto px-2 sm:px-4">
-            {[
-              {
-                name: "Vaibhav Abhang",
-                position: "Director",
-                image: "/hero/team/vaibhav.jpg"
-              },
-              {
-                name: "Pravin Adik",
-                position: "Director",
-                image: "/hero/team/pravin.jpg"
-              },
-              {
-                name: "Yogesh Salunke",
-                position: "Director",
-                image: "/hero/team/yogesh.jpg"
-              },
-              {
-                name: "Saurabh Sonawane",
-                position: "Director",
-                image: "/hero/team/saurabh.jpg"
-              }
-            ].map((director, index) => (
-              <motion.div
-                key={director.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -8 }}
-                className="group"
-              >
-                <div className="text-center transition-all duration-700 ease-out group-hover:scale-105 h-full border border-gray-200 hover:border-emerald-300 rounded-xl bg-white overflow-hidden">
-                  <div className="relative w-full h-64 rounded-t-xl overflow-hidden transition-all duration-700 ease-out">
-                    <Image
-                      src={director.image}
-                      alt={director.name}
-                      width={300}
-                      height={300}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                    />
-                    <div 
-                      className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-amber-100 flex items-center justify-center"
-                      style={{ display: 'none' }}
-                    >
-                      <div className="text-center text-gray-600">
-                        <Users className="h-12 w-12 text-emerald-500" />
+          {teamLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+            </div>
+          ) : teamMembers.length > 0 ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 max-w-6xl mx-auto px-2 sm:px-4">
+              {teamMembers.map((member, index) => (
+                <motion.div
+                  key={member.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -8 }}
+                  className="group"
+                >
+                  <div className="text-center transition-all duration-700 ease-out group-hover:scale-105 h-full border border-gray-200 hover:border-emerald-300 rounded-xl bg-white overflow-hidden">
+                    <div className="relative w-full h-64 rounded-t-xl overflow-hidden transition-all duration-700 ease-out">
+                      <Image
+                        src={member.imageUrl || "/hero/team/default.jpg"}
+                        alt={member.name}
+                        width={300}
+                        height={300}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      />
+                      <div 
+                        className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-amber-100 flex items-center justify-center"
+                        style={{ display: 'none' }}
+                      >
+                        <div className="text-center text-gray-600">
+                          <Users className="h-12 w-12 text-emerald-500" />
+                        </div>
                       </div>
                     </div>
+                    <div className="p-6">
+                      <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors duration-500 ease-out">
+                        {member.name}
+                      </h3>
+                      <p className="text-xs sm:text-emerald-600 font-medium group-hover:text-emerald-700 transition-colors duration-500 ease-out">
+                        {member.position}
+                      </p>
+                      {member.bio && (
+                        <p className="text-xs text-gray-600 mt-2 line-clamp-2">
+                          {member.bio}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors duration-500 ease-out">
-                      {director.name}
-                    </h3>
-                    <p className="text-xs sm:text-emerald-600 font-medium group-hover:text-emerald-700 transition-colors duration-500 ease-out">
-                      {director.position}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Directors Added</h3>
+              <p className="text-gray-600">Team members will appear here once they are added.</p>
+            </div>
+          )}
         </div>
       </section>
+
+      {/* Certifications Section */}
+      <CertificationsSection />
 
       {/* Export Process Section */}
       <ExportProcessSection />

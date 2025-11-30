@@ -3,10 +3,61 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield } from "lucide-react"
+import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield, RefreshCw } from "lucide-react"
 import DryTurmericTable from "@/components/products/dry-turmeric-table"
+import { useProductData } from "@/hooks/use-product-data"
 
 export default function DryTurmericPage() {
+  const { product, loading, refetch } = useProductData('dry-turmeric')
+
+  // Icon mapping for feature cards
+  const iconMap = {
+    Star,
+    CheckCircle,
+    Leaf,
+    Truck,
+    Shield
+  }
+
+  // Default features if not provided
+  const defaultFeatures = [
+    {
+      icon: "Star",
+      title: "Premium Quality",
+      description: "Hand-picked from finest sources"
+    },
+    {
+      icon: "CheckCircle",
+      title: "International Standards",
+      description: "Meets all quality standards"
+    },
+    {
+      icon: "Leaf",
+      title: "Fresh & Natural",
+      description: "100% natural, no preservatives"
+    },
+    {
+      icon: "Truck",
+      title: "Fast Delivery",
+      description: "Quick worldwide delivery"
+    },
+    {
+      icon: "Shield",
+      title: "Quality Assurance",
+      description: "Rigorous quality checks"
+    }
+  ]
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen">
@@ -21,35 +72,77 @@ export default function DryTurmericPage() {
               viewport={{ once: true }}
             >
               <h1 className="text-xl md:text-4xl font-bold text-gray-900 mb-4">
-                Premium Quality{" "}
-                <span className="text-emerald-600">Dry Turmeric</span>
+                {product?.heroTitle || "Premium Quality Dry Turmeric"}
+                {product?.heroSubtitle && (
+                  <span className="text-emerald-600"> {product.heroSubtitle}</span>
+                )}
               </h1>
               <div className="space-y-4 text-sm md:text-[15px] text-gray-600 leading-relaxed">
-                <p>
-                  Experience the finest dry turmeric from India&apos;s premier spice regions. 
-                  Our premium quality turmeric varieties are carefully processed, dried, 
-                  and exported to meet the highest international standards.
-                </p>
-                <p>
-                  With high curcumin content (2-5%) and available in both sun-dried and mechanically dried forms, 
-                  our turmeric is perfect for food, pharmaceutical, and dye industry applications.
-                </p>
+                {product?.heroDescription ? (
+                  <div dangerouslySetInnerHTML={{ __html: product.heroDescription.replace(/\n/g, '<br />') }} />
+                ) : (
+                  <>
+                    <p>
+                      Experience the finest dry turmeric from India&apos;s premier sources. 
+                      Our premium quality dry turmeric are carefully selected, packed, 
+                      and exported to meet the highest international standards.
+                    </p>
+                    <p>
+                      Known for their exceptional quality, taste, and freshness, 
+                      our dry turmeric are perfect for international markets.
+                    </p>
+                  </>
+                )}
               </div>
               <div className="flex flex-col sm:flex-row gap-4 mt-6">
+                {product?.heroButtonText && (
+                  <Button
+                    onClick={() => window.location.href = product.heroButtonLink || '/contact'}
+                    size="lg"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 group"
+                  >
+                    {product.heroButtonText}
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+                  </Button>
+                )}
+                {product?.heroButton2Text && (
+                  <Button
+                    onClick={() => window.location.href = product.heroButton2Link || '#features'}
+                    variant="outline"
+                    size="lg"
+                    className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 px-8 py-3"
+                  >
+                    {product.heroButton2Text}
+                  </Button>
+                )}
+                {!product?.heroButtonText && !product?.heroButton2Text && (
+                  <>
+                    <Button
+                      onClick={() => window.location.href = '/contact'}
+                      size="lg"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 group"
+                    >
+                      Get Quote
+                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 px-8 py-3"
+                    >
+                      Learn More
+                    </Button>
+                  </>
+                )}
                 <Button
-                  onClick={() => window.location.href = '/contact'}
-                  size="lg"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 group"
-                >
-                  Get Quote
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
-                </Button>
-                <Button
+                  onClick={refetch}
                   variant="outline"
-                  size="lg"
-                  className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 px-8 py-3"
+                  size="sm"
+                  className="border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2"
+                  disabled={loading}
                 >
-                  Learn More
+                  <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                  Refresh
                 </Button>
               </div>
             </motion.div>
@@ -63,9 +156,9 @@ export default function DryTurmericPage() {
             >
               <div className="relative max-w-lg mx-auto">
                 <Image
-                  src="/products/dry-turmeric.png"
-                  alt="Premium Dry Turmeric"
-                  width={500}
+                  src={product?.heroImageUrl || "/products/dry-turmeric.png"}
+                  alt={product?.heroTitle || "Premium Dry Turmeric"}
+                  width={600}
                   height={400}
                   className="w-full h-auto rounded-xl"
                   onError={(e) => {
@@ -81,7 +174,7 @@ export default function DryTurmericPage() {
                 >
                   <div className="text-center text-gray-600">
                     <Leaf className="h-16 w-16 mx-auto mb-4 text-emerald-500" />
-                    <p className="text-lg font-semibold">Premium Dry Turmeric</p>
+                    <p className="text-lg font-semibold">{product?.heroTitle || "Premium Dry Turmeric"}</p>
                     <p className="text-sm">Export Quality</p>
                   </div>
                 </div>
@@ -102,41 +195,15 @@ export default function DryTurmericPage() {
             className="text-center mb-8"
           >
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-              Why Choose Our Dry Turmeric?
+              {product?.featuresTitle || "Why Choose Our Dry Turmeric?"}
             </h2>
             <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto">
-              Premium quality dry turmeric with high curcumin content and medicinal properties
+              {product?.featuresSubtitle || "Premium quality dry turmeric with exceptional taste and freshness"}
             </p>
           </motion.div>
 
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-            {[
-              {
-                icon: Star,
-                title: "High Curcumin",
-                description: "2-5% curcumin content"
-              },
-              {
-                icon: CheckCircle,
-                title: "Multiple Varieties",
-                description: "Salem, Nizamabad, Rajapuri"
-              },
-              {
-                icon: Leaf,
-                title: "Drying Methods",
-                description: "Sun-dried & mechanically dried"
-              },
-              {
-                icon: Truck,
-                title: "Pharmaceutical Grade",
-                description: "Dubai & UAE markets"
-              },
-              {
-                icon: Shield,
-                title: "Multiple Applications",
-                description: "Food, pharma, dye industry"
-              }
-            ].map((feature, index) => (
+            {((product?.features && Array.isArray(product.features)) ? product.features : defaultFeatures).map((feature, index) => (
               <motion.div
                 key={feature.title}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -148,7 +215,10 @@ export default function DryTurmericPage() {
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center group-hover:bg-emerald-200 transition-colors duration-300">
-                    <feature.icon className="h-5 w-5 text-emerald-600" />
+                    {(() => {
+                      const IconComponent = iconMap[feature.icon as keyof typeof iconMap] || Star
+                      return <IconComponent className="h-5 w-5 text-emerald-600" />
+                    })()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors duration-300">
@@ -165,7 +235,7 @@ export default function DryTurmericPage() {
         </div>
       </section>
 
-      {/* Interactive Dry Turmeric Table */}
+      {/* Interactive Table */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
           <DryTurmericTable />
@@ -184,17 +254,17 @@ export default function DryTurmericPage() {
           >
             <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-2xl p-8 border border-emerald-100">
               <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
-                Ready to Order Premium Dry Turmeric?
+                {product?.ctaTitle || "Ready to Order Premium Dry Turmeric?"}
               </h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                Contact us today for the finest quality dry turmeric delivered to your doorstep with our proven export process
+                {product?.ctaDescription || "Contact us today for the finest quality dry turmeric delivered to your doorstep with our proven export process"}
               </p>
               <Button
-                onClick={() => window.location.href = '/contact'}
+                onClick={() => window.location.href = product?.ctaButtonLink || '/contact'}
                 size="lg"
                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 group"
               >
-                Get Quote Now
+                {product?.ctaButtonText || "Get Quote Now"}
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
               </Button>
             </div>

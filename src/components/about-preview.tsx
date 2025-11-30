@@ -1,38 +1,72 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { ArrowRight, Users, Target, Heart, Sparkles } from "lucide-react"
+import { ArrowRight, Users, Target, Heart, Sparkles, Award, Leaf, Lightbulb, Shield, Star, Globe, type LucideIcon } from "lucide-react"
 import { AnimatedButton } from "@/components/ui/animated-button"
 import Link from "next/link"
 import { useAboutContent } from "@/hooks/use-about-content"
 import Image from "next/image"
 
-const values = [
-  {
-    icon: Target,
-    title: "Quality First",
-    description: "Every product undergoes rigorous quality testing to meet international standards"
-  },
-  {
-    icon: Heart,
-    title: "Sustainable Farming",
-    description: "Supporting eco-friendly practices that benefit farmers and the environment"
-  },
-  {
-    icon: Users,
-    title: "Farmer Partnership",
-    description: "Direct relationships with farmers ensuring fair prices and premium quality"
-  },
-  {
-    icon: Sparkles,
-    title: "Innovation",
-    description: "Leveraging technology for better supply chain management and traceability"
-  }
-]
+interface Feature {
+  id: string;
+  section: string;
+  title: string;
+  description: string;
+  icon: string;
+  order: number;
+  isActive: boolean;
+}
 
+const ICON_MAP: Record<string, LucideIcon> = {
+  'Award': Award,
+  'Leaf': Leaf,
+  'Users': Users,
+  'Lightbulb': Lightbulb,
+  'Shield': Shield,
+  'Star': Star,
+  'Heart': Heart,
+  'Globe': Globe,
+  'Target': Target,
+  'Sparkles': Sparkles,
+};
+
+interface FallbackValue {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
+const fallbackValues: FallbackValue[] = [
+  { icon: Target, title: "Quality First", description: "Every product undergoes rigorous quality testing to meet international standards" },
+  { icon: Heart, title: "Sustainable Farming", description: "Supporting eco-friendly practices that benefit farmers and the environment" },
+  { icon: Users, title: "Farmer Partnership", description: "Direct relationships with farmers ensuring fair prices and premium quality" },
+  { icon: Sparkles, title: "Innovation", description: "Leveraging technology for better supply chain management and traceability" }
+];
 
 export function AboutPreview() {
   const { content, loading } = useAboutContent();
+  const [features, setFeatures] = useState<Feature[]>([]);
+
+  useEffect(() => {
+    const fetchFeatures = async () => {
+      try {
+        const res = await fetch('/api/home-features');
+        const data = (await res.json()) as Feature[];
+        if (res.ok) {
+          const aboutFeatures = data
+            .filter((f) => f.section === 'about' && f.isActive)
+            .sort((a, b) => a.order - b.order);
+          setFeatures(aboutFeatures);
+        }
+      } catch (e) {
+        console.error('Error fetching features:', e);
+      }
+    };
+    fetchFeatures();
+  }, []);
+
+  const getIcon = (iconName: string): LucideIcon => ICON_MAP[iconName] || Target;
   
   // Get the about section content
   const aboutContent = content.find(section => section.section === 'about');
@@ -158,32 +192,33 @@ export function AboutPreview() {
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {values.map((value, index) => (
-            <motion.div
-              key={value.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 + index * 0.1, duration: 0.6 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -5 }}
-              className="group bg-white border border-gray-200 hover:border-emerald-300 rounded-xl p-6 transition-all duration-700 ease-out group-hover:scale-105"
-            >
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:from-emerald-600 group-hover:to-emerald-700 rounded-lg flex items-center justify-center mb-4 transition-all duration-700 ease-out group-hover:scale-110 group-hover:rotate-3">
-                {(() => {
-                  const IconComponent = value.icon
-                  return <IconComponent className="h-6 w-6 text-white transition-all duration-700 ease-out group-hover:scale-110" />
-                })()}
-              </div>
-              
-              <h3 className="text-sm sm:text-[15px] font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors duration-500 ease-out">
-                {value.title}
-              </h3>
-              
-              <p className="text-gray-600 text-xs sm:text-[15px] leading-relaxed group-hover:text-gray-700 transition-colors duration-500 ease-out">
-                {value.description}
-              </p>
-            </motion.div>
-          ))}
+          {(features.length > 0 ? features : fallbackValues).map((value, index) => {
+            const isCmsFeature = (item: Feature | FallbackValue): item is Feature => 'section' in item;
+            const IconComponent = isCmsFeature(value) ? getIcon(value.icon) : value.icon;
+            return (
+              <motion.div
+                key={'id' in value ? value.id : value.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + index * 0.1, duration: 0.6 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -5 }}
+                className="group bg-white border border-gray-200 hover:border-emerald-300 rounded-xl p-6 transition-all duration-700 ease-out group-hover:scale-105"
+              >
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:from-emerald-600 group-hover:to-emerald-700 rounded-lg flex items-center justify-center mb-4 transition-all duration-700 ease-out group-hover:scale-110 group-hover:rotate-3">
+                  <IconComponent className="h-6 w-6 text-white transition-all duration-700 ease-out group-hover:scale-110" />
+                </div>
+                
+                <h3 className="text-sm sm:text-[15px] font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors duration-500 ease-out">
+                  {value.title}
+                </h3>
+                
+                <p className="text-gray-600 text-xs sm:text-[15px] leading-relaxed group-hover:text-gray-700 transition-colors duration-500 ease-out">
+                  {value.description}
+                </p>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

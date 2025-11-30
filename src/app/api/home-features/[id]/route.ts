@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+
+interface HomeFeatureUpdatePayload {
+  section?: string;
+  title?: string;
+  description?: string;
+  icon?: string;
+  order?: number;
+  isActive?: boolean;
+}
 
 export async function PUT(
   request: NextRequest,
@@ -14,18 +24,20 @@ export async function PUT(
     }
 
     const { id } = await params;
-    const data = await request.json();
+    const data = (await request.json()) as HomeFeatureUpdatePayload;
+    
+    // Build update object, only including defined values
+    const updateData: Prisma.HomePageFeatureUpdateInput = {};
+    if (data.section !== undefined) updateData.section = data.section;
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.icon !== undefined) updateData.icon = data.icon;
+    if (data.order !== undefined) updateData.order = data.order;
+    if (data.isActive !== undefined) updateData.isActive = data.isActive;
     
     const feature = await prisma.homePageFeature.update({
       where: { id },
-      data: {
-        section: data.section,
-        title: data.title,
-        description: data.description,
-        icon: data.icon,
-        order: data.order,
-        isActive: data.isActive
-      }
+      data: updateData
     });
 
     return NextResponse.json(feature);

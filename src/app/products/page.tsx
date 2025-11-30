@@ -6,207 +6,160 @@ import { Button } from "@/components/ui/button"
 import { 
   Search, 
   ArrowRight, 
-  Leaf, 
-  Droplets,
-  Sun,
-  Shield,
-  Truck,
-  Clock,
-  CheckCircle
+  Star,
+  Package
 } from "lucide-react"
-import { useAppointmentModal } from "@/components/appointment-modal-provider"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-// Product categories
-const productCategories = [
-  {
-    id: "fruits",
-    name: "Fresh Fruits",
-    description: "Premium quality fresh fruits from Indian farms",
-    icon: Leaf,
-    color: "emerald"
-  },
-  {
-    id: "vegetables", 
-    name: "Fresh Vegetables",
-    description: "Farm-fresh vegetables with international standards",
-    icon: Droplets,
-    color: "blue"
-  },
-  {
-    id: "grains",
-    name: "Grains & Spices",
-    description: "Premium grains and authentic Indian spices",
-    icon: Sun,
-    color: "amber"
+interface Product {
+  id: string
+  name: string
+  slug: string
+  description?: string
+  shortDescription?: string
+  imageUrl?: string
+  images?: string[]
+  heroImageUrl?: string | null
+  heroDescription?: string | null
+  category: {
+    id: string
+    name: string
+    slug: string
+    color?: string
   }
-]
-
-// Product data with proper navigation links
-const products = [
-  {
-    id: "grapes",
-    name: "Fresh Grapes",
-    category: "fruits",
-    description: "Premium quality Nashik grapes with natural sweetness and crunchy texture",
-    image: "/products/grapes-2.png",
-    benefits: ["Natural Sweetness", "Long Shelf Life", "Export Grade", "Premium Quality"],
-    link: "/products/grapes"
-  },
-  {
-    id: "pomegranates",
-    name: "Pomegranates",
-    category: "fruits",
-    description: "Bhagwa variety with deep red arils, high juice content and long storage capacity",
-    image: "/products/pomogranate.png",
-    benefits: ["Deep Red Arils", "High Juice Content", "APEDA Certified", "Export Ready"],
-    link: "/products/pomegranates"
-  },
-  {
-    id: "guava",
-    name: "Guavas",
-    category: "fruits",
-    description: "Allahabad Safeda and Pink Guava varieties rich in Vitamin C and antioxidants",
-    image: "/products/guava.png",
-    benefits: ["Rich in Vitamin C", "Two Varieties", "High Antioxidants", "Health Benefits"],
-    link: "/products/guava"
-  },
-  {
-    id: "banana",
-    name: "Green Bananas",
-    category: "fruits",
-    description: "Cavendish and Robusta varieties with firm texture and long shelf life",
-    image: "/products/green-banana.png",
-    benefits: ["Year-round Available", "Long Shelf Life", "High Nutrients", "Export Grade"],
-    link: "/products/banana"
-  },
-  {
-    id: "onions",
-    name: "Nashik Onions",
-    category: "vegetables",
-    description: "Red and pink onions with strong flavor, firm texture and uniform grading",
-    image: "/products/onion.png",
-    benefits: ["Strong Flavor", "Year-round Available", "Extended Shelf Life", "Uniform Grading"],
-    link: "/products/onions"
-  },
-  {
-    id: "green-chillis",
-    name: "Green Chilies",
-    category: "vegetables",
-    description: "G4, Bullet, and Byadgi varieties with high pungency and longer shelf life",
-    image: "/products/green-chillies.png",
-    benefits: ["High Pungency", "Fresh & Dried", "Long Shelf Life", "Authentic Flavors"],
-    link: "/products/green-chillis"
-  },
-  {
-    id: "potatoes",
-    name: "Potatoes",
-    category: "vegetables",
-    description: "Jyoti, Kufri Bahar, and Kufri Pukhraj varieties perfect for chips and fries",
-    image: "/products/potatoes.png",
-    benefits: ["High Dry Matter", "Starch-rich", "Bulk Supply", "Cooking Quality"],
-    link: "/products/potatoes"
-  },
-  {
-    id: "rice",
-    name: "Rice",
-    category: "grains",
-    description: "Basmati and Non-Basmati varieties with authentic aroma and fluffy texture",
-    image: "/products/rice.png",
-    benefits: ["Aromatic Basmati", "Cost-effective Options", "Customized Packaging", "Export Grade"],
-    link: "/products/rice"
-  },
-  {
-    id: "dry-turmeric",
-    name: "Dry Turmeric",
-    category: "grains",
-    description: "Salem, Nizamabad, and Rajapuri varieties with high curcumin content",
-    image: "/products/dry-turmeric.png",
-    benefits: ["High Curcumin", "Multiple Varieties", "Pharmaceutical Grade", "Export Ready"],
-    link: "/products/dry-turmeric"
-  },
-  {
-    id: "groundnuts",
-    name: "Groundnuts",
-    category: "grains",
-    description: "Raw, roasted, and blanched forms with high oil content and protein",
-    image: "/products/groundnuts.png",
-    benefits: ["High Oil Content", "Multiple Forms", "High Protein", "Bulk Exports"],
-    link: "/products/groundnuts"
+  isFeatured: boolean
+  isOrganic: boolean
+  isPremium: boolean
+  isActive: boolean
+  rating?: number
+  reviews: number
+  availability: string
+  features?: string[]
+  price?: {
+    min: number
+    max: number
+    currency: string
   }
-]
+}
 
-// Product Card Component
-function ProductCard({ product, index }: { product: typeof products[0]; index: number }) {
+interface ProductCategory {
+  id: string
+  name: string
+  slug: string
+  description?: string
+  imageUrl?: string
+  color?: string
+  isActive: boolean
+  _count: {
+    products: number
+  }
+}
+
+// Product Card Component - Compact Vertical Layout
+function ProductCard({ product, index }: { product: Product; index: number }) {
   const handleViewDetails = () => {
-    window.location.href = product.link
+    window.location.href = `/products/${product.slug}`
   }
+
+  // Get the best available image
+  const imageUrl = product.imageUrl || product.heroImageUrl || (product.images && product.images[0])
 
   return (
     <motion.div
       key={product.id}
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300"
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+      className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 group"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 h-full">
-        {/* Image Section */}
-        <div className="relative h-64 sm:h-72 md:h-full">
+      {/* Image Section */}
+      <div className="relative h-[300px] overflow-hidden">
+        {imageUrl ? (
           <Image
-            src={product.image}
+            src={imageUrl}
             alt={product.name}
-            width={300}
-            height={200}
-            className="w-full h-full object-cover"
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
-              const placeholder = target.nextElementSibling as HTMLElement;
+              const placeholder = target.parentElement?.querySelector('.placeholder') as HTMLElement;
               if (placeholder) placeholder.style.display = 'flex';
             }}
           />
-          <div 
-            className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-amber-100 flex items-center justify-center"
-            style={{ display: 'none' }}
-          >
-            <div className="text-center text-gray-600">
-              <Leaf className="h-16 w-16 mx-auto mb-4 text-emerald-500" />
-              <p className="text-lg font-semibold">{product.name}</p>
-              <p className="text-sm">Export Quality</p>
-            </div>
+        ) : null}
+        <div 
+          className="placeholder absolute inset-0 bg-gradient-to-br from-emerald-100 to-amber-100 flex items-center justify-center"
+          style={{ display: imageUrl ? 'none' : 'flex' }}
+        >
+          <div className="text-center text-gray-600">
+            <Package className="h-10 w-10 mx-auto mb-2 text-emerald-500" />
+            <p className="text-sm font-medium">{product.name}</p>
           </div>
         </div>
-
-        {/* Content Section */}
-        <div className="p-6 md:p-8 flex flex-col justify-between">
-          <div>
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
-              {product.name}
-            </h3>
-            <p className="text-gray-600 mb-4 leading-relaxed">
-              {product.description}
-            </p>
-            
-            {/* Benefits */}
-            <div className="grid grid-cols-2 gap-2 mb-6">
-              {product.benefits.map((benefit: string, idx: number) => (
-                <div key={idx} className="flex items-center space-x-2">
-                  <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                  <span className="text-sm text-gray-600">{benefit}</span>
-                </div>
-              ))}
+        
+        {/* Product badges */}
+        <div className="absolute top-2 left-2 flex flex-wrap gap-1">
+          {product.isFeatured && (
+            <div className="bg-emerald-600 text-white px-2 py-0.5 rounded-full text-[10px] font-semibold flex items-center gap-1">
+              <Star className="h-2.5 w-2.5" />
+              Featured
             </div>
-          </div>
+          )}
+          {product.isPremium && (
+            <div className="bg-amber-600 text-white px-2 py-0.5 rounded-full text-[10px] font-semibold">
+              Premium
+            </div>
+          )}
+          {product.isOrganic && (
+            <div className="bg-green-600 text-white px-2 py-0.5 rounded-full text-[10px] font-semibold">
+              Organic
+            </div>
+          )}
+        </div>
+      </div>
 
-          {/* Action Button */}
+      {/* Content Section */}
+      <div className="p-4">
+        {/* Category */}
+        <div className="flex items-center gap-1.5 mb-2">
+          <div 
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: product.category?.color || '#10b981' }}
+          />
+          <span className="text-xs text-gray-500">{product.category?.name || 'Uncategorized'}</span>
+        </div>
+        
+        {/* Title */}
+        <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-1">
+          {product.name}
+        </h3>
+        
+        {/* Description */}
+        <p className="text-xs text-gray-600 mb-3 line-clamp-2">
+          {product.shortDescription || product.description || product.heroDescription || 'Premium quality agricultural product for export.'}
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2">
           <Button
             onClick={handleViewDetails}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white group"
+            size="sm"
+            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8 group"
           >
             View Details
-            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+          </Button>
+          <Button
+            onClick={() => window.location.href = '/contact'}
+            size="sm"
+            variant="outline"
+            className="flex-1 border-emerald-600 text-emerald-600 hover:bg-emerald-50 text-xs h-8 group"
+          >
+            Get Quote
+            <ArrowRight className="ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
       </div>
@@ -214,189 +167,209 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
   )
 }
 
-// Filter Component
-function ProductFilter({ selectedCategory, onCategoryChange }: { selectedCategory: string; onCategoryChange: (category: string) => void }) {
-  return (
-    <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-      <button
-        onClick={() => onCategoryChange("all")}
-        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-          selectedCategory === "all"
-            ? "bg-emerald-600 text-white"
-            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-        }`}
-      >
-        All Products
-      </button>
-      {productCategories.map((category) => (
-        <button
-          key={category.id}
-          onClick={() => onCategoryChange(category.id)}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-            selectedCategory === category.id
-              ? "bg-emerald-600 text-white"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
-        >
-          {category.name}
-        </button>
-      ))}
-    </div>
-  )
-}
+
+// Default categories for fallback
+const defaultCategories: ProductCategory[] = [
+  {
+    id: "fresh-fruits",
+    name: "Fresh Fruits",
+    slug: "fresh-fruits",
+    description: "Premium quality fresh fruits from Indian farms",
+    color: "#10b981",
+    isActive: true,
+    _count: { products: 0 }
+  },
+  {
+    id: "fresh-vegetables", 
+    name: "Fresh Vegetables",
+    slug: "fresh-vegetables",
+    description: "Farm-fresh vegetables with international standards",
+    color: "#3b82f6",
+    isActive: true,
+    _count: { products: 0 }
+  },
+  {
+    id: "grains-spices",
+    name: "Grains & Spices",
+    slug: "grains-spices", 
+    description: "Premium grains and authentic Indian spices",
+    color: "#f59e0b",
+    isActive: true,
+    _count: { products: 0 }
+  }
+]
+
+// Default products for fallback
+const defaultProducts: Product[] = [
+  {
+    id: "sample-grapes",
+    name: "Fresh Grapes",
+    slug: "fresh-grapes",
+    description: "Premium quality Nashik grapes with natural sweetness and crunchy texture",
+    shortDescription: "Premium quality Nashik grapes with natural sweetness",
+    imageUrl: "/products/grapes-2.png",
+    category: {
+      id: "fresh-fruits",
+      name: "Fresh Fruits",
+      slug: "fresh-fruits",
+      color: "#10b981"
+    },
+    isFeatured: true,
+    isOrganic: false,
+    isPremium: true,
+    isActive: true,
+    rating: 4.8,
+    reviews: 156,
+    availability: "in-stock",
+    features: ["Natural Sweetness", "Long Shelf Life", "Export Grade", "Premium Quality"],
+    price: { min: 120, max: 180, currency: "USD" }
+  },
+  {
+    id: "sample-onions",
+    name: "Nashik Onions",
+    slug: "nashik-onions",
+    description: "Red and pink onions with strong flavor, firm texture and uniform grading",
+    shortDescription: "Red and pink onions with strong flavor",
+    imageUrl: "/products/onion.png",
+    category: {
+      id: "fresh-vegetables",
+      name: "Fresh Vegetables", 
+      slug: "fresh-vegetables",
+      color: "#3b82f6"
+    },
+    isFeatured: true,
+    isOrganic: false,
+    isPremium: false,
+    isActive: true,
+    rating: 4.6,
+    reviews: 89,
+    availability: "in-stock",
+    features: ["Strong Flavor", "Year-round Available", "Extended Shelf Life", "Uniform Grading"],
+    price: { min: 0.8, max: 1.2, currency: "USD" }
+  }
+]
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState<Product[]>(defaultProducts)
+  const [categories, setCategories] = useState<ProductCategory[]>(defaultCategories)
+  const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [searchQuery] = useState("")
-  const { openModal } = useAppointmentModal()
+  const [searchQuery, setSearchQuery] = useState("")
+
+  // Fetch products and categories
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const [productsRes, categoriesRes] = await Promise.all([
+          fetch("/api/products"),
+          fetch("/api/product-categories")
+        ])
+        
+        const productsData = await productsRes.json()
+        const categoriesData = await categoriesRes.json()
+        
+        console.log("Products data:", productsData)
+        console.log("Categories data:", categoriesData)
+        
+        setProducts(Array.isArray(productsData.products) && productsData.products.length > 0 ? productsData.products : defaultProducts)
+        setCategories(Array.isArray(categoriesData) && categoriesData.length > 0 ? categoriesData : defaultCategories)
+      } catch (error) {
+        console.error("Error fetching data:", error)
+        setProducts(defaultProducts)
+        setCategories(defaultCategories)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const filteredProducts = products.filter(product => {
-    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory
+    const matchesCategory = selectedCategory === "all" || product.category.id === selectedCategory
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase())
+                         (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                         (product.shortDescription && product.shortDescription.toLowerCase().includes(searchQuery.toLowerCase()))
     return matchesCategory && matchesSearch
   })
 
   return (
-    <div className="min-h-screen">
-     
-
-      {/* Products Grid */}
-      <section className="py-16 bg-gray-50  pt-50">
-        <div className="container mx-auto px-4 sm:px-8 lg:px-32">
-          
-
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <div className="text-center md:text-left mb-4 md:mb-0">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+    <div className="min-h-screen pt-24">
+      {/* Products Section */}
+      <section className="py-8 bg-gray-50">
+        <div className="container mx-auto px-6 sm:px-10 lg:px-16 xl:px-24">
+          {/* Header with Title and Filters */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+            {/* Title */}
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                 All Products
-              </h2>
-            </div>
-            <div className="flex justify-center md:justify-end">
-              <ProductFilter 
-                selectedCategory={selectedCategory} 
-                onCategoryChange={setSelectedCategory} 
-              />
-            </div>
-          </div>
-
-          {/* Products Grid */}
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {filteredProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
-          </div>
-
-          {filteredProducts.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <Search className="h-12 w-12 mx-auto" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No products found
-              </h3>
-              <p className="text-gray-600">
-                Try adjusting your search or filter criteria
+              </h1>
+              <p className="text-gray-600 text-sm">
+                {loading ? "Loading..." : `${filteredProducts.length} products available`}
               </p>
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* Quality Assurance Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 sm:px-8 lg:px-32">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Quality Assurance
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Every product undergoes rigorous quality checks to ensure international standards
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Shield,
-                title: "Quality Testing",
-                description: "Comprehensive testing for freshness, nutrition, and safety standards"
-              },
-              {
-                icon: Truck,
-                title: "Cold Chain Logistics",
-                description: "Maintained temperature control throughout the supply chain"
-              },
-              {
-                icon: Clock,
-                title: "Fresh Harvest",
-                description: "Products harvested at optimal ripeness for maximum quality"
-              }
-            ].map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center"
+            
+            {/* Search and Category Filter - Side by Side */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              {/* Search Input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                />
+              </div>
+              
+              {/* Category Dropdown */}
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full sm:w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
               >
-                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <feature.icon className="h-8 w-8 text-emerald-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-emerald-600 to-emerald-700">
-        <div className="container mx-auto px-4 sm:px-8 lg:px-32">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center text-white"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Interested in Our Products?
-            </h2>
-            <p className="text-xl text-emerald-100 mb-8 max-w-2xl mx-auto">
-              Get a customized quote for your specific requirements and volume needs
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                onClick={openModal}
-                size="lg"
-                className="bg-white text-emerald-600 hover:bg-gray-100 px-8 py-3"
-              >
-                Get Quote
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => window.location.href = '/contact'}
-                className="border-white text-white hover:bg-white hover:text-emerald-600 px-8 py-3"
-              >
-                Contact Us
-              </Button>
+                <option value="all">All Categories</option>
+                {Array.isArray(categories) && categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
             </div>
-          </motion.div>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading products...</p>
+            </div>
+          ) : (
+            <>
+              {/* Products Grid - 3 columns */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
+                {filteredProducts.map((product, index) => (
+                  <ProductCard key={product.id} product={product} index={index} />
+                ))}
+              </div>
+
+              {filteredProducts.length === 0 && (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 mb-4">
+                    <Search className="h-12 w-12 mx-auto" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    No products found
+                  </h3>
+                  <p className="text-gray-600">
+                    Try adjusting your search or filter criteria
+                  </p>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
     </div>

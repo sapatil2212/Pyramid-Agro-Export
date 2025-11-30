@@ -4,52 +4,104 @@ import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Leaf } from "lucide-react"
+import { ArrowRight, Leaf, Package } from "lucide-react"
 import { useAppointmentModal } from "@/components/appointment-modal-provider"
+import { useState, useEffect } from "react"
 
-// Product images
-const OnionImage = "/products/onion.png"
-const GrapesImage = "/products/grapes.png"
-const GreenBananaImage = "/products/green-banana.png"
-const GreenChilliesImage = "/products/green-chillies.png"
+interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  shortDescription?: string;
+  imageUrl?: string;
+  heroImageUrl?: string;
+  heroDescription?: string;
+  features?: string[] | Array<{ icon?: string; title?: string; description?: string }>;
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+    color?: string;
+  };
+  isActive: boolean;
+  isFeatured: boolean;
+}
 
-const featuredProducts = [
-  {
-    id: "premium-onions",
-    title: "Premium Onions",
-    description: "Fresh, high-quality onions sourced directly from India's finest farms, perfect for export and culinary excellence.",
-    benefits: ["Export Quality", "Fresh Harvest", "Long Shelf Life", "Premium Grade"],
-    image: OnionImage,
-    link: "/products/onions"
-  },
-  {
-    id: "fresh-grapes",
-    title: "Fresh Grapes",
-    description: "Sweet, juicy grapes grown in optimal conditions, carefully selected and packed for international markets.",
-    benefits: ["Sweet & Juicy", "Export Ready", "Premium Quality", "Fresh Packed"],
-    image: GrapesImage,
-    link: "/products/grapes"
-  },
-  {
-    id: "green-bananas",
-    title: "Green Bananas",
-    description: "Premium green bananas perfect for cooking and export, maintaining freshness and nutritional value.",
-    benefits: ["Nutritious", "Export Grade", "Fresh Harvest", "Quality Assured"],
-    image: GreenBananaImage,
-    link: "/products/banana"
-  },
-  {
-    id: "green-chillies",
-    title: "Green Chillies",
-    description: "Spicy, fresh green chillies with perfect heat levels, ideal for culinary applications and export markets.",
-    benefits: ["Perfect Heat", "Fresh Quality", "Export Ready", "Premium Grade"],
-    image: GreenChilliesImage,
-    link: "/products/green-chillis"
+// Helper to parse features
+function parseFeatures(features: string[] | Array<{ icon?: string; title?: string; description?: string }> | undefined): string[] {
+  if (!features) return []
+  if (Array.isArray(features)) {
+    if (features.length > 0 && typeof features[0] === 'object' && 'title' in features[0]) {
+      return features.map((f) => (typeof f === 'object' && 'title' in f ? f.title : String(f)) || '')
+    }
+    return features.map(String)
   }
-]
+  if (typeof features === 'string') {
+    try {
+      const parsed = JSON.parse(features)
+      if (Array.isArray(parsed)) {
+        if (parsed.length > 0 && typeof parsed[0] === 'object' && 'title' in parsed[0]) {
+          return parsed.map((f: unknown) => (typeof f === 'object' && f !== null && 'title' in f ? (f as { title: string }).title : String(f)))
+        }
+        return parsed.map(String)
+      }
+    } catch {
+      return []
+    }
+  }
+  return []
+}
 
 export function ProductsPreview() {
   const { openModal } = useAppointmentModal()
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products')
+      const data = await response.json()
+      
+      if (response.ok && data.products) {
+        // Filter only active products and shuffle randomly
+        const activeProducts = data.products.filter((p: Product) => p.isActive)
+        const shuffled = [...activeProducts].sort(() => Math.random() - 0.5)
+        // Take first 6 products
+        setProducts(shuffled.slice(0, 6))
+      } else {
+        console.error('Failed to fetch products:', data.error)
+        setProducts([])
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      setProducts([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <section className="py-5 md:py-5 bg-gradient-to-br from-gray-50 via-white to-gray-50">
+        <div className="container mx-auto px-4 sm:px-8 lg:px-32 pt-4 pb-4 md:pt-8 md:pb-20 relative z-10">
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // Don't render if no products
+  if (products.length === 0) {
+    return null
+  }
 
   return (
     <section className="py-5 md:py-5 bg-gradient-to-br from-gray-50 via-white to-gray-50">
@@ -99,96 +151,108 @@ export function ProductsPreview() {
           </motion.p>
         </motion.div>
 
-        {/* Products Grid */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {featuredProducts.map((product, index) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 h-full">
+        {/* Products Grid - 3 columns */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
+          {products.map((product: Product, index: number) => {
+            const imageUrl = product.imageUrl || product.heroImageUrl
+            const features = parseFeatures(product.features)
+            
+            return (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 group"
+              >
                 {/* Image Section */}
-                <div className="relative overflow-hidden order-1 md:order-1">
-                  <Image 
-                    src={product.image} 
-                    alt={product.title}
-                    width={300}
-                    height={200}
-                    className="w-full h-48 md:h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const placeholder = target.nextElementSibling as HTMLElement;
-                      if (placeholder) placeholder.style.display = 'flex';
-                    }}
-                  />
+                <div className="relative h-[300px] overflow-hidden">
+                  {imageUrl ? (
+                    <Image 
+                      src={imageUrl} 
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const placeholder = target.parentElement?.querySelector('.placeholder') as HTMLElement;
+                        if (placeholder) placeholder.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
                   <div 
-                    className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-amber-100 flex items-center justify-center"
-                    style={{ display: 'none' }}
+                    className={`placeholder absolute inset-0 bg-gradient-to-br from-emerald-100 to-amber-100 flex items-center justify-center ${imageUrl ? 'hidden' : 'flex'}`}
                   >
                     <div className="text-center text-gray-600">
-                      <Leaf className="h-12 w-12 mx-auto mb-2 text-emerald-500" />
-                      <p className="text-sm font-semibold">{product.title}</p>
+                      <Package className="h-10 w-10 mx-auto mb-2 text-emerald-500" />
+                      <p className="text-sm font-medium">{product.name}</p>
                     </div>
                   </div>
+                  
+                  {/* Category Badge */}
+                  {product.category && (
+                    <div className="absolute top-2 left-2">
+                      <span 
+                        className="text-white text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                        style={{ backgroundColor: product.category.color || '#10b981' }}
+                      >
+                        {product.category.name}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Content Section */}
-                <div className="p-6 flex flex-col justify-between order-2 md:order-2">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">
-                      {product.title}
-                    </h3>
-                    
-                    <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                      {product.description}
-                    </p>
-                    
-                    <div className="space-y-2">
-                      <div className="text-xs font-medium text-emerald-600">Key Features:</div>
-                      <div className="flex flex-wrap gap-1">
-                        {product.benefits.slice(0, 3).map((benefit, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium"
-                          >
-                            {benefit}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <div className="flex gap-2">
-                      <Link href={product.link} className="flex-1">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full text-xs px-3 py-1 group border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                <div className="p-4">
+                  <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-1">
+                    {product.name}
+                  </h3>
+                  
+                  <p className="text-xs text-gray-600 mb-3 line-clamp-2">
+                    {product.shortDescription || product.description || product.heroDescription || 'Premium quality agricultural product for export.'}
+                  </p>
+                  
+                  {features.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {features.slice(0, 2).map((feature: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-medium"
                         >
-                          View Details
-                          <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        onClick={openModal}
-                        className="flex-1 text-xs px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white"
-                      >
-                        Get Quote
-                      </Button>
+                          {feature}
+                        </span>
+                      ))}
                     </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <Link href={`/products/${product.slug}`} className="flex-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-xs h-8 group border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                      >
+                        View Details
+                        <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={openModal}
+                      className="flex-1 text-xs h-8 bg-emerald-600 hover:bg-emerald-700 text-white"
+                    >
+                      Get Quote
+                    </Button>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            )
+          })}
         </div>
 
         {/* View All Products Button */}

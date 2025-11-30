@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const aboutContent = await prisma.aboutPageContent.findMany({
+    const content = await prisma.aboutPageContent.findMany({
       orderBy: { createdAt: 'asc' }
     });
 
-    return NextResponse.json(aboutContent);
+    return NextResponse.json(content);
   } catch (error) {
     console.error('Error fetching about content:', error);
     return NextResponse.json(
@@ -21,45 +19,50 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session) {
+    const body = await request.json();
+    const { section, title, subtitle, description, imageUrl, buttonText, buttonLink, isActive } = body;
+
+    // Validate required fields
+    if (!section) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: 'Section is required' },
+        { status: 400 }
       );
     }
 
-    const body = await request.json();
-    const { section, title, subtitle, description, imageUrl, buttonText, buttonLink } = body;
+    // Check if section already exists (only for single-content sections)
+    const singleContentSections = ['story', 'team'];
+    if (singleContentSections.includes(section)) {
+      const existingContent = await prisma.aboutPageContent.findFirst({
+        where: { section }
+      });
 
-    const aboutContent = await prisma.aboutPageContent.upsert({
-      where: { section },
-      update: {
-        title,
-        subtitle,
-        description,
-        imageUrl,
-        buttonText,
-        buttonLink,
-        updatedAt: new Date()
-      },
-      create: {
+      if (existingContent) {
+        return NextResponse.json(
+          { error: 'Content for this section already exists' },
+          { status: 400 }
+        );
+      }
+    }
+
+    const content = await prisma.aboutPageContent.create({
+      data: {
         section,
         title,
         subtitle,
         description,
         imageUrl,
         buttonText,
-        buttonLink
+        buttonLink,
+        isActive: isActive ?? true
       }
     });
 
-    return NextResponse.json(aboutContent);
+    return NextResponse.json(content, { status: 201 });
   } catch (error) {
-    console.error('Error updating about content:', error);
+    console.error('Error creating about content:', error);
     return NextResponse.json(
-      { error: 'Failed to update about content' },
+      { error: 'Failed to create about content' },
       { status: 500 }
     );
   }

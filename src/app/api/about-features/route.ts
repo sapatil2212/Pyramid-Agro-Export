@@ -1,15 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+interface AboutFeaturePayload {
+  section: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  order?: number;
+  isActive?: boolean;
+}
+
+export async function GET(request: NextRequest) {
   try {
-    const aboutFeatures = await prisma.aboutFeature.findMany({
+    const { searchParams } = new URL(request.url);
+    const section = searchParams.get('section');
+    const active = searchParams.get('active');
+
+    const where: Prisma.AboutFeatureWhereInput = {};
+    if (section) where.section = section;
+    if (active === 'true') where.isActive = true;
+
+    const features = await prisma.aboutFeature.findMany({
+      where,
       orderBy: { order: 'asc' }
     });
 
-    return NextResponse.json(aboutFeatures);
+    return NextResponse.json(features);
   } catch (error) {
     console.error('Error fetching about features:', error);
     return NextResponse.json(
@@ -21,29 +38,39 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session) {
+    const body = (await request.json()) as AboutFeaturePayload;
+    const { section, title, description, icon, order, isActive } = body;
+
+    // Validate required fields
+    if (!section || !title) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: 'Section and title are required' },
+        { status: 400 }
       );
     }
 
-    const body = await request.json();
-    const { section, title, description, icon, order } = body;
+    // Get the next order number if not provided
+    let nextOrder = order;
+    if (nextOrder === undefined) {
+      const lastFeature = await prisma.aboutFeature.findFirst({
+        where: { section },
+        orderBy: { order: 'desc' }
+      });
+      nextOrder = lastFeature ? lastFeature.order + 1 : 0;
+    }
 
-    const aboutFeature = await prisma.aboutFeature.create({
+    const feature = await prisma.aboutFeature.create({
       data: {
         section,
         title,
         description,
         icon,
-        order: order || 0
+        order: nextOrder,
+        isActive: isActive ?? true
       }
     });
 
-    return NextResponse.json(aboutFeature);
+    return NextResponse.json(feature, { status: 201 });
   } catch (error) {
     console.error('Error creating about feature:', error);
     return NextResponse.json(

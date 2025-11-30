@@ -7,6 +7,7 @@ import { ProductsPreview } from "@/components/products-preview"
 import { InteractiveGallery } from "@/components/interactive-gallery"
 import { TestimonialsSection } from "@/components/testimonials-section"
 import { ExportProcessSection } from "@/components/export-process-section"
+import { ExportCtaSection } from "@/components/export-cta-section"
 
 export default function Home() {
   return (
@@ -16,10 +17,9 @@ export default function Home() {
       <ProductsPreview />
       <ExportProcessSection />
       <ServicesPreview />
-     
       <InteractiveGallery />
-     
       <TestimonialsSection />
+      <ExportCtaSection />
     </>
   )
 }

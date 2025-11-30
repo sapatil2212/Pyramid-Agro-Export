@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation"
 import { Menu, X, Phone, ArrowRight, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { NAVIGATION, COMPANY_INFO } from "@/lib/constants"
+import { COMPANY_INFO } from "@/lib/constants"
+import { useNavigation } from "@/hooks/use-navigation"
 import { cn, formatPhoneNumber } from "@/lib/utils"
-import Image from "next/image"
 interface NavigationItem {
   id: string
   name: string
@@ -29,8 +29,28 @@ export function Header({ onAppointmentClick }: HeaderProps) {
   const [clickedDropdown, setClickedDropdown] = React.useState<string | null>(null)
   const [dropdownTimeout, setDropdownTimeout] = React.useState<NodeJS.Timeout | null>(null)
   const [isMobile, setIsMobile] = React.useState(false)
+  const [navbarLogo, setNavbarLogo] = React.useState<string>("/Logo_v1.png")
   const pathname = usePathname()
   const menuRef = React.useRef<HTMLDivElement>(null)
+  const { navigationItems } = useNavigation()
+
+  // Fetch navbar logo from site settings
+  React.useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const response = await fetch("/api/site-settings?keys=navbar_logo")
+        if (response.ok) {
+          const data = await response.json()
+          if (data.navbar_logo) {
+            setNavbarLogo(data.navbar_logo)
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch navbar logo:", error)
+      }
+    }
+    fetchLogo()
+  }, [])
 
   React.useEffect(() => {
     let ticking = false
@@ -313,26 +333,11 @@ export function Header({ onAppointmentClick }: HeaderProps) {
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <div className="relative">
-                {/* Desktop Logo */}
-                <Image 
-                  src="/Logo_v1.png"
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={navbarLogo}
                   alt="Pyramid Agro Exports Logo"
-                  width={120}
-                  height={48}
-                  className="hidden lg:block will-change-transform"
-                  style={{
-                    height: `${logoScale * 48}px`,
-                    width: 'auto',
-                    transition: 'height 0.6s cubic-bezier(0.4, 0.0, 0.2, 1)',
-                  }}
-                />
-                {/* Mobile Logo */}
-                <Image 
-                  src="/Logo_v2.png"
-                  alt="Pyramid Agro Exports Logo"
-                  width={120}
-                  height={48}
-                  className="lg:hidden will-change-transform"
+                  className="will-change-transform"
                   style={{
                     height: `${logoScale * 48}px`,
                     width: 'auto',
@@ -344,7 +349,7 @@ export function Header({ onAppointmentClick }: HeaderProps) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8" style={{ overflow: 'visible' }}>
-              {NAVIGATION.map((item) => {
+              {navigationItems.map((item) => {
                 const isDropdownOpen = hoveredDropdown === item.name || clickedDropdown === item.name
                 
                 return (
@@ -595,7 +600,7 @@ export function Header({ onAppointmentClick }: HeaderProps) {
                 }}
               >
                 <div className="space-y-4">
-                  {NAVIGATION.map((item) => (
+                  {navigationItems.map((item) => (
                     <div key={item.href}>
                       {item.hasDropdown && item.dropdownItems ? (
                         <div className="space-y-2">
@@ -640,9 +645,9 @@ export function Header({ onAppointmentClick }: HeaderProps) {
                                         </Link>
                                       ) : (
                                         <button
-                                          onClick={() => toggleSubCategory(category.id)}
+                                          onClick={() => category.id && toggleSubCategory(category.id)}
                                           className="flex items-center justify-between w-full text-xs font-medium py-2.5 px-3 text-gray-700 hover:text-emerald-600 transition-all duration-200 rounded-lg hover:bg-white/90 hover:shadow-sm"
-                                          aria-expanded={openSubCategories.has(category.id)}
+                                          aria-expanded={category.id ? openSubCategories.has(category.id) : false}
                                           aria-haspopup="true"
                                         >
                                           <div className="text-left">
@@ -651,7 +656,7 @@ export function Header({ onAppointmentClick }: HeaderProps) {
                                           </div>
                                           {'hasSubDropdown' in category && category.hasSubDropdown && (
                                             <motion.div
-                                              animate={{ rotate: openSubCategories.has(category.id) ? 180 : 0 }}
+                                              animate={{ rotate: category.id && openSubCategories.has(category.id) ? 180 : 0 }}
                                               transition={{ duration: 0.2, ease: "easeInOut" }}
                                               className="text-gray-400"
                                             >
@@ -664,7 +669,7 @@ export function Header({ onAppointmentClick }: HeaderProps) {
                                       {/* Sub-dropdown for products */}
                                       {'hasSubDropdown' in category && category.hasSubDropdown && 'subItems' in category && category.subItems && (
                                         <AnimatePresence>
-                                          {openSubCategories.has(category.id) && (
+                                          {category.id && openSubCategories.has(category.id) && (
                                             <motion.div
                                               initial={{ opacity: 0, height: 0 }}
                                               animate={{ opacity: 1, height: "auto" }}

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
+import { useState, useEffect } from "react"
 import { 
   Phone, 
   Mail, 
@@ -28,15 +28,59 @@ const quickLinks = [
   { name: "Certifications", href: "/about#certifications" }
 ]
 
-const offices = [
-  {
-    city: "Nashik",
-    address: "Ground Floor, Shree Hari Plaza, Abhang Nagar, New Adgaon Naka, Panchavati, Nashik, Maharashtra 422003",
-    phone: "+91 91300 70701"
-  }
-]
+interface ContactInfo {
+  phone: string;
+  whatsapp: string;
+  email: string;
+  address: string;
+  city: string;
+  mapUrl: string;
+  facebook: string;
+  twitter: string;
+  linkedin: string;
+  instagram: string;
+}
+
+const defaultContactInfo: ContactInfo = {
+  phone: "+91 91300 70701",
+  whatsapp: "+91 91300 70701",
+  email: "info@pyramidagroexports.com",
+  address: "Ground Floor, Shree Hari Plaza, Abhang Nagar, New Adgaon Naka, Panchavati, Nashik, Maharashtra 422003",
+  city: "Nashik",
+  mapUrl: "https://maps.app.goo.gl/41wjFQCukoUpB9m29?g_st=ipc",
+  facebook: "",
+  twitter: "",
+  linkedin: "",
+  instagram: ""
+}
 
 export function Footer() {
+  const [contactInfo, setContactInfo] = useState<ContactInfo>(defaultContactInfo);
+  const [footerLogo, setFooterLogo] = useState<string>("");
+  const [footerLogoMobile, setFooterLogoMobile] = useState<string>("");
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch("/api/site-settings?keys=contact_info,footer_logo,footer_logo_mobile");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.contact_info) {
+            try {
+              setContactInfo(JSON.parse(data.contact_info));
+            } catch (e) {
+              console.error("Failed to parse contact info:", e);
+            }
+          }
+          if (data.footer_logo) setFooterLogo(data.footer_logo);
+          if (data.footer_logo_mobile) setFooterLogoMobile(data.footer_logo_mobile);
+        }
+      } catch (error) {
+        console.error("Failed to fetch settings:", error);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 text-white">
@@ -50,19 +94,17 @@ export function Footer() {
             <div className="flex items-center space-x-3 mb-6">
               <div className="relative">
                 {/* Desktop Logo */}
-                <Image 
-                  src="/Logo_v1.png"
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={footerLogo || "/Logo_v1.png"}
                   alt="Pyramid Agro Exports Logo"
-                  width={120}
-                  height={48}
                   className="hidden lg:block h-12 w-auto"
                 />
                 {/* Mobile Logo */}
-                <Image 
-                  src="/Logo_v2.png"
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={footerLogoMobile || "/Logo_v2.png"}
                   alt="Pyramid Agro Exports Logo"
-                  width={120}
-                  height={48}
                   className="lg:hidden h-12 w-auto"
                 />
               </div>
@@ -75,15 +117,34 @@ export function Footer() {
             
             {/* Social Links */}
             <div className="flex space-x-4">
-              {[Facebook, Twitter, Linkedin, Instagram].map((Icon, index) => (
-                <a
-                  key={index}
-                  href="#"
-                  className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200"
-                >
-                  <Icon className="h-5 w-5" />
+              {contactInfo.facebook && (
+                <a href={contactInfo.facebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200">
+                  <Facebook className="h-5 w-5" />
                 </a>
-              ))}
+              )}
+              {contactInfo.twitter && (
+                <a href={contactInfo.twitter} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200">
+                  <Twitter className="h-5 w-5" />
+                </a>
+              )}
+              {contactInfo.linkedin && (
+                <a href={contactInfo.linkedin} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200">
+                  <Linkedin className="h-5 w-5" />
+                </a>
+              )}
+              {contactInfo.instagram && (
+                <a href={contactInfo.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200">
+                  <Instagram className="h-5 w-5" />
+                </a>
+              )}
+              {!contactInfo.facebook && !contactInfo.twitter && !contactInfo.linkedin && !contactInfo.instagram && (
+                <>
+                  <a href="#" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200"><Facebook className="h-5 w-5" /></a>
+                  <a href="#" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200"><Twitter className="h-5 w-5" /></a>
+                  <a href="#" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200"><Linkedin className="h-5 w-5" /></a>
+                  <a href="#" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200"><Instagram className="h-5 w-5" /></a>
+                </>
+              )}
             </div>
           </div>
 
@@ -126,30 +187,19 @@ export function Footer() {
           {/* Contact Info */}
           <div>
             <h3 className="text-xl font-semibold mb-6">Contact Us</h3>
-            <div className="space-y-6">
-              {offices.map((office, index) => (
-                <div key={index} className="space-y-2 text-sm">
-                    <div className="flex items-center space-x-2 text-gray-300">
-                      <Phone className="h-4 w-4" />
-                      <span>{office.phone}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-gray-300 mb-2">
-                  <Mail className="h-4 w-4" />
-                  <span>info@pyramidagroexports.com</span>
-                </div>
-                    <div className="flex items-start space-x-2 text-gray-300">
-                      <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                      <span>{office.address}</span>
-                    </div>
-                    
-                    
-                
-                  </div>
-                
-              ))}
-              
-           
-             
+            <div className="space-y-4 text-sm">
+              <div className="flex items-center space-x-2 text-gray-300">
+                <Phone className="h-4 w-4 flex-shrink-0" />
+                <span>{contactInfo.phone}</span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-300">
+                <Mail className="h-4 w-4 flex-shrink-0" />
+                <span>{contactInfo.email}</span>
+              </div>
+              <div className="flex items-start space-x-2 text-gray-300">
+                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <span>{contactInfo.address}</span>
+              </div>
             </div>
           </div>
         </div>

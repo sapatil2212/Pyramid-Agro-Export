@@ -28,23 +28,33 @@ async function main() {
       isActive: true
     },
     {
-      section: 'services-preview',
-      title: 'Our Services',
-      subtitle: 'Comprehensive Export Solutions',
-      description: 'From farm to port, we provide end-to-end export solutions ensuring your products reach global markets in perfect condition. Our services include quality control, packaging, logistics, and compliance with international standards.',
+      section: 'products-preview',
+      title: '',
+      subtitle: '',
+      description: '',
       imageUrl: null,
-      buttonText: 'View Services',
-      buttonLink: '/services',
+      buttonText: '',
+      buttonLink: '',
       isActive: true
     },
     {
-      section: 'products-preview',
-      title: 'Premium Agricultural Products',
-      subtitle: 'Fresh from Indian Farms',
-      description: 'Discover our wide range of premium agricultural products including fresh fruits, vegetables, grains, and spices. Each product is carefully selected and processed to meet the highest international quality standards.',
+      section: 'interactive-gallery',
+      title: 'Interactive Gallery',
+      subtitle: 'Visual Showcase of Our Excellence',
+      description: 'Explore our interactive gallery showcasing our facilities, products, and processes through stunning visuals',
       imageUrl: null,
-      buttonText: 'View Products',
-      buttonLink: '/products',
+      buttonText: '',
+      buttonLink: '',
+      isActive: true
+    },
+    {
+      section: 'testimonials',
+      title: 'Customer Reviews',
+      subtitle: 'What Our Valued Clients Say About Us',
+      description: 'Real experiences from our international clients who trust us for premium agricultural exports',
+      imageUrl: null,
+      buttonText: '',
+      buttonLink: '',
       isActive: true
     }
   ];
@@ -58,6 +68,49 @@ async function main() {
       data: content
     });
     console.log(`✅ Created content for section: ${content.section}`);
+  }
+
+  // Seed products and categories
+  console.log('🌱 Seeding product categories and products...');
+  
+  // Import and run product seeding
+  const { exec } = require('child_process');
+  const { promisify } = require('util');
+  const execAsync = promisify(exec);
+  
+  try {
+    await execAsync('npx tsx prisma/seed-products.ts');
+    console.log('✅ Product seeding completed');
+  } catch (error) {
+    console.error('❌ Error seeding products:', error);
+  }
+
+  // Seed product previews
+  try {
+    await execAsync('npx tsx prisma/seed-product-previews.ts');
+    console.log('✅ Product previews seeding completed');
+  } catch (error) {
+    console.error('❌ Error seeding product previews:', error);
+  }
+
+  // Seed facilities section
+  try {
+    await execAsync('npx tsx prisma/seed-facilities-section.ts');
+    console.log('✅ Facilities section seeding completed');
+  } catch (error) {
+    console.error('❌ Error seeding facilities section:', error);
+  }
+
+  // Seed testimonials
+  try {
+  await execAsync('npx tsx prisma/seed-testimonials.ts');
+  console.log('✅ Testimonials seeding completed');
+
+  // Run about content seed
+  await execAsync('npx tsx prisma/seed-about-content.ts');
+  console.log('✅ About content seeding completed');
+  } catch (error) {
+    console.error('❌ Error seeding testimonials:', error);
   }
 
   console.log('🎉 Database seeding completed successfully!');

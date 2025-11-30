@@ -19,7 +19,7 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { name, fullName, issuer, validUntil, description, icon, color, features, order, isActive } = body;
+    const { name, fullName, issuer, validUntil, description, imageUrl, icon, color, features, order, isActive } = body;
 
     const certification = await prisma.certification.update({
       where: { id },
@@ -29,6 +29,7 @@ export async function PUT(
         issuer,
         validUntil,
         description,
+        imageUrl,
         icon,
         color,
         features: features ? JSON.stringify(features) : null,

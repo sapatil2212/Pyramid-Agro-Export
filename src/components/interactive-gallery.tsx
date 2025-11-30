@@ -5,60 +5,21 @@ import { X, ZoomIn, ZoomOut, RotateCcw, ChevronLeft, ChevronRight } from 'lucide
 import Image from 'next/image';
 
 interface GalleryImage {
-  id: number;
-  src: string;
-  alt: string;
+  id: string;
+  imageUrl: string;
+  altText?: string;
+  title?: string;
+  description?: string;
+  section: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
-const galleryImages: GalleryImage[] = [
-  {
-    id: 1,
-    src: "/home-gallery/gallery-1.webp",
-    alt: "Pyramid Agro Export - Fresh Agricultural Products"
-  },
-  {
-    id: 2,
-    src: "/home-gallery/gallery-2.webp",
-    alt: "Quality Control and Processing Facility"
-  },
-  {
-    id: 3,
-    src: "/home-gallery/gallery-3.webp",
-    alt: "Modern Packaging and Storage"
-  },
-  {
-    id: 4,
-    src: "/home-gallery/gallery-4.webp",
-    alt: "Export Ready Products"
-  },
-  {
-    id: 5,
-    src: "/home-gallery/gallery-5.webp",
-    alt: "Sustainable Farming Practices"
-  },
-  {
-    id: 6,
-    src: "/home-gallery/gallery-6.webp",
-    alt: "Global Distribution Network"
-  },
-  {
-    id: 7,
-    src: "/home-gallery/gallery-7.webp",
-    alt: "Premium Quality Assurance"
-  },
-  {
-    id: 8,
-    src: "/home-gallery/gallery-8.webp",
-    alt: "Farm to Table Freshness"
-  },
-  {
-    id: 9,
-    src: "/home-gallery/gallery-9.webp",
-    alt: "International Export Standards"
-  }
-];
-
 export function InteractiveGallery() {
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -66,6 +27,31 @@ export function InteractiveGallery() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const scrollPositionRef = useRef<number>(0);
+
+  // Fetch gallery images from API
+  useEffect(() => {
+    const fetchGalleryImages = async () => {
+      try {
+        const response = await fetch('/api/gallery-images?section=interactive');
+        const data = await response.json();
+        
+        if (response.ok) {
+          console.log('Fetched interactive gallery images:', data);
+          const activeImages = data.filter((img: GalleryImage) => img.isActive);
+          console.log('Active interactive gallery images:', activeImages);
+          setGalleryImages(activeImages);
+        } else {
+          console.error('Failed to fetch interactive gallery images:', data.error);
+        }
+      } catch (error) {
+        console.error('Error fetching interactive gallery images:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGalleryImages();
+  }, []);
 
   // Smooth auto-scroll using requestAnimationFrame
   const smoothAutoScroll = useCallback(() => {
@@ -216,60 +202,63 @@ export function InteractiveGallery() {
       <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
         <div className="bg-gradient-to-br from-emerald-50 via-white to-amber-50 backdrop-blur-sm border border-gray-200 rounded-3xl p-8 lg:p-12">
           
-          {/* Header */}
-          <div className="text-center mb-8 lg:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Explore Our{" "}
-              <span className="text-emerald-600">
-                Modern
-              </span>{" "}
-              Facilities
-            </h2>
-            <p className="text-sm md:text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Take a virtual tour of our state-of-the-art agricultural processing facilities and discover the advanced technology and quality standards we maintain for your produce
-            </p>
-          </div>
 
           {/* Gallery Grid */}
-          <div 
-            ref={scrollContainerRef}
-            className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide relative"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onScroll={handleScroll}
-            style={{ 
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none'
-            }}
-          >
-            {/* Duplicate images for seamless loop */}
-            {[...galleryImages, ...galleryImages].map((image, index) => (
-              <div
-                key={`${image.id}-${index}`}
-                className="flex-shrink-0 w-80 h-64 group cursor-pointer"
-                onClick={() => openModal(image)}
-                style={{
-                  animation: 'fadeInOut 0.8s ease-in-out',
-                  opacity: 0,
-                  animationFillMode: 'forwards',
-                  animationDelay: `${index * 0.1}s`
-                }}
-              >
-                <div className="relative w-full h-full rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    width={320}
-                    height={256}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDMyMCAyNTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjU2IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNjAgMTI4QzE2MCAxNDEuNDY0IDE0OS4zMjQgMTUyIDEzNiAxNTJDMTIyLjY3NiAxNTIgMTEyIDE0MS40NjQgMTEyIDEyOEMxMTIgMTE0LjUzNiAxMjIuNjc2IDEwNCAxMzYgMTA0QzE0OS4zMjQgMTA0IDE2MCAxMTQuNTM2IDE2MCAxMjhaIiBmaWxsPSIjOUI5QkE1Ii8+Cjx0ZXh0IHg9IjE2MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNkI3MjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiPkltYWdlIExvYWRpbmcuLi48L3RleHQ+Cjwvc3ZnPgo="
-                    }}
-                  />
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+            </div>
+          ) : galleryImages.length > 0 ? (
+            <div 
+              ref={scrollContainerRef}
+              className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide relative"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onScroll={handleScroll}
+              style={{ 
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
+            >
+              {/* Gallery images */}
+              {galleryImages.map((image, index) => (
+                <div
+                  key={`${image.id}-${index}`}
+                  className="flex-shrink-0 w-80 h-64 group cursor-pointer"
+                  onClick={() => openModal(image)}
+                  style={{
+                    animation: 'fadeInOut 0.8s ease-in-out',
+                    opacity: 0,
+                    animationFillMode: 'forwards',
+                    animationDelay: `${index * 0.1}s`
+                  }}
+                >
+                  <div className="relative w-full h-full rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                    <Image
+                      src={image.imageUrl}
+                      alt={image.altText || image.title || 'Gallery image'}
+                      width={320}
+                      height={256}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDMyMCAyNTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjU2IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNjAgMTI4QzE2MCAxNDEuNDY0IDE0OS4zMjQgMTUyIDEzNiAxNTJDMTIyLjY3NiAxNTIgMTEyIDE0MS40NjQgMTEyIDEyOEMxMTIgMTE0LjUzNiAxMjIuNjc2IDEwNCAxMzYgMTA0QzE0OS4zMjQgMTA0IDE2MCAxMTQuNTM2IDE2MCAxMjhaIiBmaWxsPSIjOUI5QkE1Ii8+Cjx0ZXh0IHg9IjE2MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNkI3MjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiPkltYWdlIExvYWRpbmcuLi48L3RleHQ+Cjwvc3ZnPgo="
+                      }}
+                    />
+                  </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-gray-400 mb-4">
+                <svg className="h-16 w-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
               </div>
-            ))}
-          </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Images Available</h3>
+              <p className="text-gray-600">Gallery images will appear here once uploaded.</p>
+            </div>
+          )}
 
         </div>
       </div>
@@ -327,8 +316,8 @@ export function InteractiveGallery() {
             {selectedImage && (
               <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
                 <Image
-                  src={selectedImage.src}
-                  alt={selectedImage.alt}
+                  src={selectedImage.imageUrl}
+                  alt={selectedImage.altText || selectedImage.title || 'Gallery image'}
                   width={800}
                   height={600}
                   className="max-w-full max-h-full object-contain transition-transform duration-300"

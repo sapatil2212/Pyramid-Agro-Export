@@ -1,15 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+interface TeamMemberPayload {
+  name: string;
+  position: string;
+  bio?: string;
+  expertise?: string[] | null;
+  email?: string;
+  linkedin?: string;
+  imageUrl?: string;
+  order?: number;
+  isActive?: boolean;
+}
+
+export async function GET(request: NextRequest) {
   try {
-    const teamMembers = await prisma.teamMember.findMany({
+    const { searchParams } = new URL(request.url);
+    const active = searchParams.get('active');
+
+    const where: Prisma.TeamMemberWhereInput = {};
+    if (active === 'true') where.isActive = true;
+
+    const members = await prisma.teamMember.findMany({
+      where,
       orderBy: { order: 'asc' }
     });
 
-    return NextResponse.json(teamMembers);
+    return NextResponse.json(members);
   } catch (error) {
     console.error('Error fetching team members:', error);
     return NextResponse.json(
@@ -21,32 +39,41 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session) {
+    const body = (await request.json()) as TeamMemberPayload;
+    const { name, position, bio, expertise, email, linkedin, imageUrl, order, isActive } = body;
+
+    // Validate required fields
+    if (!name || !position) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: 'Name and position are required' },
+        { status: 400 }
       );
     }
 
-    const body = await request.json();
-    const { name, position, bio, expertise, email, linkedin, imageUrl, order } = body;
+    // Get the next order number if not provided
+    let nextOrder = order;
+    if (nextOrder === undefined) {
+      const lastMember = await prisma.teamMember.findFirst({
+        orderBy: { order: 'desc' }
+      });
+      nextOrder = lastMember ? lastMember.order + 1 : 0;
+    }
 
-    const teamMember = await prisma.teamMember.create({
+    const member = await prisma.teamMember.create({
       data: {
         name,
         position,
         bio,
-        expertise: expertise ? JSON.stringify(expertise) : null,
+        expertise: Array.isArray(expertise) ? JSON.stringify(expertise) : expertise,
         email,
         linkedin,
         imageUrl,
-        order: order || 0
+        order: nextOrder,
+        isActive: isActive ?? true
       }
     });
 
-    return NextResponse.json(teamMember);
+    return NextResponse.json(member, { status: 201 });
   } catch (error) {
     console.error('Error creating team member:', error);
     return NextResponse.json(

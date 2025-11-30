@@ -14,8 +14,8 @@ interface HeroImage {
   subtitle?: string;
   order: number;
   isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface HeroImageModalProps {
@@ -37,8 +37,10 @@ export function HeroImageModal({ isOpen, onClose, image, onSave, onDelete, onAdd
   });
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setError(null);
     if (image) {
       setFormData({
         title: image.title || '',
@@ -56,7 +58,7 @@ export function HeroImageModal({ isOpen, onClose, image, onSave, onDelete, onAdd
         imageUrl: ''
       });
     }
-  }, [image]);
+  }, [image, isOpen]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
@@ -67,34 +69,48 @@ export function HeroImageModal({ isOpen, onClose, image, onSave, onDelete, onAdd
 
   const handleImageUpload = async (file: File) => {
     setUploading(true);
+    setError(null);
     try {
-      const formData = new FormData();
-      formData.append('file', file);
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', file);
 
       const response = await fetch('/api/upload-image', {
         method: 'POST',
-        body: formData
+        body: uploadFormData
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Update the image URL in the form
+        // Update the image URL in the form (API returns 'url' not 'imageUrl')
         setFormData(prev => ({
           ...prev,
-          imageUrl: data.imageUrl
+          imageUrl: data.url || data.imageUrl
         }));
       } else {
         throw new Error(data.error || 'Failed to upload image');
       }
-    } catch (error) {
-      console.error('Error uploading image:', error);
+    } catch (err: unknown) {
+      console.error('Error uploading image:', err);
+      setError(err instanceof Error ? err.message : 'Failed to upload image');
     } finally {
       setUploading(false);
     }
   };
 
   const handleSave = async () => {
+    setError(null);
+    
+    // Validate required fields
+    if (!formData.imageUrl) {
+      setError('Please upload an image first');
+      return;
+    }
+    if (!formData.title?.trim()) {
+      setError('Please enter a title');
+      return;
+    }
+    
     setSaving(true);
     try {
       if (image) {
@@ -114,7 +130,8 @@ export function HeroImageModal({ isOpen, onClose, image, onSave, onDelete, onAdd
           onSave(updatedImage);
           onClose();
         } else {
-          throw new Error('Failed to save image');
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to save image');
         }
       } else if (onAdd) {
         // Adding new image
@@ -134,11 +151,13 @@ export function HeroImageModal({ isOpen, onClose, image, onSave, onDelete, onAdd
           onAdd(savedImage);
           onClose();
         } else {
-          throw new Error('Failed to add image');
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to add image');
         }
       }
-    } catch (error) {
-      console.error('Error saving image:', error);
+    } catch (err: unknown) {
+      console.error('Error saving image:', err);
+      setError(err instanceof Error ? err.message : 'Failed to save image');
     } finally {
       setSaving(false);
     }
@@ -178,6 +197,13 @@ export function HeroImageModal({ isOpen, onClose, image, onSave, onDelete, onAdd
 
         {/* Content */}
         <div className="p-4 space-y-4">
+          {/* Error Message */}
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+          
           {/* Image Upload/Display */}
           <div className="space-y-2">
             <label className="block text-xs font-medium text-gray-600">

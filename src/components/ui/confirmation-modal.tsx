@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 import { AlertTriangle, X } from "lucide-react"
 
 interface ConfirmationModalProps {
@@ -41,10 +42,16 @@ export function ConfirmationModal({
 
   const handleConfirm = () => {
     onConfirm()
-    handleClose()
+    // Don't auto-close - let the parent handle closing after async operation completes
   }
 
-  if (!isOpen) return null
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!isOpen || !mounted) return null
 
   const getIconAndColors = () => {
     switch (type) {
@@ -85,20 +92,23 @@ export function ConfirmationModal({
 
   const { icon: Icon, iconColor, iconBg, confirmBg, confirmText: confirmTextColor } = getIconAndColors()
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
       {/* Backdrop */}
       <div 
-        className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-200 ${
+        className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-200 ${
           show ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={handleClose}
       />
       
       {/* Modal */}
-      <div className={`relative bg-white rounded-lg shadow-2xl p-6 mx-4 max-w-sm w-full transform transition-all duration-200 ${
-        show ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-      }`}>
+      <div 
+        className={`relative z-[10000] bg-white rounded-lg shadow-2xl p-6 mx-4 max-w-sm w-full transform transition-all duration-200 ${
+          show ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Close Button */}
         <button
           onClick={handleClose}
@@ -146,4 +156,6 @@ export function ConfirmationModal({
       </div>
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }

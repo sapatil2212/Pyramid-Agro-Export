@@ -15,10 +15,7 @@ const navigation = [
   { name: "Home", href: "/dashboard/home", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
   { name: "About", href: "/dashboard/about", icon: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
   { name: "Products", href: "/dashboard/products", icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" },
-  { name: "Orders", href: "/dashboard/orders", icon: "M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
-  { name: "Customers", href: "/dashboard/customers", icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" },
-  { name: "Analytics", href: "/dashboard/analytics", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
-  { name: "Reports", href: "/dashboard/reports", icon: "M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
+  { name: "Website Enquiries", href: "/dashboard/enquiries", icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
   { name: "Settings", href: "/dashboard/settings", icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" },
 ];
 
@@ -101,11 +98,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 );
               })}
             </div>
+          </nav>
 
-            {/* Divider */}
-            <div className="border-t border-gray-200/60 my-6" />
-
-            {/* Help & Support */}
+          {/* Help & Support Section - Bottom of Sidebar */}
+          <div className="border-t border-gray-200/60 p-4">
             <div className="space-y-1">
               <h3 className="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
                 Help & Support
@@ -128,28 +124,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <span className="font-medium text-sm">{item.name}</span>
                 </Link>
               ))}
-            </div>
-          </nav>
-
-          {/* User Account Section */}
-          <div className="border-t border-gray-200/60 p-4 bg-gradient-to-r from-slate-50 to-gray-50/50">
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 relative">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
-                  <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-gray-900 truncate">John Doe</p>
-                <p className="text-xs text-gray-500 truncate font-medium">john@pyramidagro.com</p>
-                <div className="flex items-center mt-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                  <span className="text-xs text-green-600 font-semibold">Online</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>

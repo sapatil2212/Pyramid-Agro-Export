@@ -3,20 +3,24 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { LoadingSpinner, ToggleLoader } from "@/components/ui/loading-spinner";
 import { 
+  Eye, 
+  Edit, 
   Plus,
-  Edit,
-  Trash2,
-  Save,
-  Mail,
-  Linkedin,
-  User,
-  Power,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Users,
+  Upload,
+  Save,
+  X,
+  Power,
+  Trash2,
+  User
 } from "lucide-react";
 import { SuccessModal } from "@/components/ui/success-modal";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
+import { TeamMemberModal } from "./team-member-modal-simple";
 import Image from "next/image";
 
 interface TeamMember {
@@ -34,30 +38,21 @@ interface TeamMember {
   updatedAt: string;
 }
 
-interface TeamMembersManagerProps {
-  // No props currently needed
-  _?: never;
-}
-
-export function TeamMembersManager({}: TeamMembersManagerProps) {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+export function TeamMembersManager() {
+  const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-  const [editingMember, setEditingMember] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [memberForm, setMemberForm] = useState<Partial<TeamMember>>({
-    name: '',
-    position: '',
-    bio: '',
-    expertise: '',
-    email: '',
-    linkedin: '',
-    imageUrl: '',
-    isActive: true
-  });
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [toggling, setToggling] = useState<string | null>(null);
+  const [showMemberModal, setShowMemberModal] = useState(false);
+  const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
 
   // Helper function to show success modal
   const showSuccess = (message: string) => {
@@ -65,18 +60,25 @@ export function TeamMembersManager({}: TeamMembersManagerProps) {
     setShowSuccessModal(true);
   };
 
+  // Helper function to show confirmation modal
+  const showConfirmation = (title: string, message: string, action: () => void) => {
+    setConfirmTitle(title);
+    setConfirmMessage(message);
+    setConfirmAction(() => action);
+    setShowConfirmModal(true);
+  };
+
   useEffect(() => {
-    fetchTeamMembers();
+    fetchMembers();
   }, []);
 
-  const fetchTeamMembers = async () => {
+  const fetchMembers = async () => {
     try {
-      setLoading(true);
       const response = await fetch('/api/team-members');
       const data = await response.json();
       
       if (response.ok) {
-        setTeamMembers(data);
+        setMembers(data);
       } else {
         throw new Error(data.error || 'Failed to fetch team members');
       }
@@ -88,133 +90,25 @@ export function TeamMembersManager({}: TeamMembersManagerProps) {
     }
   };
 
-  const handleImageUpload = async (file: File) => {
-    setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/api/upload-image', {
-        method: 'POST',
-        body: formData
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMemberForm(prev => ({ ...prev, imageUrl: data.imageUrl }));
-        showSuccess('Image uploaded successfully!');
-      } else {
-        throw new Error(data.error || 'Failed to upload image');
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      setMessage({ type: 'error', text: 'Failed to upload image' });
-    } finally {
-      setUploading(false);
-    }
+  const handleAddMember = () => {
+    setEditingMember(null);
+    setShowMemberModal(true);
   };
 
-  const handleSaveMember = async () => {
-    if (!memberForm.name || !memberForm.position) {
-      setMessage({ type: 'error', text: 'Name and position are required' });
-      return;
-    }
-
-    setSaving(true);
-    try {
-      const response = await fetch('/api/team-members', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...memberForm,
-          expertise: memberForm.expertise ? memberForm.expertise.split(',').map(s => s.trim()) : []
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        await fetchTeamMembers();
-        showSuccess('Team member saved successfully!');
-        setEditingMember(null);
-        setMemberForm({
-          name: '',
-          position: '',
-          bio: '',
-          expertise: '',
-          email: '',
-          linkedin: '',
-          imageUrl: '',
-          isActive: true
-        });
-      } else {
-        throw new Error(data.error || 'Failed to save team member');
-      }
-    } catch (error) {
-      console.error('Error saving team member:', error);
-      setMessage({ type: 'error', text: 'Failed to save team member' });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleUpdateMember = async (id: string) => {
-    if (!memberForm.name || !memberForm.position) {
-      setMessage({ type: 'error', text: 'Name and position are required' });
-      return;
-    }
-
-    setSaving(true);
-    try {
-      const response = await fetch(`/api/team-members/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...memberForm,
-          expertise: memberForm.expertise ? memberForm.expertise.split(',').map(s => s.trim()) : []
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        await fetchTeamMembers();
-        showSuccess('Team member updated successfully!');
-        setEditingMember(null);
-        setMemberForm({
-          name: '',
-          position: '',
-          bio: '',
-          expertise: '',
-          email: '',
-          linkedin: '',
-          imageUrl: '',
-          isActive: true
-        });
-      } else {
-        throw new Error(data.error || 'Failed to update team member');
-      }
-    } catch (error) {
-      console.error('Error updating team member:', error);
-      setMessage({ type: 'error', text: 'Failed to update team member' });
-    } finally {
-      setSaving(false);
-    }
+  const handleEditMember = (member: TeamMember) => {
+    setEditingMember(member);
+    setShowMemberModal(true);
   };
 
   const handleDeleteMember = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this team member?')) {
-      return;
-    }
-
+    setDeleting(true);
     try {
       const response = await fetch(`/api/team-members/${id}`, {
         method: 'DELETE'
       });
 
       if (response.ok) {
-        await fetchTeamMembers();
+        await fetchMembers();
         showSuccess('Team member deleted successfully!');
       } else {
         throw new Error('Failed to delete team member');
@@ -222,53 +116,38 @@ export function TeamMembersManager({}: TeamMembersManagerProps) {
     } catch (error) {
       console.error('Error deleting team member:', error);
       setMessage({ type: 'error', text: 'Failed to delete team member' });
+    } finally {
+      setDeleting(false);
     }
   };
 
-  const handleEditMember = (member: TeamMember) => {
-    setMemberForm({
-      ...member,
-      expertise: member.expertise ? JSON.parse(member.expertise).join(', ') : ''
-    });
-    setEditingMember(member.id);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingMember(null);
-    setMemberForm({
-      name: '',
-      position: '',
-      bio: '',
-      expertise: '',
-      email: '',
-      linkedin: '',
-      imageUrl: '',
-      isActive: true
-    });
-  };
-
-  const handleToggleStatus = async (member: TeamMember) => {
+  const handleToggleMemberStatus = async (member: TeamMember) => {
+    setToggling(member.id);
     try {
       const response = await fetch(`/api/team-members/${member.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...member,
-          isActive: !member.isActive,
-          expertise: member.expertise ? JSON.parse(member.expertise) : []
-        })
+        body: JSON.stringify({ isActive: !member.isActive })
       });
 
       if (response.ok) {
-        await fetchTeamMembers();
+        await fetchMembers();
         showSuccess(`Team member ${!member.isActive ? 'enabled' : 'disabled'} successfully!`);
       } else {
         throw new Error('Failed to update team member status');
       }
     } catch (error) {
-      console.error('Error updating team member status:', error);
+      console.error('Error toggling team member status:', error);
       setMessage({ type: 'error', text: 'Failed to update team member status' });
+    } finally {
+      setToggling(null);
     }
+  };
+
+  const handleMemberSaved = () => {
+    setShowMemberModal(false);
+    setEditingMember(null);
+    fetchMembers();
   };
 
   if (loading) {
@@ -288,11 +167,6 @@ export function TeamMembersManager({}: TeamMembersManagerProps) {
             ? 'bg-green-50 text-green-800 border border-green-200' 
             : 'bg-red-50 text-red-800 border border-red-200'
         }`}>
-          {message.type === 'success' ? (
-            <CheckCircle className="h-5 w-5" />
-          ) : (
-            <AlertCircle className="h-5 w-5" />
-          )}
           <span>{message.text}</span>
           <button
             onClick={() => setMessage(null)}
@@ -305,256 +179,171 @@ export function TeamMembersManager({}: TeamMembersManagerProps) {
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Team Members Management</h2>
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+            <Users className="h-5 w-5 text-emerald-600" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Our Directors</h3>
+            <p className="text-sm text-gray-600">
+              Manage team members and directors information
+            </p>
+          </div>
+        </div>
         <Button
-          onClick={() => setEditingMember('new')}
+          onClick={handleAddMember}
           className="bg-emerald-600 hover:bg-emerald-700"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add Team Member
+          Add Director
         </Button>
       </div>
 
-      {/* Add/Edit Form */}
-      {editingMember && (
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            {editingMember === 'new' ? 'Add New Team Member' : 'Edit Team Member'}
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Name */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Name *</label>
-              <input
-                type="text"
-                value={memberForm.name || ''}
-                onChange={(e) => setMemberForm(prev => ({ ...prev, name: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="Enter name"
-              />
-            </div>
-
-            {/* Position */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Position *</label>
-              <input
-                type="text"
-                value={memberForm.position || ''}
-                onChange={(e) => setMemberForm(prev => ({ ...prev, position: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="Enter position"
-              />
-            </div>
-
-            {/* Email */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="email"
-                value={memberForm.email || ''}
-                onChange={(e) => setMemberForm(prev => ({ ...prev, email: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="Enter email"
-              />
-            </div>
-
-            {/* LinkedIn */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">LinkedIn</label>
-              <input
-                type="url"
-                value={memberForm.linkedin || ''}
-                onChange={(e) => setMemberForm(prev => ({ ...prev, linkedin: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="Enter LinkedIn URL"
-              />
-            </div>
-
-            {/* Bio */}
-            <div className="space-y-2 md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Bio</label>
-              <textarea
-                value={memberForm.bio || ''}
-                onChange={(e) => setMemberForm(prev => ({ ...prev, bio: e.target.value }))}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="Enter bio"
-              />
-            </div>
-
-            {/* Expertise */}
-            <div className="space-y-2 md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Expertise (comma-separated)</label>
-              <input
-                type="text"
-                value={memberForm.expertise || ''}
-                onChange={(e) => setMemberForm(prev => ({ ...prev, expertise: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="e.g., International Trade, Quality Management, Supply Chain"
-              />
-            </div>
-
-            {/* Image Upload */}
-            <div className="space-y-2 md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Profile Image</label>
-              <div className="flex items-center space-x-4">
-                {memberForm.imageUrl && (
-                  <Image
-                    src={memberForm.imageUrl}
-                    alt="Profile preview"
-                    width={80}
-                    height={80}
-                    className="w-20 h-20 object-cover rounded-lg border"
-                  />
-                )}
-                <div className="flex-1">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleImageUpload(file);
-                    }}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
-                    disabled={uploading}
-                  />
-                  {uploading && (
-                    <p className="text-sm text-gray-500 mt-1">Uploading...</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Form Actions */}
-          <div className="flex justify-end space-x-2 mt-6">
-            <Button
-              variant="outline"
-              onClick={handleCancelEdit}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => editingMember === 'new' ? handleSaveMember() : handleUpdateMember(editingMember)}
-              disabled={saving}
-              className="bg-emerald-600 hover:bg-emerald-700"
-            >
-              {saving ? (
-                <LoadingSpinner size="sm" className="mr-2" />
-              ) : (
-                <Save className="h-4 w-4 mr-2" />
-              )}
-              {editingMember === 'new' ? 'Add Member' : 'Update Member'}
-            </Button>
-          </div>
-        </Card>
-      )}
-
       {/* Team Members Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teamMembers.map((member) => (
-          <Card key={member.id} className="p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+      {members.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {members.map((member) => (
+            <Card key={member.id} className="p-6 hover:shadow-lg transition-shadow">
+              <div className="flex flex-col h-full">
+                {/* Image */}
+                <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden bg-gray-100">
                   {member.imageUrl ? (
                     <Image
                       src={member.imageUrl}
                       alt={member.name}
-                      width={48}
-                      height={48}
-                      className="w-12 h-12 rounded-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   ) : (
-                    <User className="h-6 w-6 text-gray-500" />
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                      <User className="h-16 w-16 text-gray-400" />
+                    </div>
                   )}
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{member.name}</h3>
-                  <p className="text-sm text-emerald-600">{member.position}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-1">
-                <button
-                  onClick={() => handleEditMember(member)}
-                  className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                  title="Edit member"
-                >
-                  <Edit className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => handleToggleStatus(member)}
-                  className={`p-1.5 rounded-lg transition-colors ${
-                    member.isActive
-                      ? 'text-green-600 hover:bg-green-50'
-                      : 'text-gray-400 hover:bg-gray-50'
-                  }`}
-                  title={member.isActive ? 'Disable member' : 'Enable member'}
-                >
-                  <Power className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => handleDeleteMember(member.id)}
-                  className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  title="Delete member"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
 
-            {member.bio && (
-              <p className="text-sm text-gray-600 mb-4 line-clamp-3">{member.bio}</p>
-            )}
-
-            {member.expertise && (
-              <div className="mb-4">
-                <h4 className="text-xs font-medium text-gray-700 mb-2">Expertise</h4>
-                <div className="flex flex-wrap gap-1">
-                  {JSON.parse(member.expertise).map((skill: string, index: number) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700"
-                    >
-                      {skill}
+                {/* Content */}
+                <div className="flex-1 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
+                      #{member.order}
                     </span>
-                  ))}
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      member.isActive 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {member.isActive ? 'Active' : 'Disabled'}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-gray-900 text-lg">{member.name}</h4>
+                    <p className="text-emerald-600 font-medium text-sm">{member.position}</p>
+                  </div>
+
+                  {member.bio && (
+                    <p className="text-gray-600 text-sm line-clamp-3">{member.bio}</p>
+                  )}
+
+                  {member.expertise && (
+                    <div className="text-xs text-gray-500">
+                      <span className="font-medium">Expertise:</span> {member.expertise}
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center space-x-1">
+                    <button
+                      onClick={() => handleEditMember(member)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Edit member"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    
+                    <button
+                      onClick={() => handleToggleMemberStatus(member)}
+                      disabled={toggling === member.id}
+                      className={`p-2 rounded-lg transition-colors ${
+                        member.isActive
+                          ? 'text-green-600 hover:bg-green-50'
+                          : 'text-gray-400 hover:bg-gray-50'
+                      } ${toggling === member.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      title={member.isActive ? 'Disable member' : 'Enable member'}
+                    >
+                      {toggling === member.id ? (
+                        <ToggleLoader size="sm" />
+                      ) : (
+                        <Power className="h-4 w-4" />
+                      )}
+                    </button>
+                    
+                    <button
+                      onClick={() => showConfirmation(
+                        'Delete Team Member',
+                        'Are you sure you want to delete this team member? This action cannot be undone.',
+                        () => handleDeleteMember(member.id)
+                      )}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Delete member"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            )}
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No Directors Added</h3>
+          <p className="text-gray-600 mb-4">Get started by adding your first team member.</p>
+          <Button
+            onClick={handleAddMember}
+            className="bg-emerald-600 hover:bg-emerald-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Director
+          </Button>
+        </div>
+      )}
 
-            <div className="flex items-center space-x-4 pt-4 border-t border-gray-100">
-              {member.email && (
-                <a
-                  href={`mailto:${member.email}`}
-                  className="flex items-center space-x-1 text-sm text-gray-600 hover:text-emerald-600 transition-colors"
-                >
-                  <Mail className="h-4 w-4" />
-                  <span>Email</span>
-                </a>
-              )}
-              {member.linkedin && (
-                <a
-                  href={member.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-1 text-sm text-gray-600 hover:text-emerald-600 transition-colors"
-                >
-                  <Linkedin className="h-4 w-4" />
-                  <span>LinkedIn</span>
-                </a>
-              )}
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      {/* Success Modal */}
+      {/* Modals */}
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
         message={successMessage}
+      />
+
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={() => {
+          if (confirmAction) {
+            confirmAction();
+          }
+          setShowConfirmModal(false);
+        }}
+        title={confirmTitle}
+        message={confirmMessage}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        loading={deleting}
+      />
+
+      <TeamMemberModal
+        isOpen={showMemberModal}
+        onClose={() => {
+          setShowMemberModal(false);
+          setEditingMember(null);
+        }}
+        onSave={handleMemberSaved}
+        member={editingMember}
       />
     </div>
   );

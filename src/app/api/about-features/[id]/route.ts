@@ -1,40 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    
+    const feature = await prisma.aboutFeature.findUnique({
+      where: { id }
+    });
+
+    if (!feature) {
+      return NextResponse.json(
+        { error: 'Feature not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(feature);
+  } catch (error) {
+    console.error('Error fetching about feature:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch about feature' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const { id } = await params;
     const body = await request.json();
-    const { section, title, description, icon, order, isActive } = body;
+    const { title, description, icon, order, isActive } = body;
 
-    const aboutFeature = await prisma.aboutFeature.update({
+    const feature = await prisma.aboutFeature.update({
       where: { id },
       data: {
-        section,
-        title,
-        description,
-        icon,
-        order,
-        isActive,
-        updatedAt: new Date()
+        ...(title !== undefined && { title }),
+        ...(description !== undefined && { description }),
+        ...(icon !== undefined && { icon }),
+        ...(order !== undefined && { order }),
+        ...(isActive !== undefined && { isActive })
       }
     });
 
-    return NextResponse.json(aboutFeature);
+    return NextResponse.json(feature);
   } catch (error) {
     console.error('Error updating about feature:', error);
     return NextResponse.json(
@@ -49,21 +64,13 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const { id } = await params;
+
     await prisma.aboutFeature.delete({
       where: { id }
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ message: 'Feature deleted successfully' });
   } catch (error) {
     console.error('Error deleting about feature:', error);
     return NextResponse.json(

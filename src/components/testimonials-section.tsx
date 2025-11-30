@@ -9,76 +9,53 @@ import "swiper/css"
 import "swiper/css/effect-coverflow"
 import "swiper/css/pagination"
 import "swiper/css/navigation"
+import Image from "next/image"
 
-// Testimonial data
-const testimonials = [
-  {
-    id: 1,
-    name: "Fahad Al Mansoori",
-    avatar: "F",
-    location: "Fresh Harvest LLC (Dubai)",
-    quote:
-      "Pyramid Agro Exports has been our go-to partner for fresh grapes. Every consignment is delivered with exceptional care, ensuring freshness and flavor remain intact. Their consistency gives us complete confidence in building long-term business together.",
-    rating: 5,
-    date: "Procurement Head",
-    verified: true,
-  },
-  {
-    id: 2,
-    name: "Mohammed Al Rashid",
-    avatar: "M",
-    location: "Al Noor Foods (UAE)",
-    quote:
-      "The onions we import from Pyramid Agro Exports stand out for their quality and shelf life. Their packaging is export-friendly and tailored to our needs, making the logistics process smooth and hassle-free.",
-    rating: 5,
-    date: "Director",
-    verified: true,
-  },
-  {
-    id: 3,
-    name: "Abdullah Al Harthy",
-    avatar: "A",
-    location: "Gulf Agro Traders (Oman)",
-    quote:
-      "We've been sourcing chilies from Pyramid Agro Exports for over a year, and the taste, spice level, and freshness are consistently excellent. Their professionalism and commitment to deadlines make them a reliable partner.",
-    rating: 5,
-    date: "Import Manager",
-    verified: true,
-  },
-  {
-    id: 4,
-    name: "Saeed Al Qasimi",
-    avatar: "S",
-    location: "Emirates Fresh Produce (Dubai)",
-    quote:
-      "What sets Pyramid Agro Exports apart is their honesty and transparency. They deliver exactly what they promise—no compromises on quality. It's rare to find exporters who prioritize trust as much as they do.",
-    rating: 5,
-    date: "CEO",
-    verified: true,
-  },
-  {
-    id: 5,
-    name: "Khalid Bin Hamdan",
-    avatar: "K",
-    location: "Oasis Food Distributors (Oman)",
-    quote:
-      "Their grapes and onions have helped us cater to premium clients who demand the very best. Pyramid Agro Exports ensures international standards are met every time, making them one of the most dependable suppliers in the region.",
-    rating: 5,
-    date: "Senior Buyer",
-    verified: true,
-  },
-]
+interface Testimonial {
+  id: string;
+  name: string;
+  position: string;
+  company: string;
+  location?: string;
+  quote: string;
+  rating: number;
+  avatar?: string;
+  imageUrl?: string;
+  verified: boolean;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export function TestimonialsSection() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const swiperRef = useRef<SwiperType | null>(null)
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 1200)
-    return () => clearTimeout(timer)
+    fetchTestimonials()
   }, [])
+
+  const fetchTestimonials = async () => {
+    try {
+      const response = await fetch('/api/testimonials?active=true')
+      const data = await response.json()
+      
+      if (response.ok) {
+        setTestimonials(data)
+      } else {
+        console.error('Failed to fetch testimonials:', data.error)
+        // Fallback to empty array if API fails
+        setTestimonials([])
+      }
+    } catch (error) {
+      console.error('Error fetching testimonials:', error)
+      setTestimonials([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   // Enhanced star rating with smooth animations
   const renderStars = (rating: number) => {
@@ -140,7 +117,7 @@ export function TestimonialsSection() {
   )
 
   // Modern testimonial card with enhanced design
-  const renderTestimonialCard = (testimonial: typeof testimonials[0]) => (
+  const renderTestimonialCard = (testimonial: Testimonial) => (
     <div
       key={testimonial.id}
       className="relative bg-gradient-to-br from-white to-primary/5 rounded-xl p-4 mx-1 transition-all duration-700 ease-in-out cursor-pointer border border-primary/10 transform hover:scale-105 mb-5 "
@@ -159,9 +136,19 @@ export function TestimonialsSection() {
         {/* Header */}
         <div className="flex items-start space-x-3 mb-3 animate-slideInUp">
           <div className="relative">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-bold text-white text-sm">
-              {testimonial.avatar}
-            </div>
+            {testimonial.imageUrl ? (
+              <Image
+                src={testimonial.imageUrl}
+                alt={testimonial.name}
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-xl object-cover"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-bold text-white text-sm">
+                {testimonial.avatar || testimonial.name.charAt(0).toUpperCase()}
+              </div>
+            )}
             {testimonial.verified && (
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
                 <Check className="w-2 h-2 text-white" />
@@ -174,8 +161,11 @@ export function TestimonialsSection() {
               <h3 className="font-semibold text-gray-900 text-sm">{testimonial.name}</h3>
               <div className="flex items-center space-x-0.5">{renderStars(testimonial.rating)}</div>
             </div>
-            <p className="text-xs text-gray-600 mb-0.5 font-medium">{testimonial.location}</p>
-            <p className="text-xs text-gray-400">{testimonial.date}</p>
+            <p className="text-xs text-gray-600 mb-0.5 font-medium">{testimonial.position}</p>
+            <p className="text-xs text-gray-500">{testimonial.company}</p>
+            {testimonial.location && (
+              <p className="text-xs text-gray-400">{testimonial.location}</p>
+            )}
           </div>
         </div>
 
@@ -307,9 +297,17 @@ export function TestimonialsSection() {
               }}
               className="pb-12 overflow-visible"
             >
-              {testimonials.map((testimonial) => (
-                <SwiperSlide key={testimonial.id}>{renderTestimonialCard(testimonial)}</SwiperSlide>
-              ))}
+              {testimonials.length > 0 ? (
+                testimonials.map((testimonial) => (
+                  <SwiperSlide key={testimonial.id}>{renderTestimonialCard(testimonial)}</SwiperSlide>
+                ))
+              ) : (
+                <div className="text-center py-12 col-span-full">
+                  <Quote className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No testimonials available</h3>
+                  <p className="text-gray-600">Customer testimonials will appear here once they are added.</p>
+                </div>
+              )}
             </Swiper>
 
 

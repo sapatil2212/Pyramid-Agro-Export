@@ -6,6 +6,9 @@ import { ConditionalFooter } from "@/components/layout/conditional-footer";
 import { LoadingProvider } from "@/components/loading-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { ReduxProvider } from "@/components/providers/redux-provider";
+import { NotificationProvider } from "@/contexts/notification-context";
+import { PageVisitTracker } from "@/components/page-visit-tracker";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -63,16 +66,20 @@ export default function RootLayout({
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <ReduxProvider>
           <AuthProvider>
-            <LoadingProvider>
-              <ClientWrapper>
-                <main className="flex-1">
-                  {children}
-                </main>
-              </ClientWrapper>
-              <ConditionalFooter />
-            </LoadingProvider>
+            <NotificationProvider>
+              <LoadingProvider>
+                <PageVisitTracker />
+                <ClientWrapper>
+                  <main className="flex-1">
+                    {children}
+                  </main>
+                </ClientWrapper>
+                <ConditionalFooter />
+              </LoadingProvider>
+            </NotificationProvider>
           </AuthProvider>
         </ReduxProvider>
+        <Toaster position="top-right" />
       </body>
     </html>
   );

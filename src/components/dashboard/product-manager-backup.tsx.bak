@@ -1,0 +1,717 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { LoadingSpinner, ToggleLoader } from "@/components/ui/loading-spinner";
+import { 
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Power,
+  ArrowUp,
+  ArrowDown,
+  Image as ImageIcon,
+  Package,
+  Star,
+  Globe,
+  Calendar,
+  DollarSign,
+  Tag,
+  CheckCircle,
+  AlertCircle
+} from "lucide-react";
+import { ProductForm } from "./product-form";
+import { NashikGrapesTableManager } from "./nashik-grapes-table-manager";
+import { SuccessModal } from "@/components/ui/success-modal";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
+import Image from "next/image";
+
+interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  shortDescription?: string;
+  imageUrl?: string;
+  images?: string[];
+  categoryId: string;
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+    color?: string;
+  };
+  specifications?: Record<string, string>;
+  origin?: string;
+  seasons?: string[];
+  minOrderQuantity?: string;
+  packaging?: string[];
+  price?: { min: number; max: number; currency: string };
+  availability: string;
+  features?: string[];
+  nutritionalInfo?: Record<string, string>;
+  certifications?: string[];
+  shelfLife?: string;
+  storageConditions?: string[];
+  exportMarkets?: string[];
+  rating: number;
+  reviews: number;
+  isFeatured: boolean;
+  isOrganic: boolean;
+  isPremium: boolean;
+  isActive: boolean;
+  order: number;
+  // Hero section fields
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroDescription?: string;
+  heroImageUrl?: string;
+  heroButtonText?: string;
+  heroButtonLink?: string;
+  heroButton2Text?: string;
+  heroButton2Link?: string;
+  // Features section fields
+  featuresTitle?: string;
+  featuresSubtitle?: string;
+  // CTA section fields
+  ctaTitle?: string;
+  ctaDescription?: string;
+  ctaButtonText?: string;
+  ctaButtonLink?: string;
+  // Nashik Grapes Table fields
+  tableTitle?: string;
+  tableDescription?: string;
+  tableVarieties?: string;
+  tableSpecs?: string;
+  tableAdvantages?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ProductCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  imageUrl?: string;
+  icon?: string;
+  color?: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export function ProductManager() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<ProductCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [toggling, setToggling] = useState<string | null>(null);
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentView, setCurrentView] = useState<'products' | 'table'>('products');
+
+  // Helper function to show success modal
+  const showSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessModal(true);
+  };
+
+  // Helper function to show confirmation modal
+  const showConfirmation = (title: string, message: string, action: () => void) => {
+    setConfirmTitle(title);
+    setConfirmMessage(message);
+    setConfirmAction(() => action);
+    setShowConfirmModal(true);
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products?admin=true&includeInactive=true');
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Parse JSON fields
+        const parsedData = data.products.map((product: Product & { images?: string; specifications?: string; seasons?: string; packaging?: string; certifications?: string; storageConditions?: string; exportMarkets?: string }) => ({
+          ...product,
+          images: product.images ? (typeof product.images === 'string' ? JSON.parse(product.images) : product.images) : [],
+          specifications: product.specifications ? (typeof product.specifications === 'string' ? JSON.parse(product.specifications) : product.specifications) : null,
+          seasons: product.seasons ? (typeof product.seasons === 'string' ? JSON.parse(product.seasons) : product.seasons) : [],
+          packaging: product.packaging ? (typeof product.packaging === 'string' ? JSON.parse(product.packaging) : product.packaging) : [],
+          price: product.price ? (typeof product.price === 'string' ? JSON.parse(product.price) : product.price) : null,
+          features: product.features ? (typeof product.features === 'string' ? JSON.parse(product.features) : product.features) : [],
+          nutritionalInfo: product.nutritionalInfo ? (typeof product.nutritionalInfo === 'string' ? JSON.parse(product.nutritionalInfo) : product.nutritionalInfo) : null,
+          certifications: product.certifications ? (typeof product.certifications === 'string' ? JSON.parse(product.certifications) : product.certifications) : [],
+          storageConditions: product.storageConditions ? (typeof product.storageConditions === 'string' ? JSON.parse(product.storageConditions) : product.storageConditions) : [],
+          exportMarkets: product.exportMarkets ? (typeof product.exportMarkets === 'string' ? JSON.parse(product.exportMarkets) : product.exportMarkets) : []
+        }));
+        setProducts(parsedData);
+      } else {
+        throw new Error(data.error || 'Failed to fetch products');
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setMessage({ type: 'error', text: 'Failed to load products' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/product-categories');
+      const data = await response.json();
+      
+      if (response.ok) {
+        setCategories(data);
+      } else {
+        throw new Error(data.error || 'Failed to fetch categories');
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const handleAddProduct = () => {
+    setSelectedProduct(null);
+    setIsFormOpen(true);
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setIsFormOpen(true);
+  };
+
+  const handleSaveProduct = async (productData: Partial<Product> & { name: string; categoryId: string }) => {
+    setSaving(true);
+    try {
+      const isEdit = !!productData.id;
+      const url = isEdit 
+        ? `/api/products/${productData.id}`
+        : '/api/products';
+      
+      const method = isEdit ? 'PUT' : 'POST';
+
+      // Prepare data for API
+      const apiData = {
+        ...productData,
+        images: productData.images ? (typeof productData.images === 'string' ? productData.images : JSON.stringify(productData.images)) : null,
+        specifications: productData.specifications ? (typeof productData.specifications === 'string' ? productData.specifications : JSON.stringify(productData.specifications)) : null,
+        seasons: productData.seasons ? (typeof productData.seasons === 'string' ? productData.seasons : JSON.stringify(productData.seasons)) : null,
+        packaging: productData.packaging ? (typeof productData.packaging === 'string' ? productData.packaging : JSON.stringify(productData.packaging)) : null,
+        price: productData.price ? (typeof productData.price === 'string' ? productData.price : JSON.stringify(productData.price)) : null,
+        features: productData.features ? (typeof productData.features === 'string' ? productData.features : JSON.stringify(productData.features)) : null,
+        nutritionalInfo: productData.nutritionalInfo ? (typeof productData.nutritionalInfo === 'string' ? productData.nutritionalInfo : JSON.stringify(productData.nutritionalInfo)) : null,
+        certifications: productData.certifications ? (typeof productData.certifications === 'string' ? productData.certifications : JSON.stringify(productData.certifications)) : null,
+        storageConditions: productData.storageConditions ? (typeof productData.storageConditions === 'string' ? productData.storageConditions : JSON.stringify(productData.storageConditions)) : null,
+        exportMarkets: productData.exportMarkets ? (typeof productData.exportMarkets === 'string' ? productData.exportMarkets : JSON.stringify(productData.exportMarkets)) : null
+      };
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(apiData)
+      });
+
+      if (response.ok) {
+        await fetchProducts();
+        showSuccess(`Product ${isEdit ? 'updated' : 'added'} successfully!`);
+        setIsFormOpen(false);
+        setSelectedProduct(null);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to ${isEdit ? 'update' : 'create'} product`);
+      }
+    } catch (error) {
+      console.error('Error saving product:', error);
+      setMessage({ type: 'error', text: 'Failed to save product' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteProduct = async (id: string) => {
+    setDeleting(true);
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        await fetchProducts();
+        showSuccess('Product deleted successfully!');
+      } else {
+        throw new Error('Failed to delete product');
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      setMessage({ type: 'error', text: 'Failed to delete product' });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleToggleStatus = async (product: Product) => {
+    setToggling(product.id);
+    try {
+      const updatedProduct = { ...product, isActive: !product.isActive };
+      
+      const response = await fetch(`/api/products/${product.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedProduct)
+      });
+
+      if (response.ok) {
+        await fetchProducts();
+        showSuccess(`Product ${updatedProduct.isActive ? 'enabled' : 'disabled'} successfully!`);
+      } else {
+        throw new Error('Failed to update product status');
+      }
+    } catch (error) {
+      console.error('Error toggling product status:', error);
+      setMessage({ type: 'error', text: 'Failed to update product status' });
+    } finally {
+      setToggling(null);
+    }
+  };
+
+  const handleReorder = async (id: string, direction: 'up' | 'down') => {
+    const currentIndex = products.findIndex(p => p.id === id);
+    if (currentIndex === -1) return;
+
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= products.length) return;
+
+    const newProducts = [...products];
+    const [movedItem] = newProducts.splice(currentIndex, 1);
+    newProducts.splice(newIndex, 0, movedItem);
+
+    // Update order values
+    const updatedProducts = newProducts.map((item, index) => ({
+      ...item,
+      order: index
+    }));
+
+    setProducts(updatedProducts);
+
+    // Update in database
+    try {
+      for (const item of updatedProducts) {
+        await fetch(`/api/products/${item.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order: item.order })
+        });
+      }
+      showSuccess('Product order updated successfully!');
+    } catch (error) {
+      console.error('Error updating order:', error);
+      // Revert on error
+      await fetchProducts();
+      setMessage({ type: 'error', text: 'Failed to update order' });
+    }
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    setSelectedProduct(null);
+  };
+
+  // Filter products based on category and search term
+  const filteredProducts = products.filter(product => {
+    const matchesCategory = filterCategory === 'all' || product.categoryId === filterCategory;
+    const matchesSearch = searchTerm === '' || 
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.name.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Message */}
+      {message && (
+        <div className={`p-4 rounded-lg flex items-center space-x-2 ${
+          message.type === 'success' 
+            ? 'bg-green-50 text-green-800 border border-green-200' 
+            : 'bg-red-50 text-red-800 border border-red-200'
+        }`}>
+          {message.type === 'success' ? (
+            <CheckCircle className="h-5 w-5" />
+          ) : (
+            <AlertCircle className="h-5 w-5" />
+          )}
+          <span>{message.text}</span>
+          <button
+            onClick={() => setMessage(null)}
+            className="ml-auto text-gray-400 hover:text-gray-600"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-2xl font-bold text-gray-900">Products Management</h3>
+          <p className="text-gray-600">
+            Manage all your products, categories, and product details
+          </p>
+        </div>
+        {!isFormOpen && currentView === 'products' && (
+          <Button
+            onClick={handleAddProduct}
+            className="bg-emerald-600 hover:bg-emerald-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add New Product
+          </Button>
+        )}
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8">
+          <button
+            onClick={() => setCurrentView('products')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              currentView === 'products'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <Package className="h-4 w-4 mr-2 inline" />
+            Products
+          </button>
+          <button
+            onClick={() => setCurrentView('table')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              currentView === 'table'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <Star className="h-4 w-4 mr-2 inline" />
+            Nashik Grapes Table
+          </button>
+        </nav>
+      </div>
+
+      {/* Content based on current view */}
+      {currentView === 'products' && (
+        <>
+          {/* Product Form */}
+          {isFormOpen && (
+            <ProductForm
+              product={selectedProduct}
+              categories={categories}
+              onSave={handleSaveProduct}
+              onCancel={handleCloseForm}
+              loading={saving}
+            />
+          )}
+
+          {/* Filters and Products Grid - Only show when form is not open */}
+          {!isFormOpen && (
+            <>
+              {/* Filters */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div className="sm:w-64">
+                  <select
+                    value={filterCategory}
+                    onChange={(e) => setFilterCategory(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="all">All Categories</option>
+                    {categories.map(category => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Products Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredProducts.map((product, index) => (
+                  <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+            <div className="p-4">
+              {/* Header with Order and Status */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-2">
+                  <span className="bg-emerald-100 text-emerald-700 text-xs font-medium px-2 py-1 rounded-full">
+                    #{index + 1}
+                  </span>
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    product.isActive 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {product.isActive ? 'Active' : 'Disabled'}
+                  </span>
+                  {product.isFeatured && (
+                    <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">
+                      Featured
+                    </span>
+                  )}
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="flex items-center space-x-1">
+                  <button
+                    onClick={() => handleEditProduct(product)}
+                    className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                    title="Edit product"
+                  >
+                    <Edit className="h-3.5 w-3.5" />
+                  </button>
+                  
+                  <button
+                    onClick={() => handleToggleStatus(product)}
+                    disabled={toggling === product.id}
+                    className={`p-1.5 rounded-lg transition-colors ${
+                      product.isActive
+                        ? 'text-green-600 hover:bg-green-50'
+                        : 'text-gray-400 hover:bg-gray-50'
+                    } ${toggling === product.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title={product.isActive ? 'Disable product' : 'Enable product'}
+                  >
+                    {toggling === product.id ? (
+                      <ToggleLoader size="sm" />
+                    ) : (
+                      <Power className="h-3.5 w-3.5" />
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={() => showConfirmation(
+                      'Delete Product',
+                      `Are you sure you want to delete "${product.name}"? This action cannot be undone.`,
+                      () => handleDeleteProduct(product.id)
+                    )}
+                    className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Delete product"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Reorder Buttons */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex space-x-1">
+                  <button
+                    onClick={() => handleReorder(product.id, 'up')}
+                    disabled={index === 0}
+                    className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Move up"
+                  >
+                    <ArrowUp className="h-3 w-3" />
+                  </button>
+                  <button
+                    onClick={() => handleReorder(product.id, 'down')}
+                    disabled={index === products.length - 1}
+                    className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Move down"
+                  >
+                    <ArrowDown className="h-3 w-3" />
+                  </button>
+                </div>
+                
+                <button
+                  onClick={() => window.open(`/products/${product.slug}`, '_blank')}
+                  className="p-1 text-gray-400 hover:text-gray-600"
+                  title="Preview on website"
+                >
+                  <Eye className="h-3 w-3" />
+                </button>
+              </div>
+              
+              {/* Image Preview */}
+              <div className="mb-3">
+                {product.imageUrl ? (
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    width={300}
+                    height={120}
+                    className="w-full h-24 object-cover rounded-lg border"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const placeholder = target.nextElementSibling as HTMLElement;
+                      if (placeholder) placeholder.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                <div 
+                  className="w-full h-24 bg-gray-100 rounded-lg border flex items-center justify-center"
+                  style={{ display: product.imageUrl ? 'none' : 'flex' }}
+                >
+                  <ImageIcon className="h-8 w-8 text-gray-400" />
+                </div>
+              </div>
+              
+              {/* Content */}
+              <div className="space-y-2">
+                <div className="flex items-start justify-between">
+                  <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 flex-1">
+                    {product.name}
+                  </h4>
+                  <div className="flex items-center space-x-1 ml-2">
+                    {product.isOrganic && (
+                      <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+                        Organic
+                      </span>
+                    )}
+                    {product.isPremium && (
+                      <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+                        Premium
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2 text-xs text-gray-500">
+                  <Package className="h-3 w-3" />
+                  <span>{product.category.name}</span>
+                </div>
+                
+                {product.shortDescription && (
+                  <p className="text-xs text-gray-600 line-clamp-2">
+                    {product.shortDescription}
+                  </p>
+                )}
+                
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center space-x-1">
+                    <Star className="h-3 w-3 text-yellow-500" />
+                    <span>{product.rating.toFixed(1)}</span>
+                    <span>({product.reviews})</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Globe className="h-3 w-3" />
+                    <span className="capitalize">{product.availability}</span>
+                  </div>
+                </div>
+
+                {product.price && (
+                  <div className="flex items-center space-x-1 text-xs text-gray-600">
+                    <DollarSign className="h-3 w-3" />
+                    <span>
+                      {product.price.min && product.price.max 
+                        ? `${product.price.min} - ${product.price.max}`
+                        : product.price.min || product.price.max || 'Price on request'
+                      }
+                    </span>
+                  </div>
+                )}
+                
+                <div className="pt-2 border-t">
+                  <p className="text-xs text-gray-500">
+                    Slug: <span className="font-mono">{product.slug}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+              {filteredProducts.length === 0 && (
+                <div className="text-center py-12">
+                  <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+                  <p className="text-gray-600 mb-4">
+                    {searchTerm || filterCategory !== 'all' 
+                      ? 'Try adjusting your search or filter criteria.'
+                      : 'Get started by adding your first product.'
+                    }
+                  </p>
+                  {(!searchTerm && filterCategory === 'all') && (
+                    <Button
+                      onClick={handleAddProduct}
+                      className="bg-emerald-600 hover:bg-emerald-700"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Product
+                    </Button>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </>
+      )}
+
+      {/* Nashik Grapes Table Manager */}
+      {currentView === 'table' && (
+        <NashikGrapesTableManager />
+      )}
+
+      {/* Modals */}
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message={successMessage}
+      />
+
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={() => {
+          if (confirmAction) {
+            confirmAction();
+          }
+          setShowConfirmModal(false);
+        }}
+        title={confirmTitle}
+        message={confirmMessage}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        loading={deleting}
+      />
+    </div>
+  );
+}

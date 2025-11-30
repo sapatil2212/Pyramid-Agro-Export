@@ -3,10 +3,61 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield } from "lucide-react"
+import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield, RefreshCw } from "lucide-react"
 import GreenBananaTable from "@/components/products/green-banana-table"
+import { useProductData } from "@/hooks/use-product-data"
 
 export default function BananaPage() {
+  const { product, loading, refetch } = useProductData('banana')
+
+  // Icon mapping for feature cards
+  const iconMap = {
+    Star,
+    CheckCircle,
+    Leaf,
+    Truck,
+    Shield
+  }
+
+  // Default features if not provided
+  const defaultFeatures = [
+    {
+      icon: "Star",
+      title: "Premium Quality",
+      description: "Hand-picked from finest plantations"
+    },
+    {
+      icon: "CheckCircle",
+      title: "Year-round Availability",
+      description: "Available throughout the year"
+    },
+    {
+      icon: "Leaf",
+      title: "Rich in Nutrients",
+      description: "Fiber, potassium & essential nutrients"
+    },
+    {
+      icon: "Truck",
+      title: "Long Shelf Life",
+      description: "Ideal for long-haul exports"
+    },
+    {
+      icon: "Shield",
+      title: "Firm Texture",
+      description: "Strong peel & transport resilient"
+    }
+  ]
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen">
@@ -21,35 +72,77 @@ export default function BananaPage() {
               viewport={{ once: true }}
             >
               <h1 className="text-xl md:text-4xl font-bold text-gray-900 mb-4">
-                Premium Quality{" "}
-                <span className="text-emerald-600">Green Bananas</span>
+                {product?.heroTitle || "Premium Quality Green Bananas"}
+                {product?.heroSubtitle && (
+                  <span className="text-emerald-600"> {product.heroSubtitle}</span>
+                )}
               </h1>
               <div className="space-y-4 text-sm md:text-[15px] text-gray-600 leading-relaxed">
-                <p>
-                  Experience the finest green bananas from India&apos;s premier plantations. 
-                  Our premium quality green bananas are carefully harvested, packed, 
-                  and exported to meet the highest international standards.
-                </p>
-                <p>
-                  Harvested at the right maturity stage to ensure firm texture, longer shelf life, 
-                  and excellent transport resilience. Rich in fiber, potassium, and essential nutrients.
-                </p>
+                {product?.heroDescription ? (
+                  <div dangerouslySetInnerHTML={{ __html: product.heroDescription.replace(/\n/g, '<br />') }} />
+                ) : (
+                  <>
+                    <p>
+                      Experience the finest green bananas from India&apos;s premier plantations. 
+                      Our premium quality green bananas are carefully harvested, packed, 
+                      and exported to meet the highest international standards.
+                    </p>
+                    <p>
+                      Harvested at the right maturity stage to ensure firm texture, longer shelf life, 
+                      and excellent transport resilience. Rich in fiber, potassium, and essential nutrients.
+                    </p>
+                  </>
+                )}
               </div>
               <div className="flex flex-col sm:flex-row gap-4 mt-6">
+                {product?.heroButtonText && (
+                  <Button
+                    onClick={() => window.location.href = product.heroButtonLink || '/contact'}
+                    size="lg"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 group"
+                  >
+                    {product.heroButtonText}
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+                  </Button>
+                )}
+                {product?.heroButton2Text && (
+                  <Button
+                    onClick={() => window.location.href = product.heroButton2Link || '#features'}
+                    variant="outline"
+                    size="lg"
+                    className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 px-8 py-3"
+                  >
+                    {product.heroButton2Text}
+                  </Button>
+                )}
+                {!product?.heroButtonText && !product?.heroButton2Text && (
+                  <>
+                    <Button
+                      onClick={() => window.location.href = '/contact'}
+                      size="lg"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 group"
+                    >
+                      Get Quote
+                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 px-8 py-3"
+                    >
+                      Learn More
+                    </Button>
+                  </>
+                )}
                 <Button
-                  onClick={() => window.location.href = '/contact'}
-                  size="lg"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 group"
-                >
-                  Get Quote
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
-                </Button>
-                <Button
+                  onClick={refetch}
                   variant="outline"
-                  size="lg"
-                  className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 px-8 py-3"
+                  size="sm"
+                  className="border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2"
+                  disabled={loading}
                 >
-                  Learn More
+                  <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                  Refresh
                 </Button>
               </div>
             </motion.div>
@@ -63,11 +156,17 @@ export default function BananaPage() {
             >
               <div className="relative max-w-lg mx-auto">
                 <Image
-                  src="/products/green-banana.png"
-                  alt="Premium Green Bananas"
+                  src={product?.heroImageUrl || "/products/green-banana.png"}
+                  alt={product?.heroTitle || "Premium Green Bananas"}
                   width={600}
                   height={400}
                   className="w-full h-auto rounded-xl"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const placeholder = target.nextElementSibling as HTMLElement;
+                    if (placeholder) placeholder.style.display = 'flex';
+                  }}
                 />
                 <div 
                   className="absolute inset-0 bg-gradient-to-br from-emerald-100 to-amber-100 rounded-xl flex items-center justify-center"
@@ -75,7 +174,7 @@ export default function BananaPage() {
                 >
                   <div className="text-center text-gray-600">
                     <Leaf className="h-16 w-16 mx-auto mb-4 text-emerald-500" />
-                    <p className="text-lg font-semibold">Premium Green Bananas</p>
+                    <p className="text-lg font-semibold">{product?.heroTitle || "Premium Green Bananas"}</p>
                     <p className="text-sm">Export Quality</p>
                   </div>
                 </div>
@@ -96,41 +195,15 @@ export default function BananaPage() {
             className="text-center mb-8"
           >
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-              Why Choose Our Green Bananas?
+              {product?.featuresTitle || "Why Choose Our Green Bananas?"}
             </h2>
             <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto">
-              Premium quality green bananas with exceptional shelf life and transport resilience
+              {product?.featuresSubtitle || "Premium quality green bananas with exceptional shelf life and transport resilience"}
             </p>
           </motion.div>
 
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-            {[
-              {
-                icon: Star,
-                title: "Premium Quality",
-                description: "Hand-picked from finest plantations"
-              },
-              {
-                icon: CheckCircle,
-                title: "Year-round Availability",
-                description: "Available throughout the year"
-              },
-              {
-                icon: Leaf,
-                title: "Rich in Nutrients",
-                description: "Fiber, potassium & essential nutrients"
-              },
-              {
-                icon: Truck,
-                title: "Long Shelf Life",
-                description: "Ideal for long-haul exports"
-              },
-              {
-                icon: Shield,
-                title: "Firm Texture",
-                description: "Strong peel & transport resilient"
-              }
-            ].map((feature, index) => (
+            {((product?.features && Array.isArray(product.features)) ? product.features : defaultFeatures).map((feature, index) => (
               <motion.div
                 key={feature.title}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -142,7 +215,10 @@ export default function BananaPage() {
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center group-hover:bg-emerald-200 transition-colors duration-300">
-                    <feature.icon className="h-5 w-5 text-emerald-600" />
+                    {(() => {
+                      const IconComponent = iconMap[feature.icon as keyof typeof iconMap] || Star
+                      return <IconComponent className="h-5 w-5 text-emerald-600" />
+                    })()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors duration-300">
@@ -178,17 +254,17 @@ export default function BananaPage() {
           >
             <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-2xl p-8 border border-emerald-100">
               <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
-                Ready to Order Premium Green Bananas?
+                {product?.ctaTitle || "Ready to Order Premium Green Bananas?"}
               </h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                Contact us today for the finest quality green bananas delivered to your doorstep with our proven export process
+                {product?.ctaDescription || "Contact us today for the finest quality green bananas delivered to your doorstep with our proven export process"}
               </p>
               <Button
-                onClick={() => window.location.href = '/contact'}
+                onClick={() => window.location.href = product?.ctaButtonLink || '/contact'}
                 size="lg"
                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 group"
               >
-                Get Quote Now
+                {product?.ctaButtonText || "Get Quote Now"}
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
               </Button>
             </div>

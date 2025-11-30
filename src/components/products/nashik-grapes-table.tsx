@@ -2,8 +2,30 @@
 
 import { motion } from "framer-motion"
 import { CheckCircle, Star, Award, Leaf, Truck } from "lucide-react"
+import { useState, useEffect } from "react"
 
-const varieties = [
+interface Variety {
+  name: string
+  type: string
+  characteristics: string
+  features: string
+}
+
+interface Specification {
+  category: string
+  value: string
+}
+
+interface NashikGrapesTableData {
+  tableTitle?: string
+  tableDescription?: string
+  tableVarieties?: string
+  tableSpecs?: string
+  tableAdvantages?: string
+}
+
+// Default data fallback
+const defaultVarieties: Variety[] = [
   {
     name: "Sonaka",
     type: "Seedless",
@@ -30,7 +52,7 @@ const varieties = [
   }
 ]
 
-const specifications = [
+const defaultSpecifications: Specification[] = [
   { category: "Origin", value: "Nashik, Maharashtra, India" },
   { category: "Season", value: "December – April" },
   { category: "Quality Grade", value: "Export Grade" },
@@ -43,8 +65,7 @@ const specifications = [
   { category: "Certification", value: "International quality standards" }
 ]
 
-
-const keyAdvantages = [
+const defaultAdvantages = [
   "Naturally high sugar content and long shelf life make them ideal for long-distance exports",
   "Attractive clusters with uniform size and appealing shine",
   "Widely preferred in Dubai, UAE, and Oman for premium retail and wholesale markets",
@@ -54,17 +75,90 @@ const keyAdvantages = [
 ]
 
 export default function NashikGrapesTable() {
+  const [tableData, setTableData] = useState<NashikGrapesTableData>({})
+  const [varieties, setVarieties] = useState<Variety[]>(defaultVarieties)
+  const [specifications, setSpecifications] = useState<Specification[]>(defaultSpecifications)
+  const [keyAdvantages, setKeyAdvantages] = useState<string[]>(defaultAdvantages)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchTableData = async () => {
+      try {
+        const response = await fetch('/api/products?slug=grapes')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.products && data.products.length > 0) {
+            const product = data.products[0]
+            setTableData({
+              tableTitle: product.tableTitle,
+              tableDescription: product.tableDescription,
+              tableVarieties: product.tableVarieties,
+              tableSpecs: product.tableSpecs,
+              tableAdvantages: product.tableAdvantages
+            })
+
+            // Parse JSON data
+            if (product.tableVarieties) {
+              try {
+                const parsedVarieties = JSON.parse(product.tableVarieties)
+                if (Array.isArray(parsedVarieties)) {
+                  setVarieties(parsedVarieties)
+                }
+              } catch (e) {
+                console.error('Error parsing varieties:', e)
+              }
+            }
+
+            if (product.tableSpecs) {
+              try {
+                const parsedSpecs = JSON.parse(product.tableSpecs)
+                if (Array.isArray(parsedSpecs)) {
+                  setSpecifications(parsedSpecs)
+                }
+              } catch (e) {
+                console.error('Error parsing specifications:', e)
+              }
+            }
+
+            if (product.tableAdvantages) {
+              try {
+                const parsedAdvantages = JSON.parse(product.tableAdvantages)
+                if (Array.isArray(parsedAdvantages)) {
+                  setKeyAdvantages(parsedAdvantages)
+                }
+              } catch (e) {
+                console.error('Error parsing advantages:', e)
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching table data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTableData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+      </div>
+    )
+  }
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-3 flex items-center justify-center">
           <Leaf className="h-6 w-6 text-emerald-600 mr-2" />
-          NASHIK GRAPES - Premium Export Quality
+          {tableData.tableTitle || "NASHIK GRAPES - Premium Export Quality"}
         </h2>
         <p className="text-base text-gray-600 max-w-4xl mx-auto">
-          Nashik, often called the &quot;Grape Capital of India,&quot; produces world-class grapes 
-          known for their natural sweetness, crunchy texture, and rich antioxidant content.
+          {tableData.tableDescription || "Nashik, often called the \"Grape Capital of India,\" produces world-class grapes known for their natural sweetness, crunchy texture, and rich antioxidant content."}
         </p>
       </div>
 

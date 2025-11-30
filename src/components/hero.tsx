@@ -210,7 +210,7 @@ export function Hero() {
   const { getContentBySection, loading } = useHomeContent()
   const [heroImages, setHeroImages] = useState<{ id: string; imageUrl: string; title: string; subtitle: string; order: number; isActive: boolean; createdAt: string; updatedAt: string }[]>([])
   const [currentImage, setCurrentImage] = useState<{ id: string; imageUrl: string; title: string; subtitle: string; order: number; isActive: boolean; createdAt: string; updatedAt: string } | null>(null)
-  const [keyFeatures, setKeyFeatures] = useState<{ id: string; title: string; description: string; icon: string; order: number; isActive: boolean; createdAt: string; updatedAt: string }[]>([])
+  const [keyFeatures, setKeyFeatures] = useState<{ id: string; text: string; icon: string; order: number; isActive: boolean; createdAt: string; updatedAt: string }[]>([])
   
   const heroContent = getContentBySection('hero')
 
@@ -360,7 +360,7 @@ export function Hero() {
                       <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
                         <IconComponent className="h-3 w-3 text-green-600" />
                       </div>
-                      <span className="text-sm text-gray-700">{feature.title}</span>
+                      <span className="text-sm text-gray-700">{feature.text}</span>
                     </div>
                   );
                 })}

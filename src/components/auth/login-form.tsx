@@ -178,6 +178,7 @@ export function LoginForm({ onCancel }: LoginFormProps) {
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
+                suppressHydrationWarning
                 className={cn(
                   "w-full px-3 py-2 text-sm border rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200",
                   "placeholder-gray-400 text-gray-900",
@@ -215,6 +216,7 @@ export function LoginForm({ onCancel }: LoginFormProps) {
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
+                suppressHydrationWarning
                 className={cn(
                   "w-full px-3 py-2 pr-8 text-sm border rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200",
                   "placeholder-gray-400 text-gray-900",
@@ -228,6 +230,7 @@ export function LoginForm({ onCancel }: LoginFormProps) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                suppressHydrationWarning
                 className="absolute inset-y-0 right-0 pr-2 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                 disabled={isLoading}
               >
@@ -258,6 +261,7 @@ export function LoginForm({ onCancel }: LoginFormProps) {
             <button
               type="button"
               onClick={() => setShowForgotPassword(true)}
+              suppressHydrationWarning
               className="text-xs text-emerald-600 hover:text-emerald-700 flex items-center transition-colors"
               disabled={isLoading}
             >
@@ -334,6 +338,7 @@ export function LoginForm({ onCancel }: LoginFormProps) {
                   type="email"
                   value={forgotPasswordEmail}
                   onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                  suppressHydrationWarning
                   className={cn(
                     "w-full px-3 py-2 text-sm border rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200",
                     errors.forgotPassword

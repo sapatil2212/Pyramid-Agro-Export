@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
 import { 
   Shield, 
   FileCheck, 
@@ -8,87 +9,82 @@ import {
   Users, 
   CheckCircle,
   Clock,
-  Globe
+  Globe,
+  Leaf,
+  Award,
+  Heart,
+  Star
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-const services = [
-  {
-    icon: Shield,
-    title: "Quality Assurance",
-    description: "Comprehensive testing and certification to meet international food safety standards",
-    features: [
-      "ISO 22000 Certified Processes",
-      "Third-party Laboratory Testing",
-      "Traceability Documentation",
-      "Quality Control at Every Stage"
-    ],
-    color: "from-emerald-500 to-emerald-600"
-  },
-  {
-    icon: Users,
-    title: "Sustainable Sourcing",
-    description: "Direct partnerships with farmers ensuring ethical practices and premium quality",
-    features: [
-      "Fair Trade Practices",
-      "Sustainable Farming Support",
-      "Direct Farmer Relationships",
-      "Organic Certification Support"
-    ],
-    color: "from-amber-500 to-amber-600"
-  },
-  {
-    icon: Globe,
-    title: "Global Reach",
-    description: "Extensive network covering 50+ countries with reliable supply chain management",
-    features: [
-      "Worldwide Distribution",
-      "Multi-language Support",
-      "Currency Flexibility",
-      "Local Market Expertise"
-    ],
-    color: "from-blue-500 to-blue-600"
-  },
-  {
-    icon: FileCheck,
-    title: "Export Documentation",
-    description: "Complete documentation support for hassle-free international trade",
-    features: [
-      "Export-Import Documentation",
-      "Customs Clearance Support",
-      "Phytosanitary Certificates",
-      "Insurance & Logistics"
-    ],
-    color: "from-purple-500 to-purple-600"
-  },
-  {
-    icon: Truck,
-    title: "Logistics & Shipping",
-    description: "End-to-end logistics solutions ensuring timely and safe delivery worldwide",
-    features: [
-      "Temperature-controlled Transport",
-      "Real-time Tracking",
-      "Multiple Shipping Options",
-      "Warehousing Solutions"
-    ],
-    color: "from-red-500 to-red-600"
-  },
-  {
-    icon: Clock,
-    title: "24/7 Customer Support",
-    description: "Round-the-clock assistance to address all your queries and concerns",
-    features: [
-      "Dedicated Account Managers",
-      "Multi-channel Support",
-      "Quick Response Time",
-      "Technical Assistance"
-    ],
-    color: "from-indigo-500 to-indigo-600"
-  }
-]
+interface Service {
+  id: string
+  title: string
+  description?: string
+  icon: string
+  color: string
+  features: string[]
+  order: number
+  isActive: boolean
+}
 
+const getIconComponent = (iconName: string) => {
+  const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+    'shield': Shield,
+    'users': Users,
+    'globe': Globe,
+    'file-check': FileCheck,
+    'truck': Truck,
+    'clock': Clock,
+    'leaf': Leaf,
+    'award': Award,
+    'heart': Heart,
+    'star': Star,
+  }
+  return iconMap[iconName] || Shield
+}
 
 export function ServicesPreview() {
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchServices()
+  }, [])
+
+  const fetchServices = async () => {
+    try {
+      const response = await fetch('/api/services')
+      const data = await response.json()
+      
+      if (response.ok && Array.isArray(data)) {
+        // Filter only active services
+        const activeServices = data.filter((s: Service) => s.isActive)
+        setServices(activeServices)
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Don't render if no services or still loading
+  if (loading) {
+    return (
+      <section className="py-20 lg:py-8 bg-gradient-to-br from-gray-50 to-emerald-50">
+        <div className="container mx-auto">
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (services.length === 0) {
+    return null
+  }
   return (
     <section className="py-20 lg:py-8 bg-gradient-to-br from-gray-50 to-emerald-50">
       <div className="container mx-auto">
@@ -135,41 +131,41 @@ export function ServicesPreview() {
 
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-5 mb-12">
-          {services.map((service, index) => (
-            <motion.div
-              key={service.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -5 }}
-            >
-              <Card className="h-full border-0 bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                <CardHeader className="pb-4">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-xl flex items-center justify-center mb-4`}>
-                    {(() => {
-                      const IconComponent = service.icon
-                      return <IconComponent className="h-8 w-8 text-white" />
-                    })()}
-                  </div>
-                  <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
-                  <CardDescription className="text-gray-600">
-                    {service.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {service.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center space-x-2 text-sm text-gray-600">
-                        <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+          {services.map((service, index) => {
+            const IconComponent = getIconComponent(service.icon)
+            return (
+              <motion.div
+                key={service.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.6 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -5 }}
+              >
+                <Card className="h-full border-0 bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                  <CardHeader className="pb-4">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-xl flex items-center justify-center mb-4`}>
+                      <IconComponent className="h-8 w-8 text-white" />
+                    </div>
+                    <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
+                    <CardDescription className="text-gray-600">
+                      {service.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      {service.features && service.features.map((feature: string, featureIndex: number) => (
+                        <li key={featureIndex} className="flex items-center space-x-2 text-sm text-gray-600">
+                          <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )
+          })}
         </div>
 
       

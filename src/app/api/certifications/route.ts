@@ -3,9 +3,13 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const activeOnly = searchParams.get('active') === 'true';
+
     const certifications = await prisma.certification.findMany({
+      where: activeOnly ? { isActive: true } : {},
       orderBy: { order: 'asc' }
     });
 
@@ -31,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, fullName, issuer, validUntil, description, icon, color, features, order } = body;
+    const { name, fullName, issuer, validUntil, description, imageUrl, icon, color, features, order } = body;
 
     const certification = await prisma.certification.create({
       data: {
@@ -40,6 +44,7 @@ export async function POST(request: NextRequest) {
         issuer,
         validUntil,
         description,
+        imageUrl,
         icon,
         color,
         features: features ? JSON.stringify(features) : null,

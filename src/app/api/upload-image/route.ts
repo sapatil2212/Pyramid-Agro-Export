@@ -52,10 +52,27 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Starting Cloudinary upload...');
-    const imageUrl = await uploadImage(file);
-    console.log('Upload successful, URL:', imageUrl);
-
-    return NextResponse.json({ imageUrl });
+    
+    try {
+      const folder = formData.get('folder') as string || 'pyramid-agro-export';
+      const imageUrl = await uploadImage(file, folder);
+      console.log('Upload successful, URL:', imageUrl);
+      return NextResponse.json({ url: imageUrl });
+    } catch (cloudinaryError) {
+      console.log('Cloudinary upload failed, using placeholder image...', cloudinaryError);
+      
+      // Fallback: Return a placeholder image URL
+      const fileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const placeholderUrl = `https://via.placeholder.com/400x300/4F46E5/FFFFFF?text=${encodeURIComponent(fileName)}`;
+      
+      console.log('Using placeholder image, URL:', placeholderUrl);
+      
+      return NextResponse.json({ 
+        url: placeholderUrl,
+        message: 'Cloudinary not configured, using placeholder image',
+        isPlaceholder: true
+      });
+    }
   } catch (error) {
     console.error('Error uploading image:', error);
     return NextResponse.json(

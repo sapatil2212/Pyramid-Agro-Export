@@ -8,7 +8,7 @@ cloudinary.config({
 
 export { cloudinary };
 
-export const uploadImage = async (file: File): Promise<string> => {
+export const uploadImage = async (file: File, folder: string = 'pyramid-agro-export'): Promise<string> => {
   try {
     console.log('Cloudinary upload starting for file:', file.name);
     
@@ -32,7 +32,7 @@ export const uploadImage = async (file: File): Promise<string> => {
       cloudinary.uploader.upload_stream(
         {
           resource_type: 'auto',
-          folder: 'pyramid-agro-export',
+          folder: folder,
           transformation: [
             { quality: 'auto' },
             { fetch_format: 'auto' }

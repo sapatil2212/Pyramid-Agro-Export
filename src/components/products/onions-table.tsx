@@ -2,8 +2,30 @@
 
 import { motion } from "framer-motion"
 import { CheckCircle, Star, Award, Leaf, Truck } from "lucide-react"
+import { useState, useEffect } from "react"
 
-const varieties = [
+interface Variety {
+  name: string
+  type: string
+  characteristics: string
+  features: string
+}
+
+interface Specification {
+  category: string
+  value: string
+}
+
+interface OnionsTableData {
+  tableTitle?: string
+  tableDescription?: string
+  tableVarieties?: string
+  tableSpecs?: string
+  tableAdvantages?: string
+}
+
+// Default data fallback
+const defaultVarieties: Variety[] = [
   {
     name: "Small Grade",
     type: "20-40 mm",
@@ -24,7 +46,7 @@ const varieties = [
   }
 ]
 
-const specifications = [
+const defaultSpecifications: Specification[] = [
   { category: "Origin", value: "Nashik, Maharashtra, India" },
   { category: "Grades", value: "Small (20–40 mm), Medium (40–60 mm), Large (60–80 mm)" },
   { category: "Availability", value: "Year-round" },
@@ -37,7 +59,7 @@ const specifications = [
   { category: "Demand", value: "Major demand in Dubai and Oman" }
 ]
 
-const keyAdvantages = [
+const defaultAdvantages = [
   "Extended shelf life compared to other origins",
   "Uniform sizing & pungency make them ideal for both food service and retail",
   "Major demand in Dubai and Oman, where consistency and storage life are crucial",
@@ -47,17 +69,94 @@ const keyAdvantages = [
 ]
 
 export default function OnionsTable() {
+  const [tableData, setTableData] = useState<OnionsTableData>({})
+  const [varieties, setVarieties] = useState<Variety[]>(defaultVarieties)
+  const [specifications, setSpecifications] = useState<Specification[]>(defaultSpecifications)
+  const [advantages, setAdvantages] = useState<string[]>(defaultAdvantages)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchTableData()
+  }, [])
+
+  const fetchTableData = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/products?slug=onions')
+      if (response.ok) {
+        const data = await response.json()
+        if (data.products && data.products.length > 0) {
+          const product = data.products[0]
+          setTableData({
+            tableTitle: product.tableTitle,
+            tableDescription: product.tableDescription,
+            tableVarieties: product.tableVarieties,
+            tableSpecs: product.tableSpecs,
+            tableAdvantages: product.tableAdvantages
+          })
+
+          // Parse JSON data
+          if (product.tableVarieties) {
+            try {
+              const parsedVarieties = JSON.parse(product.tableVarieties)
+              if (Array.isArray(parsedVarieties)) {
+                setVarieties(parsedVarieties)
+              }
+            } catch (e) {
+              console.error('Error parsing varieties:', e)
+              setVarieties(defaultVarieties)
+            }
+          }
+
+          if (product.tableSpecs) {
+            try {
+              const parsedSpecs = JSON.parse(product.tableSpecs)
+              if (Array.isArray(parsedSpecs)) {
+                setSpecifications(parsedSpecs)
+              }
+            } catch (e) {
+              console.error('Error parsing specifications:', e)
+              setSpecifications(defaultSpecifications)
+            }
+          }
+
+          if (product.tableAdvantages) {
+            try {
+              const parsedAdvantages = JSON.parse(product.tableAdvantages)
+              if (Array.isArray(parsedAdvantages)) {
+                setAdvantages(parsedAdvantages)
+              }
+            } catch (e) {
+              console.error('Error parsing advantages:', e)
+              setAdvantages(defaultAdvantages)
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching table data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+      </div>
+    )
+  }
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-3 flex items-center justify-center">
           <Leaf className="h-6 w-6 text-emerald-600 mr-2" />
-          NASHIK RED & PINK ONIONS - Premium Export Quality
+          {tableData.tableTitle || "NASHIK RED & PINK ONIONS - Premium Export Quality"}
         </h2>
         <p className="text-base text-gray-600 max-w-4xl mx-auto">
-          Renowned worldwide, Nashik onions are known for their strong flavor, firm texture, 
-          and uniform grading with year-round availability.
+          {tableData.tableDescription || "Renowned worldwide, Nashik onions are known for their strong flavor, firm texture, and uniform grading with year-round availability."}
         </p>
       </div>
 
@@ -127,7 +226,7 @@ export default function OnionsTable() {
               Why They Stand Out Internationally
             </h3>
             <div className="space-y-2">
-              {keyAdvantages.map((advantage, index) => (
+              {advantages.map((advantage, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, x: -20 }}
