@@ -389,9 +389,9 @@ export function Header({ onAppointmentClick }: HeaderProps) {
                       <Link
                         href={item.href}
                         className={cn(
-                          "text-sm font-medium transition-colors hover:text-emerald-600 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-md px-2 -mx-2",
+                          "text-sm font-medium transition-colors hover:text-emerald-600 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2",
                           pathname === item.href
-                            ? "text-emerald-600 border-b-2 border-emerald-600"
+                            ? "text-emerald-600 bg-emerald-50"
                             : "text-gray-700"
                         )}
                       >
@@ -563,7 +563,7 @@ export function Header({ onAppointmentClick }: HeaderProps) {
               <Button
                 variant="default"
                 size="sm"
-                onClick={onAppointmentClick}
+                onClick={() => window.location.href = '/contact'}
                 className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white"
               >
                 Get Quote

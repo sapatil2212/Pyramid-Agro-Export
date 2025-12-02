@@ -184,18 +184,18 @@ export function TeamMembersManager() {
             <Users className="h-5 w-5 text-emerald-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Our Directors</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="text-base md:text-lg font-semibold text-gray-900">Our Directors</h3>
+            <p className="text-xs md:text-sm text-gray-600">
               Manage team members and directors information
             </p>
           </div>
         </div>
         <Button
           onClick={handleAddMember}
-          className="bg-emerald-600 hover:bg-emerald-700"
+          className="flex items-center space-x-2"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Director
+          <Plus className="h-4 w-4" />
+          <span className="hidden md:inline">Add Member</span>
         </Button>
       </div>
 
@@ -237,8 +237,8 @@ export function TeamMembersManager() {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-gray-900 text-lg">{member.name}</h4>
-                    <p className="text-emerald-600 font-medium text-sm">{member.position}</p>
+                    <h4 className="text-base md:text-lg font-semibold text-gray-900">{member.name}</h4>
+                    <p className="text-emerald-600 font-medium text-xs md:text-sm">{member.position}</p>
                   </div>
 
                   {member.bio && (

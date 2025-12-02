@@ -99,8 +99,8 @@ model HeroImage {
   id          String   @id @default(cuid())
   imageUrl    String
   altText     String?
-  title       String?
-  subtitle    String?
+  title       String?  @db.Text
+  subtitle    String?  @db.Text
   order       Int      @default(0)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())

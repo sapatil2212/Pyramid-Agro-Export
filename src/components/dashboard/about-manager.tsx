@@ -221,11 +221,11 @@ export function AboutManager() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-gray-900">About Section</h4>
+        <h4 className="text-sm md:text-base font-semibold text-gray-900">About Section</h4>
         <div className="flex items-center gap-2">
           {!editing && (
             <Button onClick={() => setEditing(true)} size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1">
-              <Edit className="h-4 w-4" /> Edit
+              <Edit className="h-4 w-4" /> <span className="hidden md:inline">Edit</span>
             </Button>
           )}
         </div>
@@ -233,9 +233,9 @@ export function AboutManager() {
 
       {editing ? (
         /* Edit Mode */
-        <Card className="p-5 border-2 border-emerald-200 bg-gradient-to-br from-emerald-50/50 to-white">
+        <Card className="p-3 md:p-5 border-2 border-emerald-200 bg-gradient-to-br from-emerald-50/50 to-white">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="font-semibold text-gray-900">Edit About Section</h4>
+            <h4 className="text-sm md:text-base font-semibold text-gray-900">Edit About Section</h4>
             <Button variant="ghost" size="sm" onClick={() => { setForm(content); setEditing(false); }}>
               <X className="h-4 w-4" />
             </Button>
@@ -244,14 +244,14 @@ export function AboutManager() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Image Upload */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Section Image</label>
+              <label className="text-xs md:text-sm font-medium text-gray-700">Section Image</label>
               <div className="relative group">
                 {form.imageUrl ? (
                   <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-emerald-200">
                     <Image src={form.imageUrl} alt="About" fill className="object-cover" />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
-                      <label className="opacity-0 group-hover:opacity-100 cursor-pointer bg-white/90 px-3 py-2 rounded-lg text-sm font-medium">
-                        <Upload className="h-4 w-4 inline mr-2" /> Change
+                      <label className="opacity-0 group-hover:opacity-100 cursor-pointer bg-white/90 px-2 md:px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium">
+                        <Upload className="h-3 w-3 md:h-4 md:w-4 inline mr-2" /> Change
                         <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])} />
                       </label>
                     </div>
@@ -265,8 +265,8 @@ export function AboutManager() {
                   <label className="flex flex-col items-center justify-center aspect-video border-2 border-dashed border-emerald-300 rounded-xl bg-emerald-50/50 cursor-pointer hover:bg-emerald-100/50">
                     {uploading ? <LoadingSpinner size="sm" /> : (
                       <>
-                        <Upload className="h-8 w-8 text-emerald-400 mb-2" />
-                        <span className="text-sm font-medium text-emerald-600">Upload Image</span>
+                        <Upload className="h-6 w-6 md:h-8 md:w-8 text-emerald-400 mb-2" />
+                        <span className="text-xs md:text-sm font-medium text-emerald-600">Upload Image</span>
                       </>
                     )}
                     <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])} />
@@ -279,33 +279,33 @@ export function AboutManager() {
             <div className="lg:col-span-2 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Title</label>
+                  <label className="text-xs md:text-sm font-medium text-gray-700">Title</label>
                   <Input value={form.title} onChange={(e) => setForm(p => ({ ...p, title: e.target.value }))} placeholder="About Us" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Subtitle</label>
+                  <label className="text-xs md:text-sm font-medium text-gray-700">Subtitle</label>
                   <Input value={form.subtitle} onChange={(e) => setForm(p => ({ ...p, subtitle: e.target.value }))} placeholder="Our Story" />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Description <span className="text-xs text-gray-400 font-normal">(Press Enter for new paragraph)</span></label>
+                <label className="text-xs md:text-sm font-medium text-gray-700">Description <span className="text-[10px] md:text-xs text-gray-400 font-normal">(Press Enter for new paragraph)</span></label>
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))}
                   placeholder="Tell your story... Use Enter key to add new paragraphs."
                   rows={6}
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full px-3 py-2 border rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Button Text</label>
+                  <label className="text-xs md:text-sm font-medium text-gray-700">Button Text</label>
                   <Input value={form.buttonText} onChange={(e) => setForm(p => ({ ...p, buttonText: e.target.value }))} placeholder="Learn More" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-gray-700">Button Link</label>
+                  <label className="text-xs md:text-sm font-medium text-gray-700">Button Link</label>
                   <Input value={form.buttonLink} onChange={(e) => setForm(p => ({ ...p, buttonLink: e.target.value }))} placeholder="/about" />
                 </div>
               </div>
@@ -373,19 +373,19 @@ export function AboutManager() {
       {/* Why Choose Us Features */}
       <div className="space-y-3 pt-4 border-t">
         <div className="flex items-center justify-between">
-          <h4 className="font-semibold text-gray-900">Why Choose Us Features ({features.length})</h4>
+          <h4 className="text-sm md:text-base font-semibold text-gray-900">Why Choose Us Features ({features.length})</h4>
           {!editingFeatureId && (
             <Button onClick={() => { setEditingFeatureId('new'); setFeatureForm({ title: '', description: '', icon: 'Award' }); }} size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1">
-              <Plus className="h-4 w-4" /> Add Feature
+              <Plus className="h-4 w-4" /> <span className="hidden md:inline">Add Feature</span>
             </Button>
           )}
         </div>
 
         {/* Add/Edit Feature Form */}
         {editingFeatureId && (
-          <Card className="p-4 border-2 border-emerald-200 bg-emerald-50/50">
+          <Card className="p-3 md:p-4 border-2 border-emerald-200 bg-emerald-50/50">
             <div className="flex items-center justify-between mb-3">
-              <h5 className="font-medium text-gray-900">{editingFeatureId === 'new' ? 'Add Feature' : 'Edit Feature'}</h5>
+              <h5 className="text-sm md:text-base font-medium text-gray-900">{editingFeatureId === 'new' ? 'Add Feature' : 'Edit Feature'}</h5>
               <Button variant="ghost" size="sm" onClick={() => { setEditingFeatureId(null); setFeatureForm({ title: '', description: '', icon: 'Award' }); }}>
                 <X className="h-4 w-4" />
               </Button>
@@ -396,7 +396,7 @@ export function AboutManager() {
                 <select
                   value={featureForm.icon}
                   onChange={(e) => setFeatureForm(p => ({ ...p, icon: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                  className="w-full px-3 py-2 border rounded-lg text-xs md:text-sm"
                 >
                   {ICON_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>

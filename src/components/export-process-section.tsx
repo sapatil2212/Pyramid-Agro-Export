@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { useState, useEffect } from "react"
-import { 
+import {
   MessageCircle,
   Search,
   TestTube,
@@ -41,6 +41,25 @@ const getIconComponent = (iconName: string) => {
   return iconMap[iconName] || MessageCircle
 }
 
+/**
+ * Map the logical `process.color` value to a Tailwind color family.
+ * Add more mappings as needed.
+ */
+const tailwindColorMap: Record<string, string> = {
+  emerald: 'emerald',
+  green: 'emerald',
+  blue: 'sky',
+  sky: 'sky',
+  yellow: 'yellow',
+  orange: 'orange',
+  red: 'rose',
+  indigo: 'indigo',
+  slate: 'slate',
+  gray: 'gray',
+}
+
+const colorToTailwind = (color: string) => tailwindColorMap[color] ?? color
+
 export function ExportProcessSection() {
   const [steps, setSteps] = useState<ExportStep[]>([])
   const [sectionContent, setSectionContent] = useState<SectionContent>({ title: 'Our Export Process', subtitle: '' })
@@ -49,6 +68,7 @@ export function ExportProcessSection() {
   useEffect(() => {
     fetchSteps()
     fetchSectionContent()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchSectionContent = async () => {
@@ -85,9 +105,9 @@ export function ExportProcessSection() {
 
   if (loading) {
     return (
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
-          <div className="flex items-center justify-center py-12">
+      <section className="py-10 bg-white">
+        <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-24">
+          <div className="flex items-center justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
           </div>
         </div>
@@ -97,57 +117,73 @@ export function ExportProcessSection() {
 
   if (steps.length === 0) return null
 
+  const defaultSubtitle = `From initial consultation and quality inspection to secure packaging and timely international delivery — end-to-end export services across ${steps.length} carefully managed steps.`
+
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
+    <section className="py-10 bg-white">
+      <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-24">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-6"
         >
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
             {sectionContent.title}
           </h2>
-          <p className="text-sm md:text-lg text-gray-600 max-w-3xl mx-auto">
-            {sectionContent.subtitle || `A streamlined ${steps.length}-step process ensuring quality and efficiency from consultation to delivery`}
+          <p className="text-sm md:text-base text-gray-600 max-w-3xl mx-auto">
+            {sectionContent.subtitle?.trim() ? sectionContent.subtitle : defaultSubtitle}
           </p>
         </motion.div>
 
         <div className="relative">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {steps.map((process, index) => {
               const IconComponent = getIconComponent(process.icon)
-              return (
-                <motion.div
-                  key={process.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="relative z-10"
-                >
-                  <div className="bg-white border border-gray-200 rounded-xl p-5 h-full">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`w-10 h-10 bg-${process.color}-100 rounded-lg flex items-center justify-center`}>
-                        <span className={`text-sm font-bold text-${process.color}-700`}>{process.step}</span>
-                      </div>
-                      <div className={`w-9 h-9 bg-${process.color}-50 rounded-lg flex items-center justify-center`}>
-                        <IconComponent className={`h-4 w-4 text-${process.color}-600`} />
-                      </div>
-                    </div>
+              const tColor = colorToTailwind(process.color)
+              const stepBadgeBg = `bg-${tColor}-100`
+              const stepBadgeText = `text-${tColor}-700`
+              const iconBg = `bg-${tColor}-50`
+              const iconText = `text-${tColor}-600`
+              // gradient class uses faint green-to-white; still allow slight tint per card color:
+              // We'll use a gentle green->white for consistency while letting accent color control small parts.
+              const cardGradient = `bg-gradient-to-b from-emerald-50 to-white`
 
-                    <div className="space-y-2">
-                      <h3 className="text-base font-semibold text-gray-900">
-                        {process.title}
-                      </h3>
-                      <p className="text-xs text-gray-600 leading-relaxed line-clamp-3">
-                        {process.description}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
+              return (
+              <motion.div
+  key={process.id}
+  initial={{ opacity: 0, y: 18 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.45, delay: index * 0.06 }}
+  viewport={{ once: true }}
+  className="relative z-10"
+>
+  <div
+    className={`border border-gray-200 rounded-xl p-4 h-full ${cardGradient}`}
+    style={{ minHeight: 140 }}
+  >
+    <div className="flex items-center justify-between mb-3">
+      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${stepBadgeBg}`}>
+        <span className={`text-sm font-semibold ${stepBadgeText}`}>{process.step}</span>
+      </div>
+
+      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${iconBg}`}>
+        <IconComponent className={`h-4 w-4 ${iconText}`} />
+      </div>
+    </div>
+
+    <div className="space-y-1">
+      <h3 className="text-sm md:text-base font-semibold text-gray-900">
+        {process.title}
+      </h3>
+      <p className="text-xs md:text-sm text-gray-600 leading-relaxed line-clamp-3">
+        {process.description}
+      </p>
+    </div>
+  </div>
+</motion.div>
+
               )
             })}
           </div>

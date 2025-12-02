@@ -296,7 +296,7 @@ export function Hero() {
   }
 
   return (
-    <section className="relative bg-gradient-to-br from-emerald-50 via-white to-amber-50 min-h-screen flex items-start overflow-hidden pt-24 lg:pt-32 pb-8 md:pb-0">
+    <section className="relative bg-gradient-to-br from-emerald-50 via-white to-amber-50 min-h-screen flex items-start overflow-hidden pt-32 lg:pt-32 pb-8 md:pb-0">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-20 h-20 bg-emerald-500/5 rounded-full blur-xl"></div>
@@ -396,13 +396,7 @@ export function Hero() {
                   className="group bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-8 py-3"
                 >
                   {heroContent?.button2Text || 'Get Quote'}
-                  <motion.span
-                    className="ml-2"
-                    animate={{ x: [0, 4, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    →
-                  </motion.span>
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               )}
             </motion.div>
@@ -472,7 +466,7 @@ export function Hero() {
         <Button
           variant="default"
           size="lg"
-          onClick={openModal}
+          onClick={() => window.location.href = '/contact'}
           className="group shadow-lg px-6 py-3 rounded-lg text-sm font-medium w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white"
         >
           <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">

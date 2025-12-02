@@ -202,22 +202,22 @@ export function ServicesManager() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Core Services</h3>
-          <p className="text-sm text-gray-500">Manage services displayed on the home page</p>
+          <h3 className="text-base md:text-lg font-semibold text-gray-900">Core Services</h3>
+          <p className="text-xs md:text-sm text-gray-500">Manage services displayed on the home page</p>
         </div>
         {!editingId && (
           <Button onClick={handleAdd} size="sm" className="bg-emerald-600 hover:bg-emerald-700">
-            <Plus className="h-4 w-4 mr-1" /> Add Service
+            <Plus className="h-4 w-4 mr-1" /> <span className="hidden md:inline">Add Service</span>
           </Button>
         )}
       </div>
 
       {/* Add/Edit Form */}
       {editingId && (
-        <Card className="p-4 border-emerald-200 bg-emerald-50/30">
+        <Card className="p-3 md:p-4 border-emerald-200 bg-emerald-50/30">
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h4 className="font-medium text-gray-900">{editingId === 'new' ? 'Add New Service' : 'Edit Service'}</h4>
+              <h4 className="text-sm md:text-base font-medium text-gray-900">{editingId === 'new' ? 'Add New Service' : 'Edit Service'}</h4>
               <Button variant="ghost" size="sm" onClick={() => setEditingId(null)}><X className="h-4 w-4" /></Button>
             </div>
             

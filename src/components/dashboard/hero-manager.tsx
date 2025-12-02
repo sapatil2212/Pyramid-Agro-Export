@@ -8,7 +8,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Plus, Edit, Save, Sparkles, Eye, Image as ImageIcon } from "lucide-react";
 import { SuccessModal } from "@/components/ui/success-modal";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
-import { HeroSlideForm } from "./hero-slide-form";
+import { HeroSlideModal } from "./hero-slide-modal";
 import { HeroSlideCard } from "./hero-slide-card";
 
 interface HeroImage {
@@ -193,29 +193,16 @@ export function HeroManager() {
     <div className="space-y-4">
       {/* Header with Actions */}
       <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-gray-900">Hero Slides ({heroImages.length})</h4>
+        <h4 className="text-sm md:text-base font-semibold text-gray-900">Hero Slides ({heroImages.length})</h4>
         <div className="flex items-center gap-2">
-          {!editingSlideId && (
-            <Button onClick={() => setEditingSlideId('new')} size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1">
-              <Plus className="h-4 w-4" /> Add Slide
-            </Button>
-          )}
+          <Button onClick={() => setEditingSlideId('new')} size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1">
+            <Plus className="h-4 w-4" /> <span className="hidden md:inline">Add Slide</span>
+          </Button>
           <Button onClick={() => window.open('/', '_blank')} variant="outline" size="sm" className="gap-2">
-            <Eye className="h-4 w-4" /> Preview
+            <Eye className="h-4 w-4" /> <span className="hidden md:inline">Preview</span>
           </Button>
         </div>
       </div>
-
-      {/* Add/Edit Slide Form */}
-      {editingSlideId && (
-        <HeroSlideForm
-          isNew={editingSlideId === 'new'}
-          initialData={getEditingSlide()}
-          onSave={handleSaveSlide}
-          onCancel={() => setEditingSlideId(null)}
-          saving={saving}
-        />
-      )}
 
       {/* Hero Slides List */}
       <div className="space-y-3">
@@ -223,8 +210,8 @@ export function HeroManager() {
         {heroImages.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
             <ImageIcon className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-            <h4 className="font-medium text-gray-600 mb-1">No Hero Slides Yet</h4>
-            <p className="text-sm text-gray-400 mb-4">Add your first hero slide to get started</p>
+            <h4 className="text-sm md:text-base font-medium text-gray-600 mb-1">No Hero Slides Yet</h4>
+            <p className="text-xs md:text-sm text-gray-400 mb-4">Add your first hero slide to get started</p>
             <Button onClick={() => setEditingSlideId('new')} variant="outline" className="gap-2">
               <Plus className="h-4 w-4" /> Add First Slide
             </Button>
@@ -251,25 +238,25 @@ export function HeroManager() {
 
       {/* CTA Button Settings */}
       <Card className="overflow-hidden">
-        <div className="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-b flex items-center justify-between">
+        <div className="p-3 md:p-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-b flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
               <Sparkles className="h-4 w-4 text-emerald-600" />
             </div>
-            <h4 className="font-semibold text-gray-900">CTA Button Settings</h4>
+            <h4 className="text-sm md:text-base font-semibold text-gray-900">CTA Button Settings</h4>
           </div>
           {!editingSettings && (
             <Button size="sm" variant="outline" onClick={() => setEditingSettings(true)} className="gap-2">
-              <Edit className="h-3 w-3" /> Edit
+              <Edit className="h-3 w-3" /> <span className="hidden md:inline">Edit</span>
             </Button>
           )}
         </div>
-        <div className="p-4">
+        <div className="p-3 md:p-4">
         {editingSettings ? (
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-3 p-4 bg-gray-50 rounded-lg border">
-                <label className="text-sm font-semibold text-gray-800">Primary Button</label>
+              <div className="space-y-3 p-3 md:p-4 bg-gray-50 rounded-lg border">
+                <label className="text-xs md:text-sm font-semibold text-gray-800">Primary Button</label>
                 <div className="space-y-2">
                   <div>
                     <label className="text-xs text-gray-500 block mb-1">Button Text</label>
@@ -281,8 +268,8 @@ export function HeroManager() {
                   </div>
                 </div>
               </div>
-              <div className="space-y-3 p-4 bg-gray-50 rounded-lg border">
-                <label className="text-sm font-semibold text-gray-800">Secondary Button</label>
+              <div className="space-y-3 p-3 md:p-4 bg-gray-50 rounded-lg border">
+                <label className="text-xs md:text-sm font-semibold text-gray-800">Secondary Button</label>
                 <div className="space-y-2">
                   <div>
                     <label className="text-xs text-gray-500 block mb-1">Button Text</label>
@@ -305,21 +292,21 @@ export function HeroManager() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-gray-50 rounded-lg border">
-              <span className="text-xs text-gray-500 block mb-2">Primary Button</span>
+            <div className="p-3 md:p-4 bg-gray-50 rounded-lg border">
+              <span className="text-[10px] md:text-xs text-gray-500 block mb-2">Primary Button</span>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-400 w-12">Text:</span>
-                  <span className="font-medium text-gray-900">{heroContent.buttonText || 'Not set'}</span>
+                  <span className="text-sm md:text-base font-medium text-gray-900">{heroContent.buttonText || 'Not set'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-400 w-12">Link:</span>
-                  <span className="text-emerald-600">{heroContent.buttonLink || 'Not set'}</span>
+                  <span className="text-sm md:text-base text-emerald-600">{heroContent.buttonLink || 'Not set'}</span>
                 </div>
               </div>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg border">
-              <span className="text-xs text-gray-500 block mb-2">Secondary Button</span>
+            <div className="p-3 md:p-4 bg-gray-50 rounded-lg border">
+              <span className="text-[10px] md:text-xs text-gray-500 block mb-2">Secondary Button</span>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-400 w-12">Text:</span>
@@ -337,6 +324,14 @@ export function HeroManager() {
       </Card>
 
       {/* Modals */}
+      <HeroSlideModal
+        isOpen={!!editingSlideId}
+        onClose={() => setEditingSlideId(null)}
+        isNew={editingSlideId === 'new'}
+        initialData={getEditingSlide()}
+        onSave={handleSaveSlide}
+        saving={saving}
+      />
       <SuccessModal isOpen={showSuccessModal} onClose={() => setShowSuccessModal(false)} message={successMessage} />
       <ConfirmationModal isOpen={showConfirmModal} onClose={() => setShowConfirmModal(false)}
         onConfirm={() => { if (confirmAction) confirmAction(); }} title={confirmTitle} message={confirmMessage}

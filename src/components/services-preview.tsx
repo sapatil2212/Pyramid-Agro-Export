@@ -112,7 +112,7 @@ export function ServicesPreview() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4"
+            className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-2"
           >
             Comprehensive Export Solutions
           </motion.h2>
@@ -129,44 +129,75 @@ export function ServicesPreview() {
           </motion.p>
         </motion.div>
 
+     
         {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-5 mb-12">
-          {services.map((service, index) => {
-            const IconComponent = getIconComponent(service.icon)
-            return (
-              <motion.div
-                key={service.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5 }}
-              >
-                <Card className="h-full border-0 bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                  <CardHeader className="pb-4">
-                    <div className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-xl flex items-center justify-center mb-4`}>
-                      <IconComponent className="h-8 w-8 text-white" />
-                    </div>
-                    <CardTitle className="text-xl mb-2">{service.title}</CardTitle>
-                    <CardDescription className="text-gray-600">
-                      {service.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {service.features && service.features.map((feature: string, featureIndex: number) => (
-                        <li key={featureIndex} className="flex items-center space-x-2 text-sm text-gray-600">
-                          <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )
-          })}
-        </div>
+<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-5 mb-8">
+  {services.map((service, index) => {
+    const IconComponent = getIconComponent(service.icon)
+    return (
+      <motion.div
+  key={service.id}
+  initial={{ opacity: 0, y: 30 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ delay: index * 0.1, duration: 0.6 }}
+  viewport={{ once: true }}
+  whileHover={{ y: -5 }}
+>
+  <Card
+    className="
+      h-full 
+      border border-gray-200 
+      rounded-2xl 
+      bg-gradient-to-b from-emerald-50 to-white 
+      overflow-hidden 
+      transition-all 
+      duration-300
+      relative
+      p-4
+    "
+  >
+    {/* SMALL ICON – TOP RIGHT */}
+    <div
+      className="
+        absolute top-4 right-4 
+        w-10 h-10 
+        rounded-lg 
+        bg-emerald-100 
+        flex items-center justify-center
+      "
+    >
+      <IconComponent className="h-5 w-5 text-emerald-700" />
+    </div>
+
+    <CardHeader className="pt-2 pb-4">
+      <CardTitle className="text-lg font-semibold mb-2">
+        {service.title}
+      </CardTitle>
+
+      <CardDescription className="text-gray-600 text-sm">
+        {service.description}
+      </CardDescription>
+    </CardHeader>
+
+    <CardContent>
+      <ul className="space-y-2 pt-1">
+        {service.features?.map((feature: string, featureIndex: number) => (
+          <li
+            key={featureIndex}
+            className="flex items-center space-x-2 text-sm text-gray-600"
+          >
+            <CheckCircle className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+    </CardContent>
+  </Card>
+</motion.div>
+
+    )
+  })}
+</div>
 
       
 

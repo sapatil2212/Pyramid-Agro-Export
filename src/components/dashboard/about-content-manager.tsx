@@ -318,7 +318,7 @@ export function AboutContentManager() {
     <div className="space-y-6">
       {/* Message */}
       {message && (
-        <div className={`p-4 rounded-lg flex items-center space-x-2 ${
+        <div className={`p-3 md:p-4 rounded-lg flex items-center space-x-2 ${
           message.type === 'success' 
             ? 'bg-green-50 text-green-800 border border-green-200' 
             : 'bg-red-50 text-red-800 border border-red-200'
@@ -345,21 +345,21 @@ export function AboutContentManager() {
           const hasActiveContent = certificationsContent?.isActive ?? true;
           
           return (
-            <Card key={section} className={`p-6 ${!hasActiveContent ? 'border-amber-200 bg-amber-50' : ''}`}>
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+            <Card key={section} className={`p-4 md:p-6 ${!hasActiveContent ? 'border-amber-200 bg-amber-50' : ''}`}>
+              <div className="flex items-center justify-between mb-4 md:mb-6">
+                <div className="flex items-center space-x-2 md:space-x-3">
+                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center ${
                     hasActiveContent ? 'bg-emerald-100' : 'bg-amber-100'
                   }`}>
-                    <SectionIcon className={`h-6 w-6 ${
+                    <SectionIcon className={`h-5 w-5 md:h-6 md:w-6 ${
                       hasActiveContent ? 'text-emerald-600' : 'text-amber-600'
                     }`} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-base md:text-xl font-bold text-gray-900">
                       {getSectionTitle(section)}
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-xs md:text-sm text-gray-600">
                       Manage certificate images for the certifications section
                     </p>
                   </div>
@@ -388,7 +388,7 @@ export function AboutContentManager() {
                     className="flex items-center space-x-2"
                   >
                     <Plus className="h-4 w-4" />
-                    <span>Add Certification</span>
+                    <span className="hidden md:inline">Add Certification</span>
                   </Button>
                 </div>
               </div>
@@ -410,16 +410,16 @@ export function AboutContentManager() {
           
           return (
             <Card key={section} className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                    <Target className="h-6 w-6 text-emerald-600" />
+              <div className="flex items-center justify-between mb-4 md:mb-6">
+                <div className="flex items-center space-x-2 md:space-x-3">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                    <Target className="h-5 w-5 md:h-6 md:w-6 text-emerald-600" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-base md:text-xl font-bold text-gray-900">
                       Vision & Mission
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-xs md:text-sm text-gray-600">
                       Manage vision and mission content side by side
                     </p>
                   </div>
@@ -429,12 +429,12 @@ export function AboutContentManager() {
               <div className="grid lg:grid-cols-2 gap-6">
                 {/* Vision Content */}
                 <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <Target className="h-5 w-5 text-emerald-600 mr-2" />
+                  <h4 className="text-base md:text-lg font-semibold text-gray-900 flex items-center">
+                    <Target className="h-4 w-4 md:h-5 md:w-5 text-emerald-600 mr-2" />
                     Vision
                   </h4>
                   {visionContent ? (
-                    <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                    <div className="p-3 md:p-4 bg-emerald-50 rounded-lg border border-emerald-200">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center space-x-2">
                           <span className="bg-emerald-100 text-emerald-700 text-xs font-medium px-2 py-1 rounded-full">
@@ -491,31 +491,31 @@ export function AboutContentManager() {
 
                       <div className="space-y-2">
                         {visionContent.title && (
-                          <h5 className="font-semibold text-gray-900">{visionContent.title}</h5>
+                          <h5 className="text-sm md:text-base font-semibold text-gray-900">{visionContent.title}</h5>
                         )}
                         {visionContent.description && (
-                          <p className="text-sm text-gray-700 line-clamp-3">
+                          <p className="text-xs md:text-sm text-gray-700 line-clamp-3">
                             {visionContent.description}
                           </p>
                         )}
                       </div>
                     </div>
                   ) : (
-                    <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
-                      <Target className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-500">No vision content added</p>
+                    <div className="p-3 md:p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+                      <Target className="h-6 w-6 md:h-8 md:w-8 text-gray-400 mx-auto mb-2" />
+                      <p className="text-xs md:text-sm text-gray-500">No vision content added</p>
                     </div>
                   )}
                 </div>
 
                 {/* Mission Content */}
                 <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <Award className="h-5 w-5 text-amber-600 mr-2" />
+                  <h4 className="text-base md:text-lg font-semibold text-gray-900 flex items-center">
+                    <Award className="h-4 w-4 md:h-5 md:w-5 text-amber-600 mr-2" />
                     Mission
                   </h4>
                   {missionContent ? (
-                    <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                    <div className="p-3 md:p-4 bg-amber-50 rounded-lg border border-amber-200">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center space-x-2">
                           <span className="bg-amber-100 text-amber-700 text-xs font-medium px-2 py-1 rounded-full">
@@ -572,19 +572,19 @@ export function AboutContentManager() {
 
                       <div className="space-y-2">
                         {missionContent.title && (
-                          <h5 className="font-semibold text-gray-900">{missionContent.title}</h5>
+                          <h5 className="text-sm md:text-base font-semibold text-gray-900">{missionContent.title}</h5>
                         )}
                         {missionContent.description && (
-                          <p className="text-sm text-gray-700 line-clamp-3">
+                          <p className="text-xs md:text-sm text-gray-700 line-clamp-3">
                             {missionContent.description}
                           </p>
                         )}
                     </div>
                   </div>
                   ) : (
-                    <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
-                      <Award className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-500">No mission content added</p>
+                    <div className="p-3 md:p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+                      <Award className="h-6 w-6 md:h-8 md:w-8 text-gray-400 mx-auto mb-2" />
+                      <p className="text-xs md:text-sm text-gray-500">No mission content added</p>
                     </div>
                   )}
                 </div>
@@ -602,7 +602,7 @@ export function AboutContentManager() {
 
               {/* Section Content */}
               {sectionContent && (
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <div className="mt-4 md:mt-6 p-3 md:p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-2">
                       <span className="bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
@@ -691,16 +691,16 @@ export function AboutContentManager() {
         if (section === 'values') {
           return (
             <Card key={section} className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                    <SectionIcon className="h-6 w-6 text-emerald-600" />
+              <div className="flex items-center justify-between mb-4 md:mb-6">
+                <div className="flex items-center space-x-2 md:space-x-3">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                    <SectionIcon className="h-5 w-5 md:h-6 md:w-6 text-emerald-600" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-base md:text-xl font-bold text-gray-900">
                       {getSectionTitle(section)}
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-xs md:text-sm text-gray-600">
                       Manage features for the {getSectionTitle(section).toLowerCase()} section
                     </p>
                   </div>
@@ -718,7 +718,7 @@ export function AboutContentManager() {
               {sectionFeatures.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {sectionFeatures.map((feature) => (
-                    <div key={feature.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
+                    <div key={feature.id} className="p-3 md:p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center space-x-2">
                           <span className="bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
@@ -774,7 +774,7 @@ export function AboutContentManager() {
                       </div>
 
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-gray-900 text-sm">{feature.title}</h4>
+                        <h4 className="text-xs md:text-sm font-semibold text-gray-900">{feature.title}</h4>
                         {feature.description && (
                           <p className="text-xs text-gray-700 line-clamp-2">
                             {feature.description}
@@ -787,9 +787,9 @@ export function AboutContentManager() {
               )}
 
               {sectionFeatures.length === 0 && (
-                <div className="p-8 text-center">
-                  <Star className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-500">No features added yet</p>
+                <div className="p-6 md:p-8 text-center">
+                  <Star className="h-6 w-6 md:h-8 md:w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-xs md:text-sm text-gray-500">No features added yet</p>
                 </div>
               )}
             </Card>
@@ -799,16 +799,16 @@ export function AboutContentManager() {
         // Special handling for story section (Our Story)
         if (section === 'story') {
           return (
-            <Card key={section} className="p-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                  <SectionIcon className="h-6 w-6 text-emerald-600" />
+            <Card key={section} className="p-4 md:p-6">
+              <div className="flex items-center space-x-2 md:space-x-3 mb-4 md:mb-6">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                  <SectionIcon className="h-5 w-5 md:h-6 md:w-6 text-emerald-600" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">
+                  <h3 className="text-base md:text-xl font-bold text-gray-900">
                     {getSectionTitle(section)}
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs md:text-sm text-gray-600">
                     Manage content for the {getSectionTitle(section).toLowerCase()} section
                   </p>
                 </div>
@@ -816,7 +816,7 @@ export function AboutContentManager() {
 
               {/* Section Content */}
               {sectionContent && (
-                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-2">
                       <span className="bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">

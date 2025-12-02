@@ -13,19 +13,9 @@ import {
   ArrowRight
 } from "lucide-react"
 
-const productCategories = [
-  { name: "Fresh Grapes", href: "/products#grapes" },
-  { name: "Fresh Onions", href: "/products#onions" },
-  { name: "Bananas", href: "/products#bananas" },
-  { name: "Green Chilli", href: "/products#green-chilli" }
-]
-
 const quickLinks = [
   { name: "About Us", href: "/about" },
-  { name: "Our Services", href: "/services" },
-  { name: "Quality Assurance", href: "/services#quality" },
-  { name: "Export Process", href: "/services#process" },
-  { name: "Certifications", href: "/about#certifications" }
+  { name: "Downloadable Brochure", href: "/brochure" }
 ]
 
 interface ContactInfo {
@@ -54,10 +44,17 @@ const defaultContactInfo: ContactInfo = {
   instagram: ""
 }
 
+interface Product {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 export function Footer() {
   const [contactInfo, setContactInfo] = useState<ContactInfo>(defaultContactInfo);
   const [footerLogo, setFooterLogo] = useState<string>("");
   const [footerLogoMobile, setFooterLogoMobile] = useState<string>("");
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -79,7 +76,23 @@ export function Footer() {
         console.error("Failed to fetch settings:", error);
       }
     };
+
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products?limit=100");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.products) {
+            setProducts(data.products);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+
     fetchSettings();
+    fetchProducts();
   }, []);
 
   return (
@@ -151,18 +164,21 @@ export function Footer() {
           {/* Products */}
           <div>
             <h3 className="text-xl font-semibold mb-6">Our Products</h3>
-            <ul className="space-y-3">
-              {productCategories.map((category) => (
-                <li key={category.name}>
+            <ul className="space-y-3 max-h-96 overflow-y-auto pr-2">
+              {products.map((product) => (
+                <li key={product.id}>
                   <Link
-                    href={category.href}
+                    href={`/products/${product.slug}`}
                     className="flex items-center space-x-2 text-gray-300 hover:text-emerald-400 transition-colors duration-200"
                   >
-                    <ArrowRight className="h-4 w-4" />
-                    <span>{category.name}</span>
+                    <ArrowRight className="h-4 w-4 flex-shrink-0" />
+                    <span>{product.name}</span>
                   </Link>
                 </li>
               ))}
+              {products.length === 0 && (
+                <li className="text-gray-400 text-sm">Loading products...</li>
+              )}
             </ul>
           </div>
 

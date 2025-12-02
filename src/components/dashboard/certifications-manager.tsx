@@ -182,7 +182,7 @@ export const CertificationsManager = forwardRef<CertificationsManagerRef, Certif
           <p className="text-gray-600 mb-4">Get started by adding your first certification.</p>
           <Button onClick={handleAddCertification} className="flex items-center space-x-2">
             <Plus className="h-4 w-4" />
-            <span>Add Certification</span>
+            <span className="hidden md:inline">Add Certification</span>
           </Button>
         </Card>
       ) : (
@@ -218,7 +218,7 @@ export const CertificationsManager = forwardRef<CertificationsManagerRef, Certif
               {/* Content */}
               <div className="p-4">
                 <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-semibold text-gray-900 text-sm line-clamp-1">{cert.name}</h4>
+                  <h4 className="text-xs md:text-sm font-semibold text-gray-900 line-clamp-1">{cert.name}</h4>
                   <div className="flex items-center space-x-1 ml-2">
                     <button
                       onClick={() => handleEditCertification(cert)}
@@ -489,7 +489,7 @@ function CertificationModal({ isOpen, onClose, onSave, certification }: Certific
       <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-base md:text-lg font-semibold text-gray-900">
               {certification ? 'Edit Certification' : 'Add New Certification'}
             </h2>
             <button

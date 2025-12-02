@@ -375,7 +375,7 @@ export function HomeContentManager() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Info className="h-4 w-4 text-gray-400" />
-            <span className="text-sm text-gray-500">Click on a section card to manage its content</span>
+            <span className="text-xs md:text-sm text-gray-500">Click on a section card to manage its content</span>
           </div>
           <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
             <button
@@ -404,20 +404,17 @@ export function HomeContentManager() {
             return (
               <Card
                 key={key}
-                className={`group cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-2 ${config.borderColor} overflow-hidden ${
+                className={`group cursor-pointer transition-all duration-300 hover:border-gray-300 border border-gray-200 overflow-hidden ${
                   viewMode === 'list' ? 'flex items-center' : ''
                 }`}
                 onClick={() => setActiveSection(key)}
               >
                 {viewMode === 'grid' ? (
                   <>
-                    {/* Card Header with Gradient */}
-                    <div className={`h-2 bg-gradient-to-r ${config.color}`} />
-                    
                     <div className="p-5">
                       <div className="flex items-start justify-between mb-4">
-                        <div className={`w-12 h-12 rounded-xl ${config.bgColor} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                          <Icon className={`h-6 w-6 ${config.iconColor}`} />
+                        <div className="w-12 h-12 rounded-xl border border-gray-200 flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Icon className="h-6 w-6 text-gray-600" />
                         </div>
                         <div className="flex items-center gap-2">
                           {stats.hasContent && (
@@ -429,30 +426,29 @@ export function HomeContentManager() {
                         </div>
                       </div>
                       
-                      <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors">
+                      <h3 className="text-sm md:text-base font-semibold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors">
                         {config.label}
                       </h3>
-                      <p className="text-sm text-gray-500 mb-4 line-clamp-2">
+                      <p className="text-xs md:text-sm text-gray-500 mb-4 line-clamp-2">
                         {config.description}
                       </p>
                       
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                        <span className="text-xs text-gray-400">Click to manage</span>
-                        <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
+                        <span className="text-[10px] md:text-xs text-gray-400">Click to manage</span>
+                        <ChevronRight className="h-3 w-3 md:h-4 md:w-4 text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
                       </div>
                     </div>
                   </>
                 ) : (
                   <div className="flex items-center w-full p-4 gap-4">
-                    <div className={`w-3 h-full absolute left-0 top-0 bg-gradient-to-b ${config.color}`} />
-                    <div className={`w-12 h-12 rounded-xl ${config.bgColor} flex items-center justify-center flex-shrink-0 ml-2`}>
-                      <Icon className={`h-6 w-6 ${config.iconColor}`} />
+                    <div className="w-12 h-12 rounded-xl border border-gray-200 flex items-center justify-center flex-shrink-0">
+                      <Icon className="h-6 w-6 text-gray-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 group-hover:text-emerald-600 transition-colors">
+                      <h3 className="text-sm md:text-base font-semibold text-gray-900 group-hover:text-emerald-600 transition-colors">
                         {config.label}
                       </h3>
-                      <p className="text-sm text-gray-500 truncate">
+                      <p className="text-xs md:text-sm text-gray-500 truncate">
                         {config.description}
                       </p>
                     </div>
@@ -485,7 +481,7 @@ export function HomeContentManager() {
               className="gap-2"
             >
               <ChevronRight className="h-4 w-4 rotate-180" />
-              Back to Sections
+              <span className="hidden md:inline">Back to Sections</span>
             </Button>
             
             <div className="flex items-center gap-3">
@@ -497,9 +493,9 @@ export function HomeContentManager() {
                     <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${config?.color || 'from-gray-500 to-gray-600'} flex items-center justify-center`}>
                       <Icon className="h-5 w-5 text-white" />
                     </div>
-                    <div>
-                      <h2 className="text-xl font-bold text-gray-900">{config?.label || activeSection}</h2>
-                      <p className="text-sm text-gray-500">{config?.description}</p>
+                    <div className="hidden md:block">
+                      <h2 className="text-base md:text-xl font-bold text-gray-900">{config?.label || activeSection}</h2>
+                      <p className="text-xs md:text-sm text-gray-500">{config?.description}</p>
                     </div>
                   </>
                 );
@@ -514,13 +510,13 @@ export function HomeContentManager() {
                 className="gap-2"
               >
                 <ExternalLink className="h-4 w-4" />
-                Preview Section
+                <span className="hidden md:inline">Preview Section</span>
               </Button>
             </div>
           </div>
 
           {/* Section Content */}
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             {renderSectionContent(activeSection)}
           </Card>
         </div>
