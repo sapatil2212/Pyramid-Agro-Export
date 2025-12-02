@@ -59,19 +59,17 @@ export async function POST(request: NextRequest) {
       console.log('Upload successful, URL:', imageUrl);
       return NextResponse.json({ url: imageUrl });
     } catch (cloudinaryError) {
-      console.log('Cloudinary upload failed, using placeholder image...', cloudinaryError);
+      console.log('Cloudinary upload failed:', cloudinaryError);
       
-      // Fallback: Return a placeholder image URL
-      const fileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const placeholderUrl = `https://via.placeholder.com/400x300/4F46E5/FFFFFF?text=${encodeURIComponent(fileName)}`;
-      
-      console.log('Using placeholder image, URL:', placeholderUrl);
-      
-      return NextResponse.json({ 
-        url: placeholderUrl,
-        message: 'Cloudinary not configured, using placeholder image',
-        isPlaceholder: true
-      });
+      // Return error instead of placeholder since placeholders don't work on Vercel
+      return NextResponse.json(
+        { 
+          error: 'Image upload failed. Please configure Cloudinary credentials in Vercel environment variables.',
+          details: cloudinaryError instanceof Error ? cloudinaryError.message : 'Unknown error',
+          cloudinaryConfigured: false
+        },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error('Error uploading image:', error);

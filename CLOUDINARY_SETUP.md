@@ -16,6 +16,8 @@ To use the home page CMS with image upload functionality, you need to set up Clo
    - API Secret
 
 ## 3. Update Environment Variables
+
+### For Local Development
 Add these variables to your `.env.local` file:
 
 ```env
@@ -24,6 +26,16 @@ CLOUDINARY_CLOUD_NAME=your-cloud-name-here
 CLOUDINARY_API_KEY=your-api-key-here
 CLOUDINARY_API_SECRET=your-api-secret-here
 ```
+
+### For Vercel Deployment
+1. Go to your Vercel project dashboard
+2. Navigate to **Settings** > **Environment Variables**
+3. Add the following variables:
+   - `CLOUDINARY_CLOUD_NAME` = your-cloud-name
+   - `CLOUDINARY_API_KEY` = your-api-key
+   - `CLOUDINARY_API_SECRET` = your-api-secret
+4. Make sure to select **Production**, **Preview**, and **Development** for each variable
+5. Redeploy your application for changes to take effect
 
 ## 4. Test the Setup
 1. Start your development server: `npm run dev`
