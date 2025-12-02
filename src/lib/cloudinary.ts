@@ -1,16 +1,16 @@
 import { v2 as cloudinary } from 'cloudinary';
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
 export { cloudinary };
 
 export const uploadImage = async (file: File, folder: string = 'pyramid-agro-export'): Promise<string> => {
   try {
     console.log('Cloudinary upload starting for file:', file.name);
+    console.log('Environment check:', {
+      hasCloudName: !!process.env.CLOUDINARY_CLOUD_NAME,
+      hasApiKey: !!process.env.CLOUDINARY_API_KEY,
+      hasApiSecret: !!process.env.CLOUDINARY_API_SECRET,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME?.substring(0, 5) + '...' // Log first 5 chars only
+    });
     
     // Check if Cloudinary is configured
     if (!process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME === 'your-cloud-name-here') {
@@ -24,6 +24,13 @@ export const uploadImage = async (file: File, folder: string = 'pyramid-agro-exp
     if (!process.env.CLOUDINARY_API_SECRET || process.env.CLOUDINARY_API_SECRET === 'your-api-secret-here') {
       throw new Error('Cloudinary API secret not configured. Please set up your Cloudinary credentials in the .env.local file.');
     }
+
+    // Configure Cloudinary for this request (important for serverless)
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
