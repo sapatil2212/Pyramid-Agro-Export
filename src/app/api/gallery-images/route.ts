@@ -35,6 +35,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate section
+    if (typeof section !== 'string' || section.trim() === '') {
+      return NextResponse.json(
+        { error: 'Valid section is required' },
+        { status: 400 }
+      );
+    }
+
     // Get the highest order number for this section
     const lastImage = await prisma.galleryImage.findFirst({
       where: { section },
@@ -46,9 +54,9 @@ export async function POST(request: NextRequest) {
     const galleryImage = await prisma.galleryImage.create({
       data: {
         imageUrl,
-        altText,
-        title,
-        description,
+        altText: altText || null,
+        title: title || null,
+        description: description || null,
         section,
         order: newOrder
       }
@@ -57,8 +65,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(galleryImage, { status: 201 });
   } catch (error) {
     console.error('Error creating gallery image:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create gallery image';
     return NextResponse.json(
-      { error: 'Failed to create gallery image' },
+      { error: errorMessage, details: error },
       { status: 500 }
     );
   }

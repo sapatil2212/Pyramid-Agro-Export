@@ -98,7 +98,13 @@ export function InteractiveGalleryManager() {
 
       if (response.ok) {
         const data = await response.json();
-        await handleAddImage(data.imageUrl, file.name);
+        console.log('Upload response:', data);
+        // API returns 'url' not 'imageUrl'
+        const imageUrl = data.url || data.imageUrl;
+        if (!imageUrl) {
+          throw new Error('No image URL returned from upload');
+        }
+        await handleAddImage(imageUrl, file.name);
       } else {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to upload image');
@@ -119,7 +125,9 @@ export function InteractiveGalleryManager() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           imageUrl,
-          altText: altText || '',
+          altText: altText || null,
+          title: null,
+          description: null,
           section: 'interactive'
         })
       });
@@ -128,11 +136,13 @@ export function InteractiveGalleryManager() {
         await fetchGalleryImages();
         showSuccess('Gallery image added successfully!');
       } else {
-        throw new Error('Failed to add gallery image');
+        const errorData = await response.json();
+        console.error('API Error:', errorData);
+        throw new Error(errorData.error || 'Failed to add gallery image');
       }
     } catch (error) {
       console.error('Error adding gallery image:', error);
-      setMessage({ type: 'error', text: 'Failed to add gallery image' });
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to add gallery image' });
     } finally {
       setSaving(false);
     }
