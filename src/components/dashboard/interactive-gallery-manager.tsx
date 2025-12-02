@@ -387,6 +387,7 @@ export function InteractiveGalleryManager() {
                   alt={image.altText || 'Gallery image'}
                   width={300}
                   height={200}
+                  unoptimized
                   className="w-full h-32 object-cover rounded-lg border"
                   onLoad={() => console.log('Interactive gallery manager image loaded:', image.imageUrl)}
                   onError={(e) => {

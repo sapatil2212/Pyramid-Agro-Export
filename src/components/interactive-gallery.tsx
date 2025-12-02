@@ -239,8 +239,11 @@ export function InteractiveGallery() {
                       alt={image.altText || image.title || 'Gallery image'}
                       width={320}
                       height={256}
+                      unoptimized
                       className="w-full h-full object-cover"
+                      onLoad={() => console.log('Frontend gallery image loaded:', image.imageUrl)}
                       onError={(e) => {
+                        console.error('Frontend gallery image failed to load:', image.imageUrl);
                         e.currentTarget.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDMyMCAyNTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjU2IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNjAgMTI4QzE2MCAxNDEuNDY0IDE0OS4zMjQgMTUyIDEzNiAxNTJDMTIyLjY3NiAxNTIgMTEyIDE0MS40NjQgMTEyIDEyOEMxMTIgMTE0LjUzNiAxMjIuNjc2IDEwNCAxMzYgMTA0QzE0OS4zMjQgMTA0IDE2MCAxMTQuNTM2IDE2MCAxMjhaIiBmaWxsPSIjOUI5QkE1Ii8+Cjx0ZXh0IHg9IjE2MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNkI3MjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiPkltYWdlIExvYWRpbmcuLi48L3RleHQ+Cjwvc3ZnPgo="
                       }}
                     />
@@ -320,8 +323,11 @@ export function InteractiveGallery() {
                   alt={selectedImage.altText || selectedImage.title || 'Gallery image'}
                   width={800}
                   height={600}
+                  unoptimized
                   className="max-w-full max-h-full object-contain transition-transform duration-300"
                   style={{ transform: `scale(${zoomLevel})` }}
+                  onLoad={() => console.log('Modal image loaded:', selectedImage.imageUrl)}
+                  onError={(e) => console.error('Modal image failed to load:', selectedImage.imageUrl)}
                 />
               </div>
             )}
