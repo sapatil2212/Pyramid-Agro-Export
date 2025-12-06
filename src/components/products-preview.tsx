@@ -26,6 +26,7 @@ interface Product {
   };
   isActive: boolean;
   isFeatured: boolean;
+  updatedAt?: string;
 }
 
 // Helper to parse features
@@ -155,6 +156,7 @@ export function ProductsPreview() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
           {products.map((product: Product, index: number) => {
             const imageUrl = product.imageUrl || product.heroImageUrl
+            const cacheBuster = product.updatedAt ? `?t=${new Date(product.updatedAt).getTime()}` : ''
             const features = parseFeatures(product.features)
             
             return (
@@ -170,7 +172,7 @@ export function ProductsPreview() {
                 <div className="relative h-[300px] overflow-hidden">
                   {imageUrl ? (
                     <Image 
-                      src={imageUrl} 
+                      src={`${imageUrl}${cacheBuster}`} 
                       alt={product.name}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"

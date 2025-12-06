@@ -14,10 +14,10 @@ import {
   CheckCircle,
   AlertCircle
 } from "lucide-react";
-import { ProductForm } from "./product-form";
 import { SuccessModal } from "@/components/ui/success-modal";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { AddProductWizardModal } from "./add-product-wizard-modal";
+import { EditProductWizardModal } from "./edit-product-wizard-modal";
 import Image from "next/image";
 
 interface Product {
@@ -100,10 +100,8 @@ export function ProductManager() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -116,6 +114,7 @@ export function ProductManager() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentView, setCurrentView] = useState<'products'>('products');
   const [showAddProductWizard, setShowAddProductWizard] = useState(false);
+  const [showEditProductWizard, setShowEditProductWizard] = useState(false);
 
   // Helper function to show success modal
   const showSuccess = (message: string) => {
@@ -196,54 +195,13 @@ export function ProductManager() {
 
   const handleEditProduct = (product: Product) => {
     setSelectedProduct(product);
-    setIsFormOpen(true);
+    setShowEditProductWizard(true);
   };
 
-  const handleCloseForm = () => {
-    setIsFormOpen(false);
-    setSelectedProduct(null);
-  };
-
-  const handleSaveProduct = async (productData: Partial<Product> & { name: string; categoryId: string }) => {
-    try {
-      setSaving(true);
-      setMessage(null);
-
-      const response = await fetch('/api/products', {
-        method: productData.id ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...productData,
-          images: JSON.stringify(productData.images || []),
-          specifications: productData.specifications ? JSON.stringify(productData.specifications) : null,
-          seasons: JSON.stringify(productData.seasons || []),
-          packaging: JSON.stringify(productData.packaging || []),
-          price: productData.price ? JSON.stringify(productData.price) : null,
-          features: JSON.stringify(productData.features || []),
-          nutritionalInfo: productData.nutritionalInfo ? JSON.stringify(productData.nutritionalInfo) : null,
-          certifications: JSON.stringify(productData.certifications || []),
-          storageConditions: JSON.stringify(productData.storageConditions || []),
-          exportMarkets: JSON.stringify(productData.exportMarkets || [])
-        })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        showSuccess(productData.id ? 'Product updated successfully!' : 'Product created successfully!');
-        await fetchProducts();
-        handleCloseForm();
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to save product');
-      }
-    } catch (error) {
-      console.error('Error saving product:', error);
-      setMessage({ type: 'error', text: 'Failed to save product' });
-    } finally {
-      setSaving(false);
-    }
+  const handleEditWizardSuccess = async () => {
+    await fetchProducts();
+    await fetchCategories();
+    showSuccess('Product updated successfully!');
   };
 
   const handleDeleteProduct = async (id: string) => {
@@ -383,7 +341,7 @@ export function ProductManager() {
             Manage all your products, categories, and product details
           </p>
         </div>
-        {!isFormOpen && currentView === 'products' && (
+        {currentView === 'products' && (
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -410,195 +368,178 @@ export function ProductManager() {
 
       {/* Products Content */}
       <>
-        {/* Product Form */}
-        {isFormOpen && (
-          <ProductForm
-            product={selectedProduct}
-            categories={categories}
-            onSave={handleSaveProduct}
-            onCancel={handleCloseForm}
-            loading={saving}
-          />
-        )}
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+          <div className="sm:w-64">
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            >
+              <option value="all">All Categories</option>
+              {categories.map(category => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-        {/* Filters and Products Grid - Only show when form is not open */}
-        {!isFormOpen && (
-            <>
-              {/* Filters */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-                <div className="sm:w-64">
-                  <select
-                    value={filterCategory}
-                    onChange={(e) => setFilterCategory(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {filteredProducts.map((product, index) => (
+            <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
+              {/* Image Preview - Increased Height */}
+              <div className="relative">
+                {(() => {
+                  const imageUrl = product.imageUrl || product.heroImageUrl || (product.images && product.images[0]);
+                  const cacheBuster = product.updatedAt ? `?t=${new Date(product.updatedAt).getTime()}` : '';
+                  
+                  if (imageUrl) {
+                    return (
+                      <div className="relative w-full h-40 overflow-hidden bg-gray-50">
+                        <Image
+                          src={`${imageUrl}${cacheBuster}`}
+                          alt={product.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 300px"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const placeholder = target.parentElement?.querySelector('.placeholder') as HTMLElement;
+                            if (placeholder) placeholder.style.display = 'flex';
+                          }}
+                        />
+                        <div className="placeholder absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center" style={{ display: 'none' }}>
+                          <ImageIcon className="h-10 w-10 text-gray-400 mb-1" />
+                          <span className="text-xs text-gray-400">Image unavailable</span>
+                        </div>
+                      </div>
+                    );
+                  }
+                  
+                  return (
+                    <div className="w-full h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center">
+                      <ImageIcon className="h-10 w-10 text-gray-400 mb-1" />
+                      <span className="text-xs text-gray-400">No image</span>
+                    </div>
+                  );
+                })()}
+                
+                {/* Action Buttons - Always visible */}
+                <div className="absolute top-2 right-2 flex items-center gap-1">
+                  <button
+                    onClick={() => handleEditProduct(product)}
+                    className="p-1.5 bg-white/90 text-emerald-600 hover:bg-white rounded-lg shadow-sm transition-colors"
+                    title="Edit product"
                   >
-                    <option value="all">All Categories</option>
-                    {categories.map(category => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
+                    <Edit className="h-4 w-4" />
+                  </button>
+                  
+                  <button
+                    onClick={() => handleToggleStatus(product)}
+                    disabled={toggling === product.id}
+                    className={`p-1.5 bg-white/90 rounded-lg shadow-sm transition-colors ${
+                      product.isActive ? 'text-green-600 hover:bg-white' : 'text-gray-400 hover:bg-white'
+                    } ${toggling === product.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title={product.isActive ? 'Disable product' : 'Enable product'}
+                  >
+                    {toggling === product.id ? (
+                      <ToggleLoader size="sm" />
+                    ) : (
+                      <Power className="h-4 w-4" />
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={() => showConfirmation(
+                      'Delete Product',
+                      `Are you sure you want to delete "${product.name}"? This action cannot be undone.`,
+                      () => handleDeleteProduct(product.id)
+                    )}
+                    className="p-1.5 bg-white/90 text-red-600 hover:bg-white rounded-lg shadow-sm transition-colors"
+                    title="Delete product"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
-
-              {/* Products Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {filteredProducts.map((product, index) => (
-                  <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
-                    {/* Image Preview - Increased Height */}
-                    <div className="relative">
-                      {(() => {
-                        const imageUrl = product.imageUrl || product.heroImageUrl || (product.images && product.images[0]);
-                        const cacheBuster = product.updatedAt ? `?t=${new Date(product.updatedAt).getTime()}` : '';
-                        
-                        if (imageUrl) {
-                          return (
-                            <div className="relative w-full h-40 overflow-hidden bg-gray-50">
-                              <Image
-                                src={`${imageUrl}${cacheBuster}`}
-                                alt={product.name}
-                                fill
-                                sizes="(max-width: 768px) 100vw, 300px"
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  const placeholder = target.parentElement?.querySelector('.placeholder') as HTMLElement;
-                                  if (placeholder) placeholder.style.display = 'flex';
-                                }}
-                              />
-                              <div className="placeholder absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center" style={{ display: 'none' }}>
-                                <ImageIcon className="h-10 w-10 text-gray-400 mb-1" />
-                                <span className="text-xs text-gray-400">Image unavailable</span>
-                              </div>
-                            </div>
-                          );
-                        }
-                        
-                        return (
-                          <div className="w-full h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center">
-                            <ImageIcon className="h-10 w-10 text-gray-400 mb-1" />
-                            <span className="text-xs text-gray-400">No image</span>
-                          </div>
-                        );
-                      })()}
-                      
-                      {/* Action Buttons - Always visible */}
-                      <div className="absolute top-2 right-2 flex items-center gap-1">
-                        <button
-                          onClick={() => handleEditProduct(product)}
-                          className="p-1.5 bg-white/90 text-emerald-600 hover:bg-white rounded-lg shadow-sm transition-colors"
-                          title="Edit product"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        
-                        <button
-                          onClick={() => handleToggleStatus(product)}
-                          disabled={toggling === product.id}
-                          className={`p-1.5 bg-white/90 rounded-lg shadow-sm transition-colors ${
-                            product.isActive ? 'text-green-600 hover:bg-white' : 'text-gray-400 hover:bg-white'
-                          } ${toggling === product.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          title={product.isActive ? 'Disable product' : 'Enable product'}
-                        >
-                          {toggling === product.id ? (
-                            <ToggleLoader size="sm" />
-                          ) : (
-                            <Power className="h-4 w-4" />
-                          )}
-                        </button>
-                        
-                        <button
-                          onClick={() => showConfirmation(
-                            'Delete Product',
-                            `Are you sure you want to delete "${product.name}"? This action cannot be undone.`,
-                            () => handleDeleteProduct(product.id)
-                          )}
-                          className="p-1.5 bg-white/90 text-red-600 hover:bg-white rounded-lg shadow-sm transition-colors"
-                          title="Delete product"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                    
-                    {/* Content */}
-                    <div className="p-3">
-                      {/* Badges Row */}
-                      <div className="flex items-center flex-wrap gap-1.5 mb-2">
-                        <span className="bg-emerald-100 text-emerald-700 text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                          #{index + 1}
-                        </span>
-                        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
-                          product.isActive 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-600'
-                        }`}>
-                          {product.isActive ? 'Active' : 'Disabled'}
-                        </span>
-                        {product.isFeatured && (
-                          <span className="bg-yellow-100 text-yellow-700 text-[10px] font-medium px-1.5 py-0.5 rounded">
-                            Featured
-                          </span>
-                        )}
-                      </div>
-                      
-                      {/* Title */}
-                      <h4 className="text-sm font-semibold text-gray-900 line-clamp-1 mb-1">
-                        {product.name}
-                      </h4>
-                      
-                      {/* Short Description */}
-                      {(product.shortDescription || product.heroDescription) && (
-                        <p className="text-xs text-gray-500 line-clamp-2 mb-2">
-                          {product.shortDescription || product.heroDescription}
-                        </p>
-                      )}
-                      
-                      {/* Category */}
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                        <Package className="h-3 w-3" />
-                        <span className="truncate">{product.category.name}</span>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-
-              {filteredProducts.length === 0 && (
-                <div className="text-center py-12">
-                  <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-                  <p className="text-gray-600 mb-4">
-                    {searchTerm || filterCategory !== 'all' 
-                      ? 'Try adjusting your search or filter criteria.'
-                      : 'Get started by adding your first product.'
-                    }
-                  </p>
-                  {(!searchTerm && filterCategory === 'all') && (
-                    <Button
-                      onClick={handleAddProduct}
-                      className="bg-emerald-600 hover:bg-emerald-700"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Product
-                    </Button>
+              
+              {/* Content */}
+              <div className="p-3">
+                {/* Badges Row */}
+                <div className="flex items-center flex-wrap gap-1.5 mb-2">
+                  <span className="bg-emerald-100 text-emerald-700 text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    #{index + 1}
+                  </span>
+                  <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
+                    product.isActive 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-red-100 text-red-600'
+                  }`}>
+                    {product.isActive ? 'Active' : 'Disabled'}
+                  </span>
+                  {product.isFeatured && (
+                    <span className="bg-yellow-100 text-yellow-700 text-[10px] font-medium px-1.5 py-0.5 rounded">
+                      Featured
+                    </span>
                   )}
                 </div>
-              )}
-            </>
-          )}
+                
+                {/* Title */}
+                <h4 className="text-sm font-semibold text-gray-900 line-clamp-1 mb-1">
+                  {product.name}
+                </h4>
+                
+                {/* Short Description */}
+                {(product.shortDescription || product.heroDescription) && (
+                  <p className="text-xs text-gray-500 line-clamp-2 mb-2">
+                    {product.shortDescription || product.heroDescription}
+                  </p>
+                )}
+                
+                {/* Category */}
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <Package className="h-3 w-3" />
+                  <span className="truncate">{product.category.name}</span>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
 
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-12">
+            <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+            <p className="text-gray-600 mb-4">
+              {searchTerm || filterCategory !== 'all' 
+                ? 'Try adjusting your search or filter criteria.'
+                : 'Get started by adding your first product.'
+              }
+            </p>
+            {(!searchTerm && filterCategory === 'all') && (
+              <Button
+                onClick={handleAddProduct}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Product
+              </Button>
+            )}
+          </div>
+        )}
       </>
 
       {/* Modals */}
@@ -630,6 +571,19 @@ export function ProductManager() {
         isOpen={showAddProductWizard}
         onClose={() => setShowAddProductWizard(false)}
         onSuccess={handleWizardSuccess}
+        categories={categories}
+        onCategoryCreated={fetchCategories}
+      />
+
+      {/* Edit Product Wizard Modal */}
+      <EditProductWizardModal
+        isOpen={showEditProductWizard}
+        onClose={() => {
+          setShowEditProductWizard(false);
+          setSelectedProduct(null);
+        }}
+        onSuccess={handleEditWizardSuccess}
+        product={selectedProduct}
         categories={categories}
         onCategoryCreated={fetchCategories}
       />

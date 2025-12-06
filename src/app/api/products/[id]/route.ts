@@ -43,7 +43,10 @@ export async function GET(
       nutritionalInfo: product.nutritionalInfo ? JSON.parse(product.nutritionalInfo) : null,
       certifications: product.certifications ? JSON.parse(product.certifications) : null,
       storageConditions: product.storageConditions ? JSON.parse(product.storageConditions) : null,
-      exportMarkets: product.exportMarkets ? JSON.parse(product.exportMarkets) : null
+      exportMarkets: product.exportMarkets ? JSON.parse(product.exportMarkets) : null,
+      tableVarieties: product.tableVarieties ? JSON.parse(product.tableVarieties) : null,
+      tableSpecs: product.tableSpecs ? JSON.parse(product.tableSpecs) : null,
+      tableAdvantages: product.tableAdvantages ? JSON.parse(product.tableAdvantages) : null
     }
 
     return NextResponse.json(parsedProduct)
@@ -213,9 +216,9 @@ export async function PUT(
         // Nashik Grapes Table fields
         tableTitle,
         tableDescription,
-        tableVarieties,
-        tableSpecs,
-        tableAdvantages
+        tableVarieties: tableVarieties ? JSON.stringify(tableVarieties) : null,
+        tableSpecs: tableSpecs ? JSON.stringify(tableSpecs) : null,
+        tableAdvantages: tableAdvantages ? JSON.stringify(tableAdvantages) : null
       },
       include: {
         category: {

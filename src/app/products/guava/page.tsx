@@ -3,12 +3,12 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield, RefreshCw } from "lucide-react"
+import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield } from "lucide-react"
 import GuavaTable from "@/components/products/guava-table"
 import { useProductData } from "@/hooks/use-product-data"
 
 export default function GuavaPage() {
-  const { product, loading, refetch } = useProductData('guava')
+  const { product, loading } = useProductData('guava')
 
   // Icon mapping for feature cards
   const iconMap = {
@@ -134,16 +134,6 @@ export default function GuavaPage() {
                     </Button>
                   </>
                 )}
-                <Button
-                  onClick={refetch}
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2"
-                  disabled={loading}
-                >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh
-                </Button>
               </div>
             </motion.div>
 

@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit
 
-    const [products, total] = await Promise.all([
+    const [rawProducts, total] = await Promise.all([
       prisma.product.findMany({
         where,
         include: {
@@ -68,6 +68,24 @@ export async function GET(request: NextRequest) {
       }),
       prisma.product.count({ where })
     ])
+
+    // Parse JSON fields for each product
+    const products = rawProducts.map(product => ({
+      ...product,
+      images: product.images ? JSON.parse(product.images) : null,
+      specifications: product.specifications ? JSON.parse(product.specifications) : null,
+      seasons: product.seasons ? JSON.parse(product.seasons) : null,
+      packaging: product.packaging ? JSON.parse(product.packaging) : null,
+      price: product.price ? JSON.parse(product.price) : null,
+      features: product.features ? JSON.parse(product.features) : null,
+      nutritionalInfo: product.nutritionalInfo ? JSON.parse(product.nutritionalInfo) : null,
+      certifications: product.certifications ? JSON.parse(product.certifications) : null,
+      storageConditions: product.storageConditions ? JSON.parse(product.storageConditions) : null,
+      exportMarkets: product.exportMarkets ? JSON.parse(product.exportMarkets) : null,
+      tableVarieties: product.tableVarieties ? JSON.parse(product.tableVarieties) : null,
+      tableSpecs: product.tableSpecs ? JSON.parse(product.tableSpecs) : null,
+      tableAdvantages: product.tableAdvantages ? JSON.parse(product.tableAdvantages) : null
+    }))
 
     return NextResponse.json({
       products,

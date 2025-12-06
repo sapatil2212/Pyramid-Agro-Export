@@ -48,8 +48,7 @@ export const NAVIGATION = [
           { id: "green-chillis", name: "Green Chillis", href: "/products/green-chillis" },
           { id: "onions", name: "Onions", href: "/products/onions" },
           { id: "potatoes", name: "Potatoes", href: "/products/potatoes" },
-          { id: "tomatoes", name: "Tomatoes", href: "/products/tomatoes" },
-          { id: "garlics", name: "Garlics", href: "/products/garlics" }
+          { id: "tomatoes", name: "Tomatoes", href: "/products/tomatoes" }
         ]
       },
       {

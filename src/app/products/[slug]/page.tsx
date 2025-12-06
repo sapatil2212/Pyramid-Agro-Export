@@ -22,7 +22,6 @@ import {
   Lock,
   TrendingUp,
   Sparkles,
-  RefreshCw,
   type LucideIcon,
 } from "lucide-react"
 
@@ -30,6 +29,11 @@ interface Feature {
   icon: string
   title: string
   description: string
+}
+
+interface SpecTable {
+  title: string
+  rows: Array<{ key: string; value: string }>
 }
 
 interface Product {
@@ -46,6 +50,7 @@ interface Product {
     color?: string
   }
   specifications?: Record<string, string>
+  tableSpecs?: SpecTable[]
   heroTitle?: string
   heroSubtitle?: string
   heroDescription?: string
@@ -94,6 +99,7 @@ export default function ProductDetailPage() {
         const productData = data.products[0] as Product & {
           features?: Feature[] | string
           specifications?: Record<string, string> | string
+          tableSpecs?: SpecTable[] | string
         }
         
         // Parse features if it's a string
@@ -114,6 +120,19 @@ export default function ProductDetailPage() {
           }
         }
         
+        // Parse tableSpecs if it's a string
+        if (productData.tableSpecs && typeof productData.tableSpecs === 'string') {
+          try {
+            productData.tableSpecs = JSON.parse(productData.tableSpecs)
+          } catch (e) {
+            console.error('Error parsing tableSpecs:', e)
+            productData.tableSpecs = []
+          }
+        }
+        
+        console.log('Product data loaded:', productData)
+        console.log('Table specs:', productData.tableSpecs)
+        
         setProduct(productData)
       }
     } catch (error) {
@@ -122,10 +141,6 @@ export default function ProductDetailPage() {
       setLoading(false)
     }
   }, [slug])
-
-  const refetch = () => {
-    void fetchProduct()
-  }
 
   useEffect(() => {
     void fetchProduct()
@@ -209,16 +224,6 @@ export default function ProductDetailPage() {
                     {product.heroButton2Text}
                   </Button>
                 )}
-                <Button
-                  onClick={refetch}
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2"
-                  disabled={loading}
-                >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh
-                </Button>
               </div>
             </motion.div>
 
@@ -310,8 +315,63 @@ export default function ProductDetailPage() {
         </div>
       </section>
 
-      {/* Specifications Table Section */}
-      {product.specifications && Object.keys(product.specifications).length > 0 && (
+      {/* Specifications Tables Section - Render all tables side by side like Grapes component */}
+      {product.tableSpecs && product.tableSpecs.length > 0 && (
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
+            {/* Grid layout: 2 columns on large screens, 1 column on mobile */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {product.tableSpecs.map((table, tableIndex) => (
+                <motion.div
+                  key={tableIndex}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: tableIndex * 0.1 }}
+                  viewport={{ once: true }}
+                  className="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm"
+                >
+                  {/* Table Header with emerald background */}
+                  <div className="bg-emerald-600 text-white px-4 py-3">
+                    <h3 className="text-lg font-bold">
+                      {table.title}
+                    </h3>
+                  </div>
+
+                  {/* Table Content */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900">Specification</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900">Details</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {table.rows.map((row, rowIndex) => (
+                          <motion.tr
+                            key={rowIndex}
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: rowIndex * 0.05 }}
+                            viewport={{ once: true }}
+                            className="hover:bg-emerald-50 transition-colors duration-200"
+                          >
+                            <td className="px-4 py-3 text-xs font-semibold text-gray-900">{row.key}</td>
+                            <td className="px-4 py-3 text-xs text-gray-700">{row.value}</td>
+                          </motion.tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+      
+      {/* Fallback: Old specifications format (for backward compatibility) */}
+      {(!product.tableSpecs || product.tableSpecs.length === 0) && product.specifications && Object.keys(product.specifications).length > 0 && (
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
             <motion.div

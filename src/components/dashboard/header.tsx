@@ -34,6 +34,7 @@ export function Header({ onMenuClick, title }: HeaderProps) {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const { data: session } = useSession();
   
   // Sync auth with Redux
@@ -45,11 +46,14 @@ export function Header({ onMenuClick, title }: HeaderProps) {
   // Get notifications
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
-  // Close notifications dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         setShowNotifications(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -91,7 +95,8 @@ export function Header({ onMenuClick, title }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-gray-200/30 px-6 py-3 lg:px-8 shadow-sm">
+    <>
+    <header className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200/30 px-6 py-3 lg:px-8 shadow-sm">
       <div className="flex items-center justify-between">
         {/* Left side */}
         <div className="flex items-center space-x-4">
@@ -111,22 +116,6 @@ export function Header({ onMenuClick, title }: HeaderProps) {
 
         {/* Right side */}
         <div className="flex items-center space-x-4">
-          {/* Search */}
-          <div className="hidden md:block">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <input
-                type="text"
-                placeholder="Search dashboard..."
-                className="block w-72 pl-12 pr-4 py-3 border border-gray-200/60 rounded-xl text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white/80 backdrop-blur-sm transition-all duration-200"
-              />
-            </div>
-          </div>
-
           {/* Notifications */}
           <div className="relative" ref={notificationRef}>
             <button 
@@ -205,28 +194,27 @@ export function Header({ onMenuClick, title }: HeaderProps) {
           </div>
 
           {/* User menu */}
-          <div className="relative">
+          <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-100/80 transition-all duration-200 hover:scale-105 group"
+              className="flex items-center space-x-3 p-2 rounded-xl transition-colors duration-200"
             >
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
                 <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-sm font-bold text-gray-900">{user?.name || session?.user?.name || 'User'}</p>
-                <p className="text-xs text-gray-500 font-medium capitalize">{user?.role || session?.user?.role || 'User'}</p>
+                <p className="text-sm font-semibold text-gray-900">{user?.name || session?.user?.name || 'User'}</p>
               </div>
-              <svg className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-4 w-4 text-gray-400 transition-transform duration-200" style={{ transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0deg)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
             {/* Dropdown menu */}
             {showUserMenu && (
-              <div className="absolute right-0 mt-3 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 py-2 z-50">
+              <div className="absolute right-0 mt-3 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                 <button
                   onClick={() => {
                     setShowProfileModal(true);
@@ -270,5 +258,8 @@ export function Header({ onMenuClick, title }: HeaderProps) {
         onClose={() => setShowProfileModal(false)}
       />
     </header>
+    {/* Spacer to prevent content from going under fixed header */}
+    <div className="h-[68px]"></div>
+    </>
   );
 }

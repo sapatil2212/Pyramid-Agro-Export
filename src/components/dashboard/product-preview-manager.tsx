@@ -20,6 +20,7 @@ interface Product {
   description?: string;
   shortDescription?: string;
   imageUrl?: string;
+  images?: string[];
   heroImageUrl?: string;
   heroDescription?: string;
   category: {
@@ -30,6 +31,7 @@ interface Product {
   };
   isActive: boolean;
   isFeatured: boolean;
+  updatedAt?: string;
 }
 
 export function ProductPreviewManager() {
@@ -48,8 +50,13 @@ export function ProductPreviewManager() {
       const data = await response.json();
       
       if (response.ok && data.products) {
-        // Filter only active products
-        const activeProducts = data.products.filter((p: Product) => p.isActive);
+        // Parse JSON fields and filter only active products
+        const parsedProducts = data.products.map((product: Product & { images?: string | string[] }) => ({
+          ...product,
+          images: product.images ? (typeof product.images === 'string' ? JSON.parse(product.images) : product.images) : []
+        }));
+        
+        const activeProducts = parsedProducts.filter((p: Product) => p.isActive);
         setProducts(activeProducts);
         // Show random 6 products
         shuffleAndDisplay(activeProducts);
@@ -74,7 +81,7 @@ export function ProductPreviewManager() {
   };
 
   const getImageUrl = (product: Product) => {
-    return product.imageUrl || product.heroImageUrl || null;
+    return product.imageUrl || product.heroImageUrl || (product.images && product.images[0]) || null;
   };
 
   if (loading) {
@@ -122,6 +129,7 @@ export function ProductPreviewManager() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {displayedProducts.map((product, index) => {
           const imageUrl = getImageUrl(product);
+          const cacheBuster = product.updatedAt ? `?t=${new Date(product.updatedAt).getTime()}` : '';
           return (
             <Card key={product.id} className="overflow-hidden hover:shadow-md transition-shadow">
               <div className="p-3">
@@ -129,7 +137,7 @@ export function ProductPreviewManager() {
                 <div className="relative h-32 mb-3 rounded-lg overflow-hidden bg-gray-100">
                   {imageUrl ? (
                     <Image
-                      src={imageUrl}
+                      src={`${imageUrl}${cacheBuster}`}
                       alt={product.name}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"

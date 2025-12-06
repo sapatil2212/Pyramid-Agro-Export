@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { X, ZoomIn, ZoomOut, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 interface GalleryImage {
   id: string;
@@ -200,9 +201,36 @@ export function InteractiveGallery() {
   return (
     <section className="py-16 lg:py-20 bg-gray-50">
       <div className="container mx-auto px-6 sm:px-8 lg:px-16 xl:px-32">
-        <div className="bg-gradient-to-br from-emerald-50 via-white to-amber-50 backdrop-blur-sm border border-gray-200 rounded-3xl p-8 lg:p-12">
-          
+        {/* Title and Subcontent */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+          >
+            Our Gallery
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto"
+          >
+            Explore our premium agricultural products and state-of-the-art facilities. 
+            Each image showcases our commitment to quality and excellence in export.
+          </motion.p>
+        </motion.div>
 
+        <div className="bg-gradient-to-br from-emerald-50 via-white to-amber-50 backdrop-blur-sm border border-gray-200 rounded-3xl p-8 lg:p-12">
           {/* Gallery Grid */}
           {loading ? (
             <div className="flex items-center justify-center py-12">

@@ -3,12 +3,12 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield, Heart, Award, Zap, Globe, Clock, Users, Target, Lock, TrendingUp, Sparkles, RefreshCw } from "lucide-react"
+import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield, Heart, Award, Zap, Globe, Clock, Users, Target, Lock, TrendingUp, Sparkles } from "lucide-react"
 import NashikGrapesTable from "@/components/products/nashik-grapes-table"
 import { useProductData } from "@/hooks/use-product-data"
 
 export default function GrapesPage() {
-  const { product, loading, refetch } = useProductData('grapes')
+  const { product, loading } = useProductData('grapes')
 
   // Icon mapping for feature cards
   const iconMap = {
@@ -145,16 +145,6 @@ export default function GrapesPage() {
                     </Button>
                   </>
                 )}
-                <Button
-                  onClick={refetch}
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2"
-                  disabled={loading}
-                >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh
-                </Button>
               </div>
             </motion.div>
 

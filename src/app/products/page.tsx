@@ -40,6 +40,7 @@ interface Product {
     max: number
     currency: string
   }
+  updatedAt?: string
 }
 
 interface ProductCategory {
@@ -63,6 +64,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 
   // Get the best available image
   const imageUrl = product.imageUrl || product.heroImageUrl || (product.images && product.images[0])
+  const cacheBuster = product.updatedAt ? `?t=${new Date(product.updatedAt).getTime()}` : ''
 
   return (
     <motion.div
@@ -77,7 +79,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       <div className="relative h-[300px] overflow-hidden">
         {imageUrl ? (
           <Image
-            src={imageUrl}
+            src={`${imageUrl}${cacheBuster}`}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"

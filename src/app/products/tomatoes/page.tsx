@@ -3,12 +3,12 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield, RefreshCw } from "lucide-react"
+import { ArrowRight, Star, CheckCircle, Leaf, Truck, Shield } from "lucide-react"
 import TomatoesTable from "@/components/products/tomatoes-table"
 import { useProductData } from "@/hooks/use-product-data"
 
 export default function TomatoesPage() {
-  const { product, loading, refetch } = useProductData('tomatoes')
+  const { product, loading } = useProductData('tomatoes')
 
   // Icon mapping for feature cards
   const iconMap = {
@@ -134,16 +134,6 @@ export default function TomatoesPage() {
                     </Button>
                   </>
                 )}
-                <Button
-                  onClick={refetch}
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2"
-                  disabled={loading}
-                >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh
-                </Button>
               </div>
             </motion.div>
 

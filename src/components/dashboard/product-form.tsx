@@ -26,7 +26,6 @@ import { GuavaTableManager } from "./guava-table-manager"
 import { GreenChillisTableManager } from "./green-chillis-table-manager"
 import { TomatoesTableManager } from "./tomatoes-table-manager"
 import { PotatoesTableManager } from "./potatoes-table-manager"
-import { GarlicsTableManager } from "./garlics-table-manager"
 import { RiceTableManager } from "./rice-table-manager"
 import { GroundnutsTableManager } from "./groundnuts-table-manager"
 import { DryTurmericTableManager } from "./dry-turmeric-table-manager"
@@ -1185,56 +1184,6 @@ export function ProductForm({ product, categories, onSave, onCancel, loading = f
             <div className="mt-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Potatoes Table Management</h3>
               <PotatoesTableManager />
-            </div>
-          </div>
-        ) : product?.slug === 'garlics' ? (
-          <div className="space-y-4">
-            <GrapesPageEditor
-              data={{
-                heroTitle: formData.heroTitle || product.heroTitle,
-                heroSubtitle: formData.heroSubtitle || product.heroSubtitle,
-                heroDescription: formData.heroDescription || product.heroDescription,
-                heroImageUrl: formData.heroImageUrl || product.heroImageUrl,
-                heroButtonText: formData.heroButtonText || product.heroButtonText,
-                heroButtonLink: formData.heroButtonLink || product.heroButtonLink,
-                heroButton2Text: formData.heroButton2Text || product.heroButton2Text,
-                heroButton2Link: formData.heroButton2Link || product.heroButton2Link,
-                featuresTitle: formData.featuresTitle || product.featuresTitle,
-                featuresSubtitle: formData.featuresSubtitle || product.featuresSubtitle,
-                ctaTitle: formData.ctaTitle || product.ctaTitle,
-                ctaDescription: formData.ctaDescription || product.ctaDescription,
-                ctaButtonText: formData.ctaButtonText || product.ctaButtonText,
-                ctaButtonLink: formData.ctaButtonLink || product.ctaButtonLink,
-                tableTitle: formData.tableTitle || product.tableTitle,
-                tableDescription: formData.tableDescription || product.tableDescription,
-                tableVarieties: formData.tableVarieties || product.tableVarieties,
-                tableSpecs: formData.tableSpecs || product.tableSpecs,
-                tableAdvantages: formData.tableAdvantages || product.tableAdvantages,
-              }}
-              onSave={async (sectionData) => {
-                setFormData(prev => ({ ...prev, ...sectionData }))
-                try {
-                  const response = await fetch(`/api/products/${product.id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(sectionData)
-                  })
-                  if (response.ok) {
-                    toast.success('Section saved successfully!')
-                  } else {
-                    throw new Error('Failed to save')
-                  }
-                } catch (error) {
-                  console.error('Error saving section:', error)
-                  toast.error('Failed to save section')
-                }
-              }}
-              onCancel={() => {}}
-              loading={loading}
-            />
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Garlics Table Management</h3>
-              <GarlicsTableManager />
             </div>
           </div>
         ) : product?.slug === 'rice' ? (
